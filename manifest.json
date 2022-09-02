@@ -1,9 +1,8 @@
 {
-  "id": "/",
-  "scope": "/",
+  "scope": "/notepad-pwa/",
   "name": "Notepad (PWA)",
   "display": "standalone",
-  "start_url": "/",
+  "start_url": "/notepad-pwa",
   "short_name": "notepad",
   "theme_color": "#f0f4f9",
   "description": "Notepad, but built as a PWA - because why not",
