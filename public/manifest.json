@@ -360,8 +360,7 @@
       "url": "/about",
       "icons": [
         {
-          "src": "assets/icons/StoreLogo.scale-200.png",
-          "sizes": "200x200"
+          "src": "assets/icons/StoreLogo.scale-200.png"
         }
       ]
     }
