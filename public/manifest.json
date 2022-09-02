@@ -1,5 +1,5 @@
 {
-  "scope": "/notepad-pwa/",
+  "scope": "/notepad-pwa",
   "name": "Notepad (PWA)",
   "display": "standalone",
   "start_url": "/notepad-pwa",
