@@ -1,9 +1,9 @@
 {
   "id": "/",
-  "scope": "/notepad-pwa",
+  "scope": "/",
   "name": "PWA Starter",
   "display": "standalone",
-  "start_url": "/notepad-pwa",
+  "start_url": "/",
   "short_name": "starter",
   "theme_color": "#E1477E",
   "description": "This is a PWA Starter app",
