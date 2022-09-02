@@ -361,7 +361,7 @@
       "icons": [
         {
           "src": "assets/icons/StoreLogo.scale-200.png",
-          "sizes": "192x192"
+          "sizes": "200x200"
         }
       ]
     }
@@ -374,7 +374,7 @@
   "protocol_handlers": [
     {
       "protocol": "web+notepad",
-      "url": "/"
+      "url": "/notepad-pwa?url=%s"
     }
   ]
 }
