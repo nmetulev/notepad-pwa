@@ -360,7 +360,7 @@
       "url": "/about",
       "icons": [
         {
-          "src": "assets/icons/icon_192.png",
+          "src": "assets/icons/StoreLogo.scale-200.png",
           "sizes": "192x192"
         }
       ]
@@ -373,7 +373,7 @@
   ],
   "protocol_handlers": [
     {
-      "protocol": "pnotepad",
+      "protocol": "web+notepad",
       "url": "/"
     }
   ]
