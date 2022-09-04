@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 
 @customElement('app-editor')
 export class AppMenu extends LitElement {
