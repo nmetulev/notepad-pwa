@@ -22,7 +22,8 @@ jobs:
         run: npm install
 
       - name: Vite Build
-        run: npm run build -- --base=${{ github.event.repository.name }}
+        run: npm run build
+        # run: npm run build -- --base=${{ github.event.repository.name }}
 
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.7.3
