@@ -372,7 +372,7 @@
   "protocol_handlers": [
     {
       "protocol": "web+notepad",
-      "url": "/notepad-pwa?url=%s"
+      "url": "/?url=%s"
     }
   ]
 }
