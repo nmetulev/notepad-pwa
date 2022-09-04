@@ -19,20 +19,16 @@
   <link rel="icon" href="/notepad-pwa/assets/icons/Square44x44Logo.scale-100.png" type="image/x-icon" />
 
   <!-- Imports the manifest to represent the web application. A web app must have a manifest to be a PWA. -->
-  <link rel="manifest" href="/notepad-pwa/code/manifest.084d217e.json" />
-
-  <script type="module" src="https://unpkg.com/@fluentui/web-components" crossorigin="anonymous"></script>
+  <link rel="manifest" href="/notepad-pwa/manifest.json" />
 
   
-  <script type="module" crossorigin src="/notepad-pwa/code/index.5e73f5ec.js"></script>
-  <link rel="stylesheet" href="/notepad-pwa/code/index.c492f108.css">
+  <script type="module" crossorigin src="/notepad-pwa/code/index.d0b0a474.js"></script>
+  <link rel="stylesheet" href="/notepad-pwa/code/index.d4a241b2.css">
 </head>
 
 <body>
   <!-- Our app-index web component. This component is defined in src/pages/app-index.ts-->
-  <fluent-design-system-provider>
-    <app-index></app-index>
-  </fluent-design-system-provider>
+  <app-index></app-index>
 
   <script>
     if ('serviceWorker' in navigator) {
