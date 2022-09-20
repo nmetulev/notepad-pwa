@@ -13,6 +13,7 @@ export class AppHeader extends LitElement {
         display: block;
         width: env(titlebar-area-width, 100%);
         height: env(titlebar-area-height, 33px);
+        min-height: env(titlebar-area-height, 33px);
       }
 
      .root {

@@ -1,6 +1,12 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
+import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js';
+
+
+let rootUrl = `/shoelace`
+setBasePath(rootUrl)
+
 import './header';
 import './menu';
 import './editor';
@@ -23,7 +29,24 @@ export class AppIndex extends LitElement {
         flex-grow: 1;
         flex-shrink: 1;
         flex-basis: auto;
-        background-color: pink; //todo - remove
+        overflow: auto;
+
+
+        /* background-color: pink; //todo - remove */
+      }
+      app-editor::-webkit-scrollbar {
+        width: 14px;
+      }
+
+      app-editor::-webkit-scrollbar-track {
+
+      }
+
+      app-editor::-webkit-scrollbar-thumb {
+        background-color: #8a8a8a;
+        border: 4px solid rgba(0, 0, 0, 0);
+        background-clip: padding-box;
+        border-radius: 9999px;
       }
 
       /* app-header,

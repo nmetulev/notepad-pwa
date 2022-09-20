@@ -12,15 +12,16 @@ export class AppMenu extends LitElement {
 
       .root {
         background-color: white;
-        padding: 16px;
+        /* padding: 16px; */
         font-family: "Lucida Console";
         font-size: 12pt;
         font-style: regular;
-        overflow: scroll;
+        height: 100%;
       }
 
       .editor {
-
+        padding: 16px;
+        min-height: calc(100% - 32px);
       }
 
       *:focus {
@@ -38,6 +39,11 @@ export class AppMenu extends LitElement {
       <div class="root" >
         <div class="editor" contenteditable>
           contenteditable
+          <br />
+          <br />
+          TODO:
+          <br />
+          paste plain text only
         </div>
       </div>
     `;

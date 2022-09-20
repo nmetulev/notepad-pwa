@@ -3,6 +3,9 @@
   This file is used for all of your global styles and CSS variables.
   Check here https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties for more info on using CSS variables.
 */
+
+@import '@shoelace-style/shoelace/dist/themes/light.css';
+
 :root {
   --font-family: sans-serif;
 }
@@ -12,6 +15,16 @@ html, body {
   padding: 0;
   margin: 0;
   background: #181818;
+  height: 100%;
+}
+
+/* fix for overscroll */
+html {
+  overflow: hidden;
+}
+
+body {
+  overflow: auto;
 }
 
 @media (prefers-color-scheme: dark) {
