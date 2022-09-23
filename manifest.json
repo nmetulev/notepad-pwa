@@ -374,5 +374,23 @@
       "protocol": "web+notepad",
       "url": "/?url=%s"
     }
+  ],
+  "file_handlers": [
+    {
+        "action": "/",
+        "accept": {
+            "text/*": [
+                ".txt"
+            ]
+        },
+        "icons": [
+          {
+            "src": "assets/icons/Square150x150Logo.scale-200.png",
+            "sizes": "300x300",
+            "type": "image/png"
+          }
+        ],
+        "launch_type": "multiple-clients"
+    }
   ]
 }
