@@ -1,11 +1,11 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
+import { NotepadContentState, notepadEventNames } from './state';
 
 @customElement('app-header')
 export class AppHeader extends LitElement {
-  @property({ type: String }) title = 'PWA Starter';
-
-  @property({ type: Boolean}) enableBack: boolean = false;
+  @property() title = 'Untitled';
+  @property() edited = false;
 
   static get styles() {
     return css`
@@ -49,12 +49,24 @@ export class AppHeader extends LitElement {
 
   constructor() {
     super();
+    NotepadContentState.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    NotepadContentState.instance.on(notepadEventNames.editorChanged, this.onFileChangedHandler)
   }
 
-  updated(changedProperties: any) {
-    if (changedProperties.has('enableBack')) {
-      console.log('enableBack', this.enableBack);
-    }
+  disconnectedCallback(): void {
+    NotepadContentState.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    NotepadContentState.instance.removeListener(notepadEventNames.editorChanged, this.onFileChangedHandler)
+  }
+
+  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    this.updateTitle();
+  }
+
+  private onFileChangedHandler = this.updateTitle.bind(this);
+  private updateTitle() {
+    this.title = NotepadContentState.instance.fileName || 'Untitled'
+    this.edited = NotepadContentState.instance.isDirty;
+    document.title = this.title;
   }
 
   render() {
@@ -62,7 +74,7 @@ export class AppHeader extends LitElement {
       <div class="root">
         <img src="/assets/icons/Square44x44Logo.scale-100.png" alt="Notepad logo" />
         <label>
-          Untitled - Notepad
+          ${this.edited ? "*" : ""}${this.title} - Notepad
         </label>
       </div>
     `;

@@ -1,11 +1,9 @@
 import { LitElement, css, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, query } from 'lit/decorators.js';
 
 import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js';
-
-
-let rootUrl = `/shoelace`
-setBasePath(rootUrl)
+import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog';
+import '@shoelace-style/shoelace/dist/components/dialog/dialog';
 
 import './header';
 import './menu';
@@ -13,6 +11,15 @@ import './editor';
 import './status-bar';
 
 import './styles/global.css';
+import { NotepadContentState, notepadEventNames } from './state';
+
+declare global {
+  interface Window { launchQueue: any; }
+}
+
+
+let rootUrl = `/shoelace`
+setBasePath(rootUrl)
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
@@ -36,6 +43,7 @@ export class AppIndex extends LitElement {
       }
       app-editor::-webkit-scrollbar {
         width: 14px;
+        height: 14px;
       }
 
       app-editor::-webkit-scrollbar-track {
@@ -57,13 +65,56 @@ export class AppIndex extends LitElement {
     `;
   }
 
+  @query('.dialog', true) private dialog!: SlDialog
+  private afterDialogAction!: string
+
   constructor() {
     super();
+
+    if ('launchQueue' in window ) {
+      window.launchQueue.setConsumer((launchParams : any) => {
+        if (!launchParams.files.length) {
+          return;
+        }
+        for (const fileHandle of launchParams.files) {
+          NotepadContentState.instance.setFileHandle(fileHandle);
+        }
+      });
+    } else {
+      console.error('File Handling API is not supported!');
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && e.key === 's') {
+        // Prevent the Save dialog to open
+        e.preventDefault();
+        NotepadContentState.instance.saveFile();
+      }
+    });
+
+    NotepadContentState.instance.on(notepadEventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
   }
 
-  firstUpdated() {
+  private showDialog(e: string) {
+    this.afterDialogAction = e;
+    this.dialog.show();
+  }
+
+  private async continueFromDialog(shouldSave: boolean) {
+    if (shouldSave) {
+      await NotepadContentState.instance.saveFile();
+    }
+
+    this.dialog?.hide();
+
+    if (this.afterDialogAction === 'open') {
+      NotepadContentState.instance.openFile(true);
+    } else {
+      NotepadContentState.instance.newFile(true);
+    }
 
   }
+
 
   render() {
     return html`
@@ -72,6 +123,12 @@ export class AppIndex extends LitElement {
         <app-menu></app-menu>
         <app-editor></app-editor>
         <app-status-bar></app-status-bar>
+        <sl-dialog label="Notepad" class="dialog">
+          Do you want to save changes to ${NotepadContentState.instance.fileName || 'Untitled'}?
+          <sl-button slot="footer" variant="primary" @click=${() => this.continueFromDialog(true)}>Save</sl-button>
+          <sl-button slot="footer" @click=${() => this.continueFromDialog(false)}>Don't save</sl-button>
+          <sl-button slot="footer" @click=${() => this.dialog?.hide()}>Cancel</sl-button>
+        </sl-dialog>
       </div>
     `;
   }

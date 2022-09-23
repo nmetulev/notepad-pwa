@@ -1,8 +1,24 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
+import { NotepadContentState } from './state';
 
 import '@shoelace-style/shoelace/dist/components/button/button'
 import '@shoelace-style/shoelace/dist/components/icon/icon'
+import '@shoelace-style/shoelace/dist/components/dropdown/dropdown'
+import '@shoelace-style/shoelace/dist/components/menu/menu'
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item'
+import '@shoelace-style/shoelace/dist/components/divider/divider'
+
+// import { setDefaultAnimation } from '@shoelace-style/shoelace/dist/utilities/animation-registry.js';
+// setDefaultAnimation('dropdown.show', {
+//   keyframes: [
+//     { transform: 'translateY(-200px)'},
+//     { transform: 'translateY(0)' }
+//   ],
+//   options: {
+//     duration: 500
+//   }
+// });
 
 @customElement('app-menu')
 export class AppMenu extends LitElement {
@@ -37,6 +53,11 @@ export class AppMenu extends LitElement {
         --sl-spacing-medium: 8px;
       }
 
+      sl-menu {
+        --sl-color-neutral-0: #191919; /* color */
+        --sl-color-primary-600: #e4e4e4; /* hover background */
+      }
+
       .menubar {
         flex-grow: 1;
         display: flex;
@@ -65,7 +86,21 @@ export class AppMenu extends LitElement {
     return html`
       <div class="root">
         <div class="menubar">
-          <sl-button>File</sl-button>
+          <sl-dropdown>
+            <sl-button slot="trigger">File</sl-button>
+            <sl-menu @sl-select=${(e: any) => this.menuItemClicked(e.detail.item.value)}>
+              <sl-menu-item value="new">New</sl-menu-item>
+              <sl-menu-item value="new-window">New window</sl-menu-item>
+              <sl-menu-item value="open">Open</sl-menu-item>
+              <sl-menu-item value="save">Save</sl-menu-item>
+              <sl-menu-item value="save-as">Save as</sl-menu-item>
+              <sl-divider></sl-divider>
+              <sl-menu-item value="page-setup">Page setup</sl-menu-item>
+              <sl-menu-item value="print">Print</sl-menu-item>
+              <sl-divider></sl-divider>
+              <sl-menu-item value="exit">Exit</sl-menu-item>
+            </sl-menu>
+          </sl-dropdown>
           <sl-button>Edit</sl-button>
           <sl-button>View</sl-button>
         </div>
@@ -76,5 +111,27 @@ export class AppMenu extends LitElement {
         </div>
       </div>
     `;
+  }
+
+  private menuItemClicked(item: string) {
+    switch (item) {
+      case 'new':
+        NotepadContentState.instance.newFile();
+        break;
+      case 'new-window':
+        window.open('/', '', 'width=1200, height=750');
+        break;
+      case 'open':
+        NotepadContentState.instance.openFile();
+        break;
+      case 'save':
+        NotepadContentState.instance.saveFile();
+        break;
+      case 'save-as':
+        NotepadContentState.instance.saveAsFile();
+        break;
+      default:
+        console.log(`${item} NOT IMPLEMENTED`)
+    }
   }
 }
