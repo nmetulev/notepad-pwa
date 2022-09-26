@@ -65,6 +65,7 @@ export class AppMenu extends LitElement {
           contenteditable
           spellcheck="false"
           @input=${(e: InputEvent) => NotepadContentState.instance.editorContents = (e.target as HTMLDivElement).innerText}
+          @keydown=${this.handleTab}
           @paste=${this.pasteAsPlainText}></div>
       </div>
     `;
@@ -78,6 +79,13 @@ export class AppMenu extends LitElement {
     var text = e.clipboardData?.getData('text/plain');
     if (text) {
       document.execCommand('insertHTML', false, text)
+    }
+  }
+
+  private handleTab(e: KeyboardEvent) {
+    if(e.keyCode == 9){ //Tab
+      e.preventDefault()
+      document.execCommand('insertHTML', false, '&#009');
     }
   }
 }
