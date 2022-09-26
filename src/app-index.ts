@@ -11,7 +11,7 @@ import './editor';
 import './status-bar';
 
 import './styles/global.css';
-import { NotepadContentState, notepadEventNames } from './state';
+import { Notepad, notepadEventNames } from './state';
 
 declare global {
   interface Window { launchQueue: any; }
@@ -77,7 +77,7 @@ export class AppIndex extends LitElement {
           return;
         }
         for (const fileHandle of launchParams.files) {
-          NotepadContentState.instance.setFileHandle(fileHandle);
+          Notepad.instance.setFileHandle(fileHandle);
         }
       });
     } else {
@@ -88,11 +88,11 @@ export class AppIndex extends LitElement {
       if (e.ctrlKey && e.key === 's') {
         // Prevent the Save dialog to open
         e.preventDefault();
-        NotepadContentState.instance.saveFile();
+        Notepad.instance.saveFile();
       }
     });
 
-    NotepadContentState.instance.on(notepadEventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
+    Notepad.instance.on(notepadEventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
   }
 
   private showDialog(e: string) {
@@ -102,15 +102,15 @@ export class AppIndex extends LitElement {
 
   private async continueFromDialog(shouldSave: boolean) {
     if (shouldSave) {
-      await NotepadContentState.instance.saveFile();
+      await Notepad.instance.saveFile();
     }
 
     this.dialog?.hide();
 
     if (this.afterDialogAction === 'open') {
-      NotepadContentState.instance.openFile(true);
+      Notepad.instance.openFile(true);
     } else {
-      NotepadContentState.instance.newFile(true);
+      Notepad.instance.newFile(true);
     }
 
   }
@@ -124,7 +124,7 @@ export class AppIndex extends LitElement {
         <app-editor></app-editor>
         <app-status-bar></app-status-bar>
         <sl-dialog label="Notepad" class="dialog">
-          Do you want to save changes to ${NotepadContentState.instance.fileName || 'Untitled'}?
+          Do you want to save changes to ${Notepad.instance.fileName || 'Untitled'}?
           <sl-button slot="footer" variant="primary" @click=${() => this.continueFromDialog(true)}>Save</sl-button>
           <sl-button slot="footer" @click=${() => this.continueFromDialog(false)}>Don't save</sl-button>
           <sl-button slot="footer" @click=${() => this.dialog?.hide()}>Cancel</sl-button>

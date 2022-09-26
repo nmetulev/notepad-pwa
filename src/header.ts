@@ -1,6 +1,6 @@
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { NotepadContentState, notepadEventNames } from './state';
+import { Notepad, notepadEventNames } from './state';
 
 @customElement('app-header')
 export class AppHeader extends LitElement {
@@ -49,13 +49,13 @@ export class AppHeader extends LitElement {
 
   constructor() {
     super();
-    NotepadContentState.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler)
-    NotepadContentState.instance.on(notepadEventNames.editorChanged, this.onFileChangedHandler)
+    Notepad.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    Notepad.instance.on(notepadEventNames.editorChanged, this.onFileChangedHandler)
   }
 
   disconnectedCallback(): void {
-    NotepadContentState.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler)
-    NotepadContentState.instance.removeListener(notepadEventNames.editorChanged, this.onFileChangedHandler)
+    Notepad.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    Notepad.instance.removeListener(notepadEventNames.editorChanged, this.onFileChangedHandler)
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -64,17 +64,17 @@ export class AppHeader extends LitElement {
 
   private onFileChangedHandler = this.updateTitle.bind(this);
   private updateTitle() {
-    this.title = NotepadContentState.instance.fileName || 'Untitled'
-    this.edited = NotepadContentState.instance.isDirty;
+    this.title = Notepad.instance.fileName || 'Untitled'
+    this.edited = Notepad.instance.isDirty;
     document.title = this.title;
   }
 
   render() {
     return html`
       <div class="root">
-        <img src="/assets/icons/Square44x44Logo.scale-100.png" alt="Notepad logo" />
+        <img src="/assets/icons/Square44x44Logo.scale-100.png" alt="Notepad.instance logo" />
         <label>
-          ${this.edited ? "*" : ""}${this.title} - Notepad
+          ${this.edited ? "*" : ""}${this.title} - Notepad.instance
         </label>
       </div>
     `;

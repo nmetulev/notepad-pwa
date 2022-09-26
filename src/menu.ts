@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { NotepadContentState } from './state';
+import { Notepad } from './state';
 
 import '@shoelace-style/shoelace/dist/components/button/button'
 import '@shoelace-style/shoelace/dist/components/icon/icon'
@@ -116,19 +116,19 @@ export class AppMenu extends LitElement {
   private menuItemClicked(item: string) {
     switch (item) {
       case 'new':
-        NotepadContentState.instance.newFile();
+        Notepad.instance.newFile();
         break;
       case 'new-window':
         window.open('/', '', 'width=1200, height=750');
         break;
       case 'open':
-        NotepadContentState.instance.openFile();
+        Notepad.instance.openFile();
         break;
       case 'save':
-        NotepadContentState.instance.saveFile();
+        Notepad.instance.saveFile();
         break;
       case 'save-as':
-        NotepadContentState.instance.saveAsFile();
+        Notepad.instance.saveAsFile();
         break;
       default:
         console.log(`${item} NOT IMPLEMENTED`)

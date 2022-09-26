@@ -1,11 +1,11 @@
 import { EventDispatcher, EventHandler } from "./utils/EventDispatcher";
 
-export class NotepadContentState {
-    private static _instance: NotepadContentState;
+export class Notepad {
+    private static _instance: Notepad;
 
     static get instance() {
         if (!this._instance) {
-            this._instance = new NotepadContentState();
+            this._instance = new Notepad();
         }
 
         return this._instance;

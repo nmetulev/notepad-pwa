@@ -1,6 +1,6 @@
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, query } from 'lit/decorators.js';
-import { NotepadContentState, notepadEventNames } from './state';
+import { Notepad, notepadEventNames } from './state';
 
 @customElement('app-editor')
 export class AppMenu extends LitElement {
@@ -39,11 +39,11 @@ export class AppMenu extends LitElement {
 
   constructor() {
     super();
-    NotepadContentState.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    Notepad.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler)
   }
 
   disconnectedCallback(): void {
-    NotepadContentState.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    Notepad.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler)
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -53,8 +53,8 @@ export class AppMenu extends LitElement {
   private onFileChangedHandler = this.setEditorContents.bind(this);
   private setEditorContents() {
     if (this.editor) {
-      this.editor.textContent = NotepadContentState.instance.fileContents || "";
-      NotepadContentState.instance.editorContents = this.editor.innerText;
+      this.editor.textContent = Notepad.instance.fileContents || "";
+      Notepad.instance.editorContents = this.editor.innerText;
     }
   }
 
@@ -64,7 +64,7 @@ export class AppMenu extends LitElement {
         <div class="editor"
           contenteditable
           spellcheck="false"
-          @input=${(e: InputEvent) => NotepadContentState.instance.editorContents = (e.target as HTMLDivElement).innerText}
+          @input=${(e: InputEvent) => Notepad.instance.editorContents = (e.target as HTMLDivElement).innerText}
           @keydown=${this.handleTab}
           @paste=${this.pasteAsPlainText}></div>
       </div>
