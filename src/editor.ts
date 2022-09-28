@@ -48,6 +48,7 @@ export class AppMenu extends LitElement {
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     this.setEditorContents();
+    this.editor?.focus();
   }
 
   private onFileChangedHandler = this.setEditorContents.bind(this);
