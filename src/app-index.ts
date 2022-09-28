@@ -92,6 +92,14 @@ export class AppIndex extends LitElement {
       }
     });
 
+    window.addEventListener('beforeunload', e => {
+      if (Notepad.instance.isDirty) {
+        const message = `Do you want to save changes to ${Notepad.instance.fileName || 'Untitled'}`;
+        e.returnValue = message;
+        return message;
+      }
+    });
+
     Notepad.instance.on(notepadEventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
   }
 
