@@ -98,6 +98,7 @@ export class AppIndex extends LitElement {
         e.returnValue = message;
         return message;
       }
+      return;
     });
 
     Notepad.instance.on(notepadEventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
