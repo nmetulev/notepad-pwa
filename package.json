@@ -15,10 +15,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@pwabuilder/pwainstall": "^1.6.7",
-    "@shoelace-style/shoelace": "^2.0.0-beta.83",
+    "@shoelace-style/shoelace": "^2.3.0",
     "@types/wicg-file-system-access": "^2020.9.5",
-    "lit": "^2.2.1"
+    "lit": "^2.6.1"
   },
   "devDependencies": {
     "rollup-plugin-postcss-lit": "^2.0.0",
