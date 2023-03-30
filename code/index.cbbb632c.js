@@ -1479,7 +1479,7 @@
           </sl-button>
         </div>
       </div>
-    `}menuItemClicked(t){switch(t){case"new":b.instance.newFile();break;case"new-window":window.open("/","","width=1200, height=750");break;case"open":b.instance.openFile();break;case"save":b.instance.saveFile();break;case"save-as":b.instance.saveAsFile();break;default:console.log(`${t} NOT IMPLEMENTED`)}}};jo=fs([jt("app-menu")],jo);var ms=Object.defineProperty,vs=Object.getOwnPropertyDescriptor,Ei=(t,e,o,i)=>{for(var r=i>1?void 0:i?vs(e,o):e,s=t.length-1,n;s>=0;s--)(n=t[s])&&(r=(i?n(e,o,r):n(r))||r);return i&&r&&ms(e,o,r),r};let Ve=class extends W{constructor(){super(),this.onFileChangedHandler=this.setEditorContents.bind(this),b.instance.on(M.fileChanged,this.onFileChangedHandler)}static get styles(){return It`
+    `}async menuItemClicked(t){switch(t){case"new":b.instance.newFile();break;case"new-window":window.open("/","","width=1200, height=750");break;case"open":b.instance.openFile();break;case"save":b.instance.saveFile();break;case"save-as":b.instance.saveAsFile();break;case"print":var e=await fetch("http://localhost:7083");console.log(await e.text());break;default:console.log(`${t} NOT IMPLEMENTED`)}}};jo=fs([jt("app-menu")],jo);var ms=Object.defineProperty,vs=Object.getOwnPropertyDescriptor,Ei=(t,e,o,i)=>{for(var r=i>1?void 0:i?vs(e,o):e,s=t.length-1,n;s>=0;s--)(n=t[s])&&(r=(i?n(e,o,r):n(r))||r);return i&&r&&ms(e,o,r),r};let Ve=class extends W{constructor(){super(),this.onFileChangedHandler=this.setEditorContents.bind(this),b.instance.on(M.fileChanged,this.onFileChangedHandler)}static get styles(){return It`
       :host {
         display: block
       }
@@ -1578,4 +1578,4 @@
         </sl-dialog>
       </div>
     `}};Ci([Qo(".dialog",!0)],je.prototype,"dialog",2);je=Ci([jt("app-index")],je);
-//# sourceMappingURL=index.ba188367.js.map
+//# sourceMappingURL=index.cbbb632c.js.map
