@@ -116,19 +116,19 @@ export class AppMenu extends LitElement {
   private menuItemClicked(item: string) {
     switch (item) {
       case 'new':
-        Notepad.instance.newFile();
+        Notepad.current.newFile();
         break;
       case 'new-window':
         window.open('/', '', 'width=1200, height=750');
         break;
       case 'open':
-        Notepad.instance.openFile();
+        Notepad.current.openFile();
         break;
       case 'save':
-        Notepad.instance.saveFile();
+        Notepad.current.saveFile();
         break;
       case 'save-as':
-        Notepad.instance.saveAsFile();
+        Notepad.current.saveAsFile();
         break;
       default:
         console.log(`${item} NOT IMPLEMENTED`)

@@ -77,7 +77,7 @@ export class AppIndex extends LitElement {
           return;
         }
         for (const fileHandle of launchParams.files) {
-          Notepad.instance.setFileHandle(fileHandle);
+          Notepad.current.setFileHandle(fileHandle);
         }
       });
     } else {
@@ -88,20 +88,20 @@ export class AppIndex extends LitElement {
       if (e.ctrlKey && e.key === 's') {
         // Prevent the Save dialog to open
         e.preventDefault();
-        Notepad.instance.saveFile();
+        Notepad.current.saveFile();
       }
     });
 
     window.addEventListener('beforeunload', e => {
-      if (Notepad.instance.isDirty) {
-        const message = `Do you want to save changes to ${Notepad.instance.fileName || 'Untitled'}`;
+      if (Notepad.current.isDirty) {
+        const message = `Do you want to save changes to ${Notepad.current.fileName || 'Untitled'}`;
         e.returnValue = message;
         return message;
       }
       return;
     });
 
-    Notepad.instance.on(notepadEventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
+    Notepad.on(notepadEventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
   }
 
   private showDialog(e: string) {
@@ -111,15 +111,15 @@ export class AppIndex extends LitElement {
 
   private async continueFromDialog(shouldSave: boolean) {
     if (shouldSave) {
-      await Notepad.instance.saveFile();
+      await Notepad.current.saveFile();
     }
 
     this.dialog?.hide();
 
     if (this.afterDialogAction === 'open') {
-      Notepad.instance.openFile(true);
+      Notepad.current.openFile(true);
     } else {
-      Notepad.instance.newFile(true);
+      Notepad.current.newFile(true);
     }
 
   }
@@ -133,7 +133,7 @@ export class AppIndex extends LitElement {
         <app-editor></app-editor>
         <app-status-bar></app-status-bar>
         <sl-dialog label="Notepad" class="dialog">
-          Do you want to save changes to ${Notepad.instance.fileName || 'Untitled'}?
+          Do you want to save changes to ${Notepad.current.fileName || 'Untitled'}?
           <sl-button slot="footer" variant="primary" @click=${() => this.continueFromDialog(true)}>Save</sl-button>
           <sl-button slot="footer" @click=${() => this.continueFromDialog(false)}>Don't save</sl-button>
           <sl-button slot="footer" @click=${() => this.dialog?.hide()}>Cancel</sl-button>

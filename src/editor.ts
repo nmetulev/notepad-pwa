@@ -39,11 +39,11 @@ export class AppMenu extends LitElement {
 
   constructor() {
     super();
-    Notepad.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    Notepad.on(notepadEventNames.fileChanged, this.onFileChangedHandler)
   }
 
   disconnectedCallback(): void {
-    Notepad.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    Notepad.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler)
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -54,8 +54,8 @@ export class AppMenu extends LitElement {
   private onFileChangedHandler = this.setEditorContents.bind(this);
   private setEditorContents() {
     if (this.editor) {
-      this.editor.textContent = Notepad.instance.fileContents || "";
-      Notepad.instance.editorContents = this.editor.innerText;
+      this.editor.textContent = Notepad.current.fileContents || "";
+      Notepad.current.editorContents = this.editor.innerText;
     }
   }
 
@@ -65,7 +65,7 @@ export class AppMenu extends LitElement {
         <div class="editor"
           contenteditable
           spellcheck="false"
-          @input=${(e: InputEvent) => Notepad.instance.editorContents = (e.target as HTMLDivElement).innerText}
+          @input=${(e: InputEvent) => Notepad.current.editorContents = (e.target as HTMLDivElement).innerText}
           @keydown=${this.handleTab}
           @paste=${this.pasteAsPlainText}></div>
       </div>

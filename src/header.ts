@@ -58,13 +58,13 @@ export class AppHeader extends LitElement {
 
   constructor() {
     super();
-    Notepad.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler)
-    Notepad.instance.on(notepadEventNames.editorChanged, this.onFileChangedHandler)
+    Notepad.on(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    Notepad.on(notepadEventNames.editorChanged, this.onFileChangedHandler)
   }
 
   disconnectedCallback(): void {
-    Notepad.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler)
-    Notepad.instance.removeListener(notepadEventNames.editorChanged, this.onFileChangedHandler)
+    Notepad.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    Notepad.removeListener(notepadEventNames.editorChanged, this.onFileChangedHandler)
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -73,8 +73,8 @@ export class AppHeader extends LitElement {
 
   private onFileChangedHandler = this.updateTitle.bind(this);
   private updateTitle() {
-    this.title = Notepad.instance.fileName || 'Untitled'
-    this.edited = Notepad.instance.isDirty;
+    // this.title = Notepad.instance.fileName || 'Untitled'
+    // this.edited = Notepad.instance.isDirty;
     document.title = this.title;
   }
 
