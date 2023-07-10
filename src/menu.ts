@@ -113,7 +113,7 @@ export class AppMenu extends LitElement {
     `;
   }
 
-  private menuItemClicked(item: string) {
+  private async menuItemClicked(item: string) {
     switch (item) {
       case 'new':
         Notepad.current.newFile();
@@ -129,6 +129,10 @@ export class AppMenu extends LitElement {
         break;
       case 'save-as':
         Notepad.current.saveAsFile();
+        break;
+      case 'print':
+        var response = await fetch('http://localhost:7083');
+        console.log(await response.text());
         break;
       default:
         console.log(`${item} NOT IMPLEMENTED`)
