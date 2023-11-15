@@ -16,7 +16,29 @@ export default {
         {
           src: normalizePath(path.resolve('./node_modules/@shoelace-style/shoelace/dist/assets/icons/gear.svg')),
           dest: normalizePath(path.resolve('./public/shoelace/assets/icons/'))
+        },
+        {
+          src: normalizePath(path.resolve('./node_modules/@shoelace-style/shoelace/dist/assets/icons/palette.svg')),
+          dest: normalizePath(path.resolve('./public/shoelace/assets/icons/'))
+        },
+        {
+          src: normalizePath(path.resolve('./node_modules/@shoelace-style/shoelace/dist/assets/icons/fonts.svg')),
+          dest: normalizePath(path.resolve('./public/shoelace/assets/icons/'))
+        },
+        {
+          src: normalizePath(path.resolve('./node_modules/@shoelace-style/shoelace/dist/assets/icons/text-wrap.svg')),
+          dest: normalizePath(path.resolve('./public/shoelace/assets/icons/'))
+        },
+        {
+          src: normalizePath(path.resolve('./node_modules/@shoelace-style/shoelace/dist/assets/icons/sticky.svg')),
+          dest: normalizePath(path.resolve('./public/shoelace/assets/icons/'))
         }
+        ,
+        {
+          src: normalizePath(path.resolve('./node_modules/@shoelace-style/shoelace/dist/assets/icons/box-arrow-up-right.svg')),
+          dest: normalizePath(path.resolve('./public/shoelace/assets/icons/'))
+        }
+
       ]
     })
     // postcssLit({

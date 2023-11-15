@@ -105,12 +105,19 @@ export class AppMenu extends LitElement {
           <sl-button>View</sl-button>
         </div>
         <div class="settings-container">
-          <sl-button>
+          <sl-button @click=${() => this.showSettingsPage()}>
             <sl-icon name="gear" label="Settings"></sl-icon>
           </sl-button>
         </div>
       </div>
     `;
+  }
+
+  showSettingsPage(){
+    const event = new CustomEvent('showSettingsPage', {
+      bubbles: true, // if you want the event to bubble up through the DOM
+    });
+    this.dispatchEvent(event);
   }
 
   private async menuItemClicked(item: string) {

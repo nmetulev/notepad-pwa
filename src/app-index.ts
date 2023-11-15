@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, query } from 'lit/decorators.js';
+import { customElement, query, state } from 'lit/decorators.js';
 
 import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js';
 import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog';
@@ -8,6 +8,7 @@ import '@shoelace-style/shoelace/dist/components/dialog/dialog';
 import './header';
 import './menu';
 import './editor';
+import './settings'
 import './status-bar';
 
 import './styles/global.css';
@@ -23,6 +24,9 @@ setBasePath(rootUrl)
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
+
+  @state() showSettings: boolean = false;
+
   static get styles() {
     return css`
       .root {
@@ -124,14 +128,26 @@ export class AppIndex extends LitElement {
 
   }
 
+  updateWordsWrapping(){
+    // change word wrap behavior
+    console.log("word wrap change")
+  }
 
   render() {
     return html`
       <div class="root">
-        <app-header></app-header>
-        <app-menu></app-menu>
-        <app-editor></app-editor>
-        <app-status-bar></app-status-bar>
+        ${!this.showSettings ?
+          html`
+            <app-header></app-header>
+            <app-menu @showSettingsPage=${() => this.showSettings = true}></app-menu>
+            <app-editor></app-editor>
+            <app-status-bar></app-status-bar>
+          ` :
+          html`
+            <app-settings @changedWordsWrapping=${() => this.updateWordsWrapping()}></app-settings>
+          `
+        }
+
         <sl-dialog label="Notepad" class="dialog">
           Do you want to save changes to ${Notepad.instance.fileName || 'Untitled'}?
           <sl-button slot="footer" variant="primary" @click=${() => this.continueFromDialog(true)}>Save</sl-button>
