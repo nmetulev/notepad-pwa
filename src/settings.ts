@@ -16,10 +16,128 @@ export class AppMenu extends LitElement {
 
   static get styles() {
     return css`
+
+    * {
+      box-sizing: border-box;
+    }
+
       .root {
+        padding: 40px;
+      }
+
+      .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      sl-details {
+        border-color: #e5e5e5;
+        border-radius: 3px;
+      }
+
+      sl-details::part(header){
+        background-color: #fbfbfb;
+        padding: 10px;
+        height: 30px;
+        border-radius: 3px;
+      }
+
+      sl-details::part(content){
+        background-color: #f4f4f4;
+        border-bottom-right-radius: 3px;
+        border-bottom-left-radius: 3px;
+      }
+
+      .icon-header, .non-collapsable-setting {
+        display: flex;
+        align-items: center;
+      }
+
+      .non-collapsable-setting {
+        justify-content: space-between;
+        border: 1px solid #e5e5e5;
+        background-color: #fbfbfb;
+        padding: 10px;
+        height: 50px;
+      }
+
+      .ncs-item {
+        align-items: center;
+      }
+
+      .icon-header div, .ncs-item div {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .non-collapsable-setting div {
+        display: flex;
+      }
+
+      sl-icon {
+        margin-right: 15px;
+        font-size: 18px;
 
       }
 
+      h1, h2, p {
+        margin: 0;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+        font-size: 40px;
+      }
+
+      h2, h3 {
+        font-size: 16px;
+        font-weight: normal;
+      }
+
+      p {
+        font-size: 12px;
+      }
+
+      .font-options, .font-option {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .font-options {
+        flex-direction: column;
+      }
+
+      .font-option {
+        border-bottom: 1px solid #e5e5e5;
+        align-items: center;
+        padding: 10px;
+      }
+
+      .font-options:last-child {
+        border-bottom: unset;
+      }
+
+      h3 {
+        margin: 15px;
+        margin-left: 40px;
+      }
+
+      #font-details::part(content){
+        padding: 0;
+      }
+
+      .font-demo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .font-option sl-select {
+        margin-right: 10px;
+      }
     `;
   }
 
@@ -41,10 +159,12 @@ export class AppMenu extends LitElement {
         <h1>Settings</h1>
         <div class="controls">
             <sl-details id="app-theme-details">
-                <div slot="summary">
+                <div class="icon-header" slot="summary">
                     <sl-icon name="palette" label="palette"></sl-icon>
-                    <h2 id="app-theme">App theme</h2>
-                    <p> Select which app theme to display</p>
+                    <div>
+                        <h2 id="app-theme">App theme</h2>
+                        <p> Select which app theme to display</p>
+                    </div>
                 </div>
                 <sl-radio-group aria-labelledby="app-theme">
                     <sl-radio>Light</sl-radio>
@@ -53,15 +173,15 @@ export class AppMenu extends LitElement {
                 </sl-radio-group>
             </sl-details>
             <sl-details id="font-details">
-                <div slot="summary">
+                <div class="icon-header" slot="summary">
                     <sl-icon name="fonts" label="fonts"></sl-icon>
                     <h2>Font</h2>
                 </div>
                 <div class="font-options">
                     <div class="font-option">
                         <h3 id="font-family">Family</h3>
-                        <sl-select aria-labelledby="font-family">
-                            <!-- Loop through font families -->
+                        <sl-select aria-labelledby="font-family" value="font-Consolas">
+                          ${fonts.map((font: string) => html`<sl-option value="font-${font}">${font}</sl-option>`)}
                         </sl-select>
                     </div>
                     <div class="font-option">
@@ -82,18 +202,22 @@ export class AppMenu extends LitElement {
                 </div>
             </sl-details>
             <div class="non-collapsable-setting">
-                <div>
+                <div class="ncs-item">
                     <sl-icon name="text-wrap" label="text-wrap"></sl-icon>
-                    <h2 id="app-theme">Word wrap</h2>
-                    <p>Fit text within window by default</p>
+                    <div>
+                        <h2 id="app-theme">Word wrap</h2>
+                        <p>Fit text within window by default</p>
+                    </div>
                 </div>
                 <sl-switch @sl-change=${() => this.toggleWordsWrapping()}>${this.wordsWrapping ? "On" : "Off"}</sl-switch>
             </div>
             <div class="non-collapsable-setting">
-                <div>
+                <div class="ncs-item">
                     <sl-icon name="box-arrow-up-right" label="box-arrow-up-right"></sl-icon>
-                    <h2 id="opening-files">Opening files</h2>
-                    <p>Choose where your files are opened</p>
+                    <div>
+                        <h2 id="opening-files">Opening files</h2>
+                        <p>Choose where your files are opened</p>
+                    </div>
                 </div>
                 <sl-select aria-labelledby="opening-files" value="new-tab">
                     <sl-option value="new-tab">Open in a new tab</sl-option>
@@ -101,7 +225,7 @@ export class AppMenu extends LitElement {
                 </sl-select>
             </div>
             <sl-details id="start-behavior-details">
-                <div slot="summary">
+                <div class="icon-header" slot="summary">
                     <sl-icon name="sticky" label="sticky"></sl-icon>
                     <h2 id="start-behavior">When Notepad (PWA) starts</h2>
                 </div>
@@ -124,7 +248,7 @@ export class AppMenu extends LitElement {
         </div>
         <div class="buttons">
             <button>Send feedback</button>
-            <a class="link-button" href="" target="_blank" rel="noopener">Help</a>
+            <a class="link-button" href="https://support.microsoft.com/en-us/windows/help-in-notepad-4d68c388-2ff2-0e7f-b706-35fb2ab88a8c" target="_blank" rel="noopener">Help</a>
         </div>
       </div>
     `;
@@ -134,3 +258,15 @@ export class AppMenu extends LitElement {
 }
 
 const fontSizes: number[] = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72];
+const fonts: string[] = [
+  "Arial",
+  "Calibri",
+  "Consolas",
+  "Georgia",
+  "Impact",
+  "Magneto",
+  "Segoe UI",
+  "Tahoma",
+  "Times New Roman",
+  "Verdana"
+]

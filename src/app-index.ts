@@ -36,6 +36,12 @@ export class AppIndex extends LitElement {
         overflow: hidden;
       }
 
+      .root.settings-root {
+        background-color: #f9f2e9;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
       app-editor {
         flex-grow: 1;
         flex-shrink: 1;
@@ -133,13 +139,20 @@ export class AppIndex extends LitElement {
     console.log("word wrap change")
   }
 
+  updateStateForSettingsPage(){
+    this.showSettings = true;
+    let root: HTMLDivElement = this.shadowRoot.querySelector('.root')! as HTMLDivElement;
+    //root.style.backgroundColor = '#f9f2e9';
+    root.classList.add("settings-root")
+  }
+
   render() {
     return html`
       <div class="root">
         ${!this.showSettings ?
           html`
             <app-header></app-header>
-            <app-menu @showSettingsPage=${() => this.showSettings = true}></app-menu>
+            <app-menu @showSettingsPage=${() => this.updateStateForSettingsPage()}></app-menu>
             <app-editor></app-editor>
             <app-status-bar></app-status-bar>
           ` :
