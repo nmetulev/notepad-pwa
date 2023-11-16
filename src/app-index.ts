@@ -141,7 +141,7 @@ export class AppIndex extends LitElement {
 
   updateStateForSettingsPage(){
     this.showSettings = true;
-    let root: HTMLDivElement = this.shadowRoot.querySelector('.root')! as HTMLDivElement;
+    let root: HTMLDivElement = this.shadowRoot!.querySelector('.root')! as HTMLDivElement;
     //root.style.backgroundColor = '#f9f2e9';
     root.classList.add("settings-root")
   }

@@ -38,7 +38,7 @@ export class AppMenu extends LitElement {
 
       sl-details::part(header){
         background-color: #fbfbfb;
-        padding: 10px;
+        padding: 20px;
         height: 30px;
         border-radius: 3px;
       }
@@ -49,6 +49,20 @@ export class AppMenu extends LitElement {
         border-bottom-left-radius: 3px;
       }
 
+      sl-details::part(summary-icon){
+        rotate: none;
+        transition: none;
+      }
+
+      /* @keyframes rotateAnimation {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(180deg);
+        }
+      } */
+
       .icon-header, .non-collapsable-setting {
         display: flex;
         align-items: center;
@@ -58,8 +72,9 @@ export class AppMenu extends LitElement {
         justify-content: space-between;
         border: 1px solid #e5e5e5;
         background-color: #fbfbfb;
-        padding: 10px;
+        padding: 9px 20px;
         height: 50px;
+        box-sizing: unset;
       }
 
       .ncs-item {
@@ -138,6 +153,30 @@ export class AppMenu extends LitElement {
       .font-option sl-select {
         margin-right: 10px;
       }
+
+      sl-switch {
+        margin-right: 10px;
+      }
+
+      sl-switch::part(control) {
+        --height: 21px;
+        --width: 48px;
+        --sl-color-primary-600: #0067c0;
+      }
+
+      sl-switch::part(thumb){
+        width: 15px;
+        height: 15px;
+      }
+
+      #open-behavior-select{
+        width: fit-content;
+      }
+
+      #open-behavior-select::part(display-input){
+        font-size: 14px;
+        white-space: nowrap;
+      }
     `;
   }
 
@@ -159,6 +198,8 @@ export class AppMenu extends LitElement {
         <h1>Settings</h1>
         <div class="controls">
             <sl-details id="app-theme-details">
+            <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
+            <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
                 <div class="icon-header" slot="summary">
                     <sl-icon name="palette" label="palette"></sl-icon>
                     <div>
@@ -173,32 +214,34 @@ export class AppMenu extends LitElement {
                 </sl-radio-group>
             </sl-details>
             <sl-details id="font-details">
-                <div class="icon-header" slot="summary">
-                    <sl-icon name="fonts" label="fonts"></sl-icon>
-                    <h2>Font</h2>
-                </div>
-                <div class="font-options">
-                    <div class="font-option">
-                        <h3 id="font-family">Family</h3>
-                        <sl-select aria-labelledby="font-family" value="font-Consolas">
-                          ${fonts.map((font: string) => html`<sl-option value="font-${font}">${font}</sl-option>`)}
-                        </sl-select>
-                    </div>
-                    <div class="font-option">
-                        <h3 id="font-style">Style</h3>
-                        <sl-select aria-labelledby="font-style">
-                            <!-- Loop through font styles -->
-                        </sl-select>
-                    </div>
-                    <div class="font-option">
-                        <h3 id="font-size">Size</h3>
-                        <sl-select aria-labelledby="font-size" value="font-size-11">
-                           ${fontSizes.map((num: number) => html`<sl-option value="font-size-${num}">${num}</sl-option>`)}
-                        </sl-select>
-                    </div>
-                    <div class="font-demo">
-                        <p>The sound of ocean waves calms my soul</p>
-                    </div>
+              <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
+              <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
+              <div class="icon-header" slot="summary">
+                  <sl-icon name="fonts" label="fonts"></sl-icon>
+                  <h2>Font</h2>
+              </div>
+              <div class="font-options">
+                  <div class="font-option">
+                      <h3 id="font-family">Family</h3>
+                      <sl-select aria-labelledby="font-family" value="font-Consolas">
+                        ${fonts.map((font: string) => html`<sl-option value="font-${font}">${font}</sl-option>`)}
+                      </sl-select>
+                  </div>
+                  <div class="font-option">
+                      <h3 id="font-style">Style</h3>
+                      <sl-select aria-labelledby="font-style">
+                          <!-- Loop through font styles -->
+                      </sl-select>
+                  </div>
+                  <div class="font-option">
+                      <h3 id="font-size">Size</h3>
+                      <sl-select aria-labelledby="font-size" value="font-size-11">
+                          ${fontSizes.map((num: number) => html`<sl-option value="font-size-${num}">${num}</sl-option>`)}
+                      </sl-select>
+                  </div>
+                  <div class="font-demo">
+                      <p>The sound of ocean waves calms my soul</p>
+                  </div>
                 </div>
             </sl-details>
             <div class="non-collapsable-setting">
@@ -219,21 +262,23 @@ export class AppMenu extends LitElement {
                         <p>Choose where your files are opened</p>
                     </div>
                 </div>
-                <sl-select aria-labelledby="opening-files" value="new-tab">
+                <sl-select id="open-behavior-select" aria-labelledby="opening-files" value="new-tab">
                     <sl-option value="new-tab">Open in a new tab</sl-option>
                     <sl-option value="new-window">Open in a new window</sl-option>
                 </sl-select>
             </div>
             <sl-details id="start-behavior-details">
-                <div class="icon-header" slot="summary">
-                    <sl-icon name="sticky" label="sticky"></sl-icon>
-                    <h2 id="start-behavior">When Notepad (PWA) starts</h2>
-                </div>
-                <sl-radio-group aria-labelledby="start-behavior">
-                    <sl-radio>Open content from the previous session</sl-radio>
-                    <sl-radio>Open a new window</sl-radio>
-                </sl-radio-group>
-            </sl-details>
+              <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
+              <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
+              <div class="icon-header" slot="summary">
+                  <sl-icon name="sticky" label="sticky"></sl-icon>
+                  <h2 id="start-behavior">When Notepad (PWA) starts</h2>
+              </div>
+              <sl-radio-group aria-labelledby="start-behavior">
+                  <sl-radio>Open content from the previous session</sl-radio>
+                  <sl-radio>Open a new window</sl-radio>
+              </sl-radio-group>
+          </sl-details>
         </div>
         <div class="about-this-app">
             <h2>About this app</h2>

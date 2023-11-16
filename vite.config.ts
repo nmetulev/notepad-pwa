@@ -32,10 +32,17 @@ export default {
         {
           src: normalizePath(path.resolve('./node_modules/@shoelace-style/shoelace/dist/assets/icons/sticky.svg')),
           dest: normalizePath(path.resolve('./public/shoelace/assets/icons/'))
-        }
-        ,
+        },
         {
           src: normalizePath(path.resolve('./node_modules/@shoelace-style/shoelace/dist/assets/icons/box-arrow-up-right.svg')),
+          dest: normalizePath(path.resolve('./public/shoelace/assets/icons/'))
+        },
+        {
+          src: normalizePath(path.resolve('./node_modules/@shoelace-style/shoelace/dist/assets/icons/chevron-up.svg')),
+          dest: normalizePath(path.resolve('./public/shoelace/assets/icons/'))
+        },
+        {
+          src: normalizePath(path.resolve('./node_modules/@shoelace-style/shoelace/dist/assets/icons/chevron-down.svg')),
           dest: normalizePath(path.resolve('./public/shoelace/assets/icons/'))
         }
 
