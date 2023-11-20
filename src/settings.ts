@@ -22,13 +22,22 @@ export class AppMenu extends LitElement {
     }
 
       .root {
-        padding: 40px;
+        padding: 5px;
+        padding-top: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .root h1 {
+        padding-left: 20px;
       }
 
       .controls {
         display: flex;
         flex-direction: column;
         gap: 5px;
+        padding: 0 20px;
       }
 
       sl-details {
@@ -102,7 +111,6 @@ export class AppMenu extends LitElement {
       }
 
       h1 {
-        margin-bottom: 20px;
         font-size: 40px;
       }
 
@@ -136,7 +144,7 @@ export class AppMenu extends LitElement {
 
       h3 {
         margin: 15px;
-        margin-left: 40px;
+        margin-left: 43px;
       }
 
       #font-details::part(content){
@@ -176,6 +184,121 @@ export class AppMenu extends LitElement {
       #open-behavior-select::part(display-input){
         font-size: 14px;
         white-space: nowrap;
+      }
+
+      .about-this-app {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        padding-left: 20px;
+      }
+
+      .about-this-app h2 {
+        font-weight: bold;
+      }
+      .about-this-app h2, .about-this-app p {
+        font-size: 16px;
+      }
+
+      .links {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        width: fit-content;
+      }
+
+      .links button {
+        all: unset;
+      }
+
+      .links a, .links button {
+        color: #0067c0;
+        text-decoration: none;
+        font-size: 16px;
+        padding: 5px 0;
+        width: fit-content;
+        padding: 5px 20px;
+        border-radius: 3px;
+      }
+
+      .links a:visited, .links a:active {
+        color: #0067c0
+      }
+
+      .links button {
+        all: unset;
+        color: #0067c0;
+        font-size: 16px;
+        padding: 5px 0;
+        width: fit-content;
+        padding: 5px 20px;
+        border-radius: 3px;
+      }
+
+      .links button:hover {
+        cursor: pointer;
+        background-color: #eaeaea;
+        color: #20377a;
+      }
+
+      .links a:hover {
+        background-color: #eaeaea;
+        color: #20377a;
+      }
+
+      .buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: fit-content;
+        padding-left: 20px;
+      }
+
+      .buttons * {
+        all: unset;
+        background-color: #fbfbfb;
+        border-radius: 3px;
+        border: 1px solid #e5e5e5;
+        padding: 5px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+      }
+
+      .buttons *:hover {
+        cursor: default;
+        background-color: #f6f6f6;
+      }
+
+      #app-theme-details::part(content), #start-behavior-details::part(content){
+        padding: 20px 43px;
+      }
+      sl-radio-group::part(form-control-input){
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      sl-radio::part(base){
+        display: flex;
+        align-items: center;
+      }
+      sl-radio::part(control){
+        height: 20px;
+        width: 20px;
+        background-color: #eeeeee;
+        border-color: #949494;
+      }
+      sl-radio::part(control):hover  {
+        background-color: #e6e6e6;
+      }
+      sl-radio::part(control--checked)  {
+        background-color: #0067c0;
+        border-color: #0067c0;
+      }
+      sl-radio::part(control--checked):hover  {
+        background-color: #0067c0;
+        border-color: #0067c0;
       }
     `;
   }

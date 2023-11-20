@@ -37,9 +37,15 @@ export class AppIndex extends LitElement {
       }
 
       .root.settings-root {
-        background-color: #f9f2e9;
-        align-items: center;
         justify-content: flex-start;
+        backdrop-filter: blur(1px);
+
+        background: hsla(207, 48%, 95%, 1);
+        background: linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%);
+        background: -moz-linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%);
+        background: -webkit-linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%);
+        filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#EEF4F9", endColorstr="#F9F2E9", GradientType=1 );
+        overflow-y: auto;
       }
 
       app-editor {
