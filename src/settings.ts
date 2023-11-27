@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 
 import '@shoelace-style/shoelace/dist/components/details/details.js';
 import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
@@ -8,18 +8,39 @@ import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 import '@shoelace-style/shoelace/dist/components/select/select.js';
 import '@shoelace-style/shoelace/dist/components/option/option.js';
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
+import { Settings } from './utils/interfaces';
+import SlSelect from '@shoelace-style/shoelace/dist/components/select/select.js';
+import SlRadioGroup from '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
+import SlSwitch from '@shoelace-style/shoelace/dist/components/switch/switch.js';
 
 @customElement('app-settings')
 export class AppMenu extends LitElement {
 
-    @state() wordsWrapping: boolean = false;
+  // prefilled with the default settings
+  @property({type: Object}) appSettings: Settings = {
+    theme: "light",
+    font: {family: "Consolas", style: "regular", size: 11},
+    wrap: false,
+    open_behavior: true,
+    start_behavior: true
+  };
+
+  /*
+    Are the controls hooked up?
+    [ ] - App Theme
+    [x] - Font
+    [x] - Wrap
+    [ ] - Open Behavior
+    [~] - Start Behvaior ... weird issue with things erasing between settings page
+
+  */
 
   static get styles() {
     return css`
 
-    * {
-      box-sizing: border-box;
-    }
+      * {
+        box-sizing: border-box;
+      }
 
       .root {
         padding: 5px;
@@ -307,17 +328,74 @@ export class AppMenu extends LitElement {
     super();
   }
 
+  connectedCallback(){
+    super.connectedCallback();
+    console.log(this.appSettings);
+  }
+
   toggleWordsWrapping(){
-    this.wordsWrapping = !this.wordsWrapping;
-    const event = new CustomEvent('changedWordsWrapping', {
-        bubbles: true, // if you want the event to bubble up through the DOM
-      });
-      this.dispatchEvent(event);
+
+    const switcher = this.shadowRoot!.querySelector('sl-switch') as unknown as SlSwitch;
+
+    const wrapping = switcher.checked;
+
+    this.appSettings.wrap = wrapping;
+    this.writeSettings();
+
+    const event = new CustomEvent('updateSettings', {
+      bubbles: true, // if you want the event to bubble up through the DOM
+    });
+    this.dispatchEvent(event);
+  }
+
+  writeSettings(){
+    localStorage.setItem('notepadSettings', JSON.stringify(this.appSettings));
+  }
+
+  updateFont(){
+    const family = this.shadowRoot?.querySelector("#family-select") as unknown as SlSelect;
+    const style = this.shadowRoot?.querySelector("#style-select") as unknown as SlSelect;
+    const size = this.shadowRoot?.querySelector("#size-select") as unknown as SlSelect;
+
+    let updatedFont = {
+      family: family.value as string,
+      style: style.value as string,
+      size: parseInt(size.value as string)
+    }
+
+    this.appSettings.font = updatedFont;
+    this.writeSettings();
+
+    const event = new CustomEvent('updateSettings', {
+      bubbles: true, // if you want the event to bubble up through the DOM
+    });
+    this.dispatchEvent(event);
+  }
+
+  backToEditor(){
+    const event = new CustomEvent('showEditor', {
+      bubbles: true, // if you want the event to bubble up through the DOM
+    });
+    this.dispatchEvent(event);
+  }
+
+  updateStartBehvaior(){
+
+    let group = this.shadowRoot!.querySelector("#start-group") as unknown as SlRadioGroup;
+
+    this.appSettings.start_behavior = group.value === "true" ? true : false;
+    this.writeSettings();
+
+    const event = new CustomEvent('updateSettings', {
+      bubbles: true, // if you want the event to bubble up through the DOM
+    });
+    this.dispatchEvent(event);
   }
 
   render() {
     return html`
       <div class="root">
+        <button type="button" @click=${() => this.backToEditor()}>Back</button>
         <h1>Settings</h1>
         <div class="controls">
             <sl-details id="app-theme-details">
@@ -330,10 +408,10 @@ export class AppMenu extends LitElement {
                         <p> Select which app theme to display</p>
                     </div>
                 </div>
-                <sl-radio-group aria-labelledby="app-theme">
-                    <sl-radio>Light</sl-radio>
-                    <sl-radio>Dark</sl-radio>
-                    <sl-radio>Use system setting</sl-radio>
+                <sl-radio-group aria-labelledby="app-theme" value=${this.appSettings.theme}>
+                    <sl-radio value="light">Light</sl-radio>
+                    <sl-radio value="dark">Dark</sl-radio>
+                    <sl-radio value="system">Use system setting</sl-radio>
                 </sl-radio-group>
             </sl-details>
             <sl-details id="font-details">
@@ -346,20 +424,23 @@ export class AppMenu extends LitElement {
               <div class="font-options">
                   <div class="font-option">
                       <h3 id="font-family">Family</h3>
-                      <sl-select aria-labelledby="font-family" value="font-Consolas">
-                        ${fonts.map((font: string) => html`<sl-option value="font-${font}">${font}</sl-option>`)}
+                      <sl-select id="family-select" aria-labelledby="font-family" value=${this.appSettings.font.family} @sl-change=${() => this.updateFont()}>
+                        ${fonts.map((font: string) => html`<sl-option value="${font}">${font}</sl-option>`)}
                       </sl-select>
                   </div>
                   <div class="font-option">
                       <h3 id="font-style">Style</h3>
-                      <sl-select aria-labelledby="font-style">
-                          <!-- Loop through font styles -->
+                      <sl-select id="style-select" aria-labelledby="font-style" value=${this.appSettings.font.style} @sl-change=${() => this.updateFont()}>
+                        <sl-option value="regular">Regular</sl-option>
+                        <sl-option value="italic">Italic</sl-option>
+                        <sl-option value="bold">Bold</sl-option>
+                        <sl-option value="bold+italic">Bold Italic</sl-option>
                       </sl-select>
                   </div>
                   <div class="font-option">
                       <h3 id="font-size">Size</h3>
-                      <sl-select aria-labelledby="font-size" value="font-size-11">
-                          ${fontSizes.map((num: number) => html`<sl-option value="font-size-${num}">${num}</sl-option>`)}
+                      <sl-select id="size-select" aria-labelledby="font-size" value=${this.appSettings.font.size} @sl-change=${() => this.updateFont()}>
+                          ${fontSizes.map((num: number) => html`<sl-option value=${num}>${num}</sl-option>`)}
                       </sl-select>
                   </div>
                   <div class="font-demo">
@@ -375,7 +456,7 @@ export class AppMenu extends LitElement {
                         <p>Fit text within window by default</p>
                     </div>
                 </div>
-                <sl-switch @sl-change=${() => this.toggleWordsWrapping()}>${this.wordsWrapping ? "On" : "Off"}</sl-switch>
+                <sl-switch @sl-change=${() => this.toggleWordsWrapping()} .checked=${this.appSettings.wrap}>${this.appSettings.wrap ? "On" : "Off"}</sl-switch>
             </div>
             <div class="non-collapsable-setting">
                 <div class="ncs-item">
@@ -397,9 +478,9 @@ export class AppMenu extends LitElement {
                   <sl-icon name="sticky" label="sticky"></sl-icon>
                   <h2 id="start-behavior">When Notepad (PWA) starts</h2>
               </div>
-              <sl-radio-group aria-labelledby="start-behavior">
-                  <sl-radio>Open content from the previous session</sl-radio>
-                  <sl-radio>Open a new window</sl-radio>
+              <sl-radio-group id="start-group" aria-labelledby="start-behavior" value=${this.appSettings.start_behavior} @sl-change=${() => this.updateStartBehvaior()}>
+                  <sl-radio value="true">Open content from the previous session</sl-radio>
+                  <sl-radio value="false">Open a new window</sl-radio>
               </sl-radio-group>
           </sl-details>
         </div>

@@ -1,9 +1,17 @@
 import { LitElement, css, html, PropertyValueMap } from 'lit';
-import { customElement, query } from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
+import { styleMap } from 'lit/directives/style-map.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { Notepad, notepadEventNames } from './state';
+import { Font } from './utils/interfaces';
+
 
 @customElement('app-editor')
 export class AppMenu extends LitElement {
+
+  @property({type: Object}) fontStyles: Font = {family: "Consolas", style: "regular", size: 11};
+  @property({type: Boolean}) openLastSession: boolean = false;
+  @property({type: Boolean}) wrapWords: boolean = false;
 
   static get styles() {
     return css`
@@ -22,11 +30,22 @@ export class AppMenu extends LitElement {
 
       .editor {
         padding: 16px;
-        min-height: calc(100% - 32px);
-        min-width: calc(100% - 32px);
-        width: max-content;
-        white-space: pre;
+        min-height: 100%;
+        min-width: 100%;
         overflow-wrap: normal;
+        box-sizing: border-box;
+      }
+
+      .editor.wrap {
+        white-space: unset;
+        width: 100vw;
+        word-break: break-all;
+      }
+
+      .editor.no-wrap {
+        white-space: pre;
+        width: max-content;
+        word-break: unset;
       }
 
       *:focus {
@@ -43,6 +62,7 @@ export class AppMenu extends LitElement {
   }
 
   disconnectedCallback(): void {
+    localStorage.setItem('lastSession', this.editor.innerText);
     Notepad.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler)
   }
 
@@ -52,20 +72,42 @@ export class AppMenu extends LitElement {
   }
 
   private onFileChangedHandler = this.setEditorContents.bind(this);
+
   private setEditorContents() {
     if (this.editor) {
-      this.editor.textContent = Notepad.instance.fileContents || "";
-      Notepad.instance.editorContents = this.editor.innerText;
+      this.editor.textContent = Notepad.instance.fileContents || ""; // sets editor to file contents?
+      if(localStorage.getItem('lastSession') && this.openLastSession){
+        this.editor.innerText = localStorage.getItem('lastSession')!;
+      }
+      Notepad.instance.editorContents = this.editor.innerText; //
     }
   }
 
+  updateText(e: InputEvent){
+    Notepad.instance.editorContents = (e.target as HTMLDivElement).innerText;
+    localStorage.setItem('lastSession', this.editor.innerText);
+  }
+
   render() {
+
+    const styleInfo = {
+      'font-size': (this.fontStyles.size).toString() + 'px',
+      'font-family': this.fontStyles.family,
+      'font-style': this.fontStyles.style.includes("italic") ? "italic" : "unset",
+      'font-weight':  this.fontStyles.style.includes("bold") ? "bold" : "unset"
+    };
+
+    const wrapClasses = {
+      'wrap': this.wrapWords,
+      'no-wrap': !this.wrapWords
+    };
+
     return html`
-      <div class="root" >
-        <div class="editor"
+      <div class="root" style=${styleMap(styleInfo)}>
+        <div class="${classMap(wrapClasses)} editor"
           contenteditable
           spellcheck="false"
-          @input=${(e: InputEvent) => Notepad.instance.editorContents = (e.target as HTMLDivElement).innerText}
+          @input=${(e: InputEvent) => this.updateText(e)}
           @keydown=${this.handleTab}
           @paste=${this.pasteAsPlainText}></div>
       </div>

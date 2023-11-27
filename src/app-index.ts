@@ -13,6 +13,7 @@ import './status-bar';
 
 import './styles/global.css';
 import { Notepad, notepadEventNames } from './state';
+import { Settings } from './utils/interfaces';
 
 declare global {
   interface Window { launchQueue: any; }
@@ -25,10 +26,20 @@ setBasePath(rootUrl)
 @customElement('app-index')
 export class AppIndex extends LitElement {
 
+  // prefilled with the default settings
+  @state() appSettings: Settings = {
+    theme: "light",
+    font: {family: "Consolas", style: "regular", size: 11},
+    wrap: false,
+    open_behavior: true,
+    start_behavior: true
+  };
+
   @state() showSettings: boolean = false;
 
   static get styles() {
     return css`
+
       .root {
         display: flex;
         flex-direction: column;
@@ -79,6 +90,22 @@ export class AppIndex extends LitElement {
         flex-shrink: 0;
       } */
     `;
+  }
+
+  protected firstUpdated(): void {
+
+    // check if there are settings from before
+    if(localStorage.getItem('notepadSettings')){
+
+      // if there are, update the defaults to the saved settings
+      this.appSettings = JSON.parse(localStorage.getItem('notepadSettings')!);
+    } else {
+
+      // else, save the default settings to storage
+      localStorage.setItem('notepadSettings', JSON.stringify(this.appSettings));
+    }
+
+    console.log(this.appSettings);
   }
 
   @query('.dialog', true) private dialog!: SlDialog
@@ -143,6 +170,12 @@ export class AppIndex extends LitElement {
   updateWordsWrapping(){
     // change word wrap behavior
     console.log("word wrap change")
+
+    /*
+      white-space: unset;
+      width: 100vw;
+      word-break: break-all;
+    */
   }
 
   updateStateForSettingsPage(){
@@ -152,6 +185,17 @@ export class AppIndex extends LitElement {
     root.classList.add("settings-root")
   }
 
+  backToEditor(){
+    this.showSettings = false;
+    let root: HTMLDivElement = this.shadowRoot!.querySelector('.root')! as HTMLDivElement;
+    //root.style.backgroundColor = '#f9f2e9';
+    root.classList.remove("settings-root")
+  }
+
+  updateSettings(){
+    this.appSettings = JSON.parse(localStorage.getItem('notepadSettings')!)
+  }
+
   render() {
     return html`
       <div class="root">
@@ -159,11 +203,19 @@ export class AppIndex extends LitElement {
           html`
             <app-header></app-header>
             <app-menu @showSettingsPage=${() => this.updateStateForSettingsPage()}></app-menu>
-            <app-editor></app-editor>
+            <app-editor
+              .fontStyles=${this.appSettings.font}
+              .openLastSession=${this.appSettings.start_behavior}
+              .wrapWords=${this.appSettings.wrap}
+            ></app-editor>
             <app-status-bar></app-status-bar>
           ` :
           html`
-            <app-settings @changedWordsWrapping=${() => this.updateWordsWrapping()}></app-settings>
+            <app-settings
+              .appSettings=${this.appSettings}
+              @showEditor=${() => this.backToEditor()}
+              @updateSettings=${() => this.updateSettings()}
+            ></app-settings>
           `
         }
 
