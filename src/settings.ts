@@ -28,7 +28,7 @@ export class AppMenu extends LitElement {
 
   /*
     Are the controls hooked up?
-    [ ] - App Theme
+    [~] - App Theme
     [x] - Font
     [x] - Wrap
     [ ] - Open Behavior

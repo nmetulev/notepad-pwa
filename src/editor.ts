@@ -28,6 +28,11 @@ export class AppMenu extends LitElement {
         height: 100%;
       }
 
+      .root.dark-mode {
+        color: #ffffff;
+        background-color: #272727;
+      }
+
       .editor {
         padding: 16px;
         min-height: 100%;

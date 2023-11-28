@@ -167,17 +167,6 @@ export class AppIndex extends LitElement {
 
   }
 
-  updateWordsWrapping(){
-    // change word wrap behavior
-    console.log("word wrap change")
-
-    /*
-      white-space: unset;
-      width: 100vw;
-      word-break: break-all;
-    */
-  }
-
   updateStateForSettingsPage(){
     this.showSettings = true;
     let root: HTMLDivElement = this.shadowRoot!.querySelector('.root')! as HTMLDivElement;

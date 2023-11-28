@@ -33,6 +33,11 @@ export class AppHeader extends LitElement {
         font-family: Segoe UI Variable Text, Segoe UI, SegoeUI, Helvetica Neue, Helvetica, Arial, sans-serif;
     }
 
+    .root.dark-mode {
+      background-color: #202020;
+      color: #ffffff;
+    }
+
     .root img {
       margin-left: 14px;
       height: 18px;

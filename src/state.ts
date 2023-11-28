@@ -54,8 +54,8 @@ export class Notepad {
             return true;
         } catch (_) {
             this.fileHandle = undefined;
-            this.fileName = undefined;
             this.fileContents = undefined;
+            this.fileName = undefined;
         }
         return false;
     }

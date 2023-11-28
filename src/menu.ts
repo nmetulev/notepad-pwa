@@ -53,6 +53,18 @@ export class AppMenu extends LitElement {
         --sl-spacing-medium: 8px;
       }
 
+      .root.dark-mode {
+        background-color: #2c2c2c;
+        border-bottom: solid 1.5px #2c2c2c;
+        --sl-color-neutral-0: #2c2c2c; /* background */
+        --sl-color-neutral-300: #2c2c2c; /* border */
+        --sl-color-neutral-700: #ffffff; /* color */
+      }
+
+      .root.dark-mode .menubar {
+        background-color: #2c2c2c;
+      }
+
       sl-menu {
         --sl-color-neutral-0: #191919; /* color */
         --sl-color-primary-600: #e4e4e4; /* hover background */
