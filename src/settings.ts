@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 
 import '@shoelace-style/shoelace/dist/components/details/details.js';
 import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
@@ -12,6 +12,7 @@ import { Settings } from './utils/interfaces';
 import SlSelect from '@shoelace-style/shoelace/dist/components/select/select.js';
 import SlRadioGroup from '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
 import SlSwitch from '@shoelace-style/shoelace/dist/components/switch/switch.js';
+import { styleMap } from 'lit/directives/style-map.js';
 
 @customElement('app-settings')
 export class AppMenu extends LitElement {
@@ -393,6 +394,14 @@ export class AppMenu extends LitElement {
   }
 
   render() {
+    const styleInfo = {
+      'font-size': (this.appSettings.font.size).toString() + 'px',
+      'font-family': this.appSettings.font.family,
+      'font-style': this.appSettings.font.style.includes("italic") ? "italic" : "unset",
+      'font-weight':  this.appSettings.font.style.includes("bold") ? "bold" : "unset",
+      'margin': '10px'
+    };
+
     return html`
       <div class="root">
         <button type="button" @click=${() => this.backToEditor()}>Back</button>
@@ -444,7 +453,7 @@ export class AppMenu extends LitElement {
                       </sl-select>
                   </div>
                   <div class="font-demo">
-                      <p>The sound of ocean waves calms my soul</p>
+                      <p style=${styleMap(styleInfo)}>The sound of ocean waves calms my soul.</p>
                   </div>
                 </div>
             </sl-details>
