@@ -45,7 +45,6 @@ export class AppMenu extends LitElement {
 
       .root {
         padding: 5px;
-        padding-top: 40px;
         display: flex;
         flex-direction: column;
         gap: 20px;
@@ -216,6 +215,10 @@ export class AppMenu extends LitElement {
         background-color: var(--option-hover-background-color);
       }
 
+      sl-option::part(checked-icon){
+        color: var(--text-color);
+      }
+
       sl-switch {
         margin-right: 10px;
       }
@@ -362,11 +365,6 @@ export class AppMenu extends LitElement {
     super();
   }
 
-  connectedCallback(){
-    super.connectedCallback();
-    console.log(this.appSettings);
-  }
-
   toggleWordsWrapping(){
 
     const switcher = this.shadowRoot!.querySelector('sl-switch') as unknown as SlSwitch;
@@ -401,13 +399,6 @@ export class AppMenu extends LitElement {
     this.writeSettings();
 
     const event = new CustomEvent('updateSettings', {
-      bubbles: true, // if you want the event to bubble up through the DOM
-    });
-    this.dispatchEvent(event);
-  }
-
-  backToEditor(){
-    const event = new CustomEvent('showEditor', {
       bubbles: true, // if you want the event to bubble up through the DOM
     });
     this.dispatchEvent(event);
@@ -449,7 +440,6 @@ export class AppMenu extends LitElement {
 
     return html`
       <div class="root">
-        <button type="button" @click=${() => this.backToEditor()}>Back</button>
         <h1>Settings</h1>
         <div class="controls">
             <sl-details id="app-theme-details">

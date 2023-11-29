@@ -92,7 +92,8 @@ export class AppIndex extends LitElement {
     `;
   }
 
-  protected firstUpdated(): void {
+  connectedCallback(): void {
+    super.connectedCallback();
 
     // check if there are settings from before
     if(localStorage.getItem('notepadSettings')){
@@ -106,6 +107,10 @@ export class AppIndex extends LitElement {
     }
 
     this.updateTheme();
+
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    darkModeMediaQuery.addEventListener('change', (e: Event)  => this.handleColorSchemeChange(e));
+
   }
 
   @query('.dialog', true) private dialog!: SlDialog
@@ -185,17 +190,42 @@ export class AppIndex extends LitElement {
     this.appSettings = JSON.parse(localStorage.getItem('notepadSettings')!)
   }
 
-  updateTheme(){
-    let html = document.querySelector('html');
-    html!.setAttribute("theme", this.appSettings.theme);
+  handleColorSchemeChange(e: any) {
+    if (e.matches) {
+      // dark mode
+       this.appSettings.theme = 'dark'
+    } else {
+        // The user has switched to light mode
+        this.appSettings.theme = 'light'
+    }
+    this.updateTheme()
   }
+
+  updateTheme() {
+    let html = document.querySelector('html');
+    if(this.appSettings.theme === "light"){
+        html!.classList.remove("dark-mode");
+        html!.classList.add("light-mode");
+    } else if(this.appSettings.theme === "dark"){
+        html!.classList.add("dark-mode");
+        html!.classList.remove("light-mode");
+    } else {
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        html!.classList.add("dark-mode")
+        html!.classList.remove("light-mode");
+      } else {
+        html!.classList.add("light-mode")
+        html!.classList.remove("dark-mode");
+      }
+    }
+}
 
   render() {
     return html`
       <div class="root">
+        <app-header .settingsShowing=${this.showSettings} @showEditor=${() => this.backToEditor()}></app-header>
         ${!this.showSettings ?
           html`
-            <app-header></app-header>
             <app-menu @showSettingsPage=${() => this.updateStateForSettingsPage()}></app-menu>
             <app-editor
               .fontStyles=${this.appSettings.font}
@@ -207,7 +237,6 @@ export class AppIndex extends LitElement {
           html`
             <app-settings
               .appSettings=${this.appSettings}
-              @showEditor=${() => this.backToEditor()}
               @changedTheme=${() => this.updateTheme()}
               @updateSettings=${() => this.updateSettings()}
             ></app-settings>
