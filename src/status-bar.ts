@@ -9,8 +9,8 @@ export class AppMenu extends LitElement {
       .root {
         height: 32px;
         width: 100%;
-        background-color: #f3f3f3;
-        border-top: solid 1.5px #e6e6e6;
+        background-color: var(--status-bar-background-color);
+        border-top: solid 1.5px var(--status-bar-border-color);
 
       }
     `;

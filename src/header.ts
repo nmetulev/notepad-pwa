@@ -25,17 +25,13 @@ export class AppHeader extends LitElement {
         height: env(titlebar-area-height, 33px);
         app-region: drag;
 
-        background-color: #f0f4f9;
+        background-color: var(--header-background-color);
+        color: var(--text-color);
         display: flex;
         flex-direction: row;
         align-items: center;
         align-content: center;
         font-family: Segoe UI Variable Text, Segoe UI, SegoeUI, Helvetica Neue, Helvetica, Arial, sans-serif;
-    }
-
-    .root.dark-mode {
-      background-color: #202020;
-      color: #ffffff;
     }
 
     .root img {

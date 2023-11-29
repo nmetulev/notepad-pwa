@@ -63,19 +63,24 @@ export class AppMenu extends LitElement {
       }
 
       sl-details {
-        border-color: #e5e5e5;
+        border-radius: 3px;
+      }
+
+      sl-details::part(base){
+        background-color: var(--details-header-color);
+        border-color: var(--details-border-color);
         border-radius: 3px;
       }
 
       sl-details::part(header){
-        background-color: #fbfbfb;
+        background-color: var(--details-header-color);
         padding: 20px;
         height: 30px;
         border-radius: 3px;
       }
 
       sl-details::part(content){
-        background-color: #f4f4f4;
+        background-color: var(--details-content-color);
         border-bottom-right-radius: 3px;
         border-bottom-left-radius: 3px;
       }
@@ -101,8 +106,8 @@ export class AppMenu extends LitElement {
 
       .non-collapsable-setting {
         justify-content: space-between;
-        border: 1px solid #e5e5e5;
-        background-color: #fbfbfb;
+        border: 1px solid var(--details-border-color);;
+        background-color: var(--details-header-color);
         padding: 9px 20px;
         height: 50px;
         box-sizing: unset;
@@ -184,6 +189,33 @@ export class AppMenu extends LitElement {
         margin-right: 10px;
       }
 
+      sl-select::part(combobox){
+        color: var(--text-color);
+        background-color: var(--select-background-color);
+        border-color: var(--select-border-color);
+      }
+
+      sl-select::part(display-input){
+        color: var(--text-color);
+      }
+
+      sl-select::part(listbox){
+        background-color: var(--select-dropdown-background-color);
+        border-color: var(--select-dropdown-background-color);
+      }
+
+      sl-option::part(label){
+        color: var(--text-color);
+      }
+
+      sl-option::part(base){
+        background-color: var(--select-dropdown-background-color);
+      }
+
+      sl-option::part(base):hover{
+        background-color: var(--option-hover-background-color);
+      }
+
       sl-switch {
         margin-right: 10px;
       }
@@ -197,6 +229,7 @@ export class AppMenu extends LitElement {
       sl-switch::part(thumb){
         width: 15px;
         height: 15px;
+        background-color: var(--switch-thumb-color)
       }
 
       #open-behavior-select{
@@ -234,7 +267,7 @@ export class AppMenu extends LitElement {
       }
 
       .links a, .links button {
-        color: #0067c0;
+        color: var(--link-text-color);
         text-decoration: none;
         font-size: 16px;
         padding: 5px 0;
@@ -244,12 +277,12 @@ export class AppMenu extends LitElement {
       }
 
       .links a:visited, .links a:active {
-        color: #0067c0
+        color: var(--link-text-color)
       }
 
       .links button {
         all: unset;
-        color: #0067c0;
+        color: var(--link-text-color);
         font-size: 16px;
         padding: 5px 0;
         width: fit-content;
@@ -259,13 +292,13 @@ export class AppMenu extends LitElement {
 
       .links button:hover {
         cursor: pointer;
-        background-color: #eaeaea;
-        color: #20377a;
+        background-color: var(--link-hover-background-color);
+        color: var(--link-hover-text-color);
       }
 
       .links a:hover {
-        background-color: #eaeaea;
-        color: #20377a;
+        background-color: var(--link-hover-background-color);
+        color: var(--link-hover-text-color);
       }
 
       .buttons {
@@ -278,9 +311,9 @@ export class AppMenu extends LitElement {
 
       .buttons * {
         all: unset;
-        background-color: #fbfbfb;
+        background-color: var(--button-background-color);
         border-radius: 3px;
-        border: 1px solid #e5e5e5;
+        border: 1px solid var(--button-border-color);
         padding: 5px 10px;
         display: flex;
         align-items: center;
@@ -290,7 +323,7 @@ export class AppMenu extends LitElement {
 
       .buttons *:hover {
         cursor: default;
-        background-color: #f6f6f6;
+        background-color: var(--button-hover-background-color);
       }
 
       #app-theme-details::part(content), #start-behavior-details::part(content){
@@ -393,6 +426,18 @@ export class AppMenu extends LitElement {
     this.dispatchEvent(event);
   }
 
+  updateTheme(){
+    let group = this.shadowRoot!.querySelector("#theme-group") as unknown as SlRadioGroup;
+
+    this.appSettings.theme = group.value;
+    this.writeSettings();
+
+    const event = new CustomEvent('changedTheme', {
+      bubbles: true, // if you want the event to bubble up through the DOM
+    });
+    this.dispatchEvent(event);
+  }
+
   render() {
     const styleInfo = {
       'font-size': (this.appSettings.font.size).toString() + 'px',
@@ -417,7 +462,7 @@ export class AppMenu extends LitElement {
                         <p> Select which app theme to display</p>
                     </div>
                 </div>
-                <sl-radio-group aria-labelledby="app-theme" value=${this.appSettings.theme}>
+                <sl-radio-group aria-labelledby="app-theme" id="theme-group" value=${this.appSettings.theme} @sl-change=${() => this.updateTheme()}>
                     <sl-radio value="light">Light</sl-radio>
                     <sl-radio value="dark">Dark</sl-radio>
                     <sl-radio value="system">Use system setting</sl-radio>

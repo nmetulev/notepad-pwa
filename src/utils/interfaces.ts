@@ -1,5 +1,5 @@
 export interface Settings {
-    theme: "dark" | "light" | "system";
+    theme: string;
     font: Font;
     wrap: boolean;
     open_behavior: boolean; // new tab = true, window = false

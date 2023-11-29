@@ -8,6 +8,35 @@
 
 :root {
   --font-family: sans-serif;
+  --background-color: #ffffff;
+  --settings-background: linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%);
+  --text-color: #191919;
+  --details-header-color: #fbfbfb;
+  --details-content-color: #f4f4f4;
+  --details-border-color: #e5e5e5;
+  --button-background-color: #fbfbfb;
+  --button-hover-background-color: #f6f6f6;
+  --button-border-color: #e5e5e5;
+  --link-text-color: #0067c0;
+  --link-hover-text-color: #20377a;
+  --link-hover-background-color: #eaeaea;
+  --switch-thumb-color: #ffffff;
+  --select-background-color: #ffffff;
+  --select-border-color: #ececec;
+  --select-dropdown-background-color: #ffffff;
+  --option-hover-background-color: #f0f0f0;
+
+  --editor-background-color: #ffffff;
+  --header-background-color: #f0f4f9;
+
+  --menu-background-color: #f0f4f9;
+  --menu-button-hover-background-color: #e4e4e4;
+  --menu-button-click-background-color: #f3f3f3;
+  --menu-dropdown-background-color: #f9f9f9;
+  --menu-item-hover-background-color: #f0f0f0;
+  --divider-color: #eeeeee;
+  --status-bar-background-color: #f3f3f3;
+  --status-bar-border-color: #e6e6e6;
 }
 
 html, body {
@@ -25,6 +54,37 @@ html {
 
 body {
   overflow: auto;
+}
+
+html[theme="dark"] {
+  --settings-background: #202020;
+  --text-color: #ffffff;
+  --details-header-color: #2b2b2b;
+  --details-content-color: #272727;
+  --details-border-color: #2b2b2b;
+  --button-background-color: #2d2d2d;
+  --button-hover-background-color: #313331;
+  --button-border-color: #303030;
+  --link-text-color: #93e1f4;
+  --link-hover-text-color: #93e1f4;
+  --link-hover-background-color: #2d2e2a;
+  --switch-thumb-color: #000000;
+  --select-background-color: #373737;
+  --select-border-color: #373737;
+  --select-dropdown-background-color: #2c2c2c;
+  --option-hover-background-color: #383838;
+
+  --editor-background-color: #272727;
+  --header-background-color: #202020;
+
+  --menu-background-color: #1a212a;
+  --menu-button-hover-background-color: #272e36;
+  --menu-button-click-background-color: #232a31;
+  --menu-dropdown-background-color: #2c2c2c;
+  --menu-item-hover-background-color: #383838;
+  --divider-color: #393939;
+  --status-bar-background-color: #2c2c2c;
+  --status-bar-border-color: #1c1d1d;
 }
 
 @media (prefers-color-scheme: dark) {

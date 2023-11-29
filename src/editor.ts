@@ -20,17 +20,13 @@ export class AppMenu extends LitElement {
       }
 
       .root {
-        background-color: white;
+        background-color: var(--editor-background-color);
+        color: var(--text-color);
         /* padding: 16px; */
         font-family: "Lucida Console";
         font-size: 12pt;
         font-style: regular;
         height: 100%;
-      }
-
-      .root.dark-mode {
-        color: #ffffff;
-        background-color: #272727;
       }
 
       .editor {

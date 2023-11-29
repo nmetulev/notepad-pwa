@@ -28,21 +28,21 @@ export class AppMenu extends LitElement {
       .root {
         height: 36px;
         width: 100%;
-        background-color: #f0f4f9;
-        border-bottom: solid 1.5px #e6e6e6;
+        background-color: var(--menu-background-color);
+        border-bottom: solid 1.5px var(--status-bar-border-color);
         display: flex;
         flex-direction: row;
-        align-items: flex-end;
+        align-items: center;
 
-        --sl-color-neutral-0: transparent; /* background */
-        --sl-color-neutral-300: transparent; /* border */
-        --sl-color-neutral-700: #191919; /* color */
+        --sl-color-neutral-0: transparent; /* background of buttons */
+        --sl-color-neutral-300: transparent; /* border of buttons */
+        --sl-color-neutral-700: var(--text-color); /* text color of buttons */
 
-        --sl-color-primary-50: #e4e4e4; /* hover background */
-        --sl-color-primary-100: #f3f3f3; /* click background */
+        --sl-color-primary-50: var(--menu-button-hover-background-color); /* hover background */
+        --sl-color-primary-100: var(--menu-button-click-background-color); /* click background */
         --sl-color-primary-300: transparent; /* hover border */
         --sl-color-primary-400: transparent; /* click border */
-        --sl-color-primary-700: #191919; /* hover color */
+        --sl-color-primary-700: var(--text-color); /* hover color */
 
         --sl-input-height-medium: 32px;
 
@@ -53,21 +53,19 @@ export class AppMenu extends LitElement {
         --sl-spacing-medium: 8px;
       }
 
-      .root.dark-mode {
-        background-color: #2c2c2c;
-        border-bottom: solid 1.5px #2c2c2c;
-        --sl-color-neutral-0: #2c2c2c; /* background */
-        --sl-color-neutral-300: #2c2c2c; /* border */
-        --sl-color-neutral-700: #ffffff; /* color */
-      }
-
-      .root.dark-mode .menubar {
-        background-color: #2c2c2c;
-      }
-
       sl-menu {
-        --sl-color-neutral-0: #191919; /* color */
-        --sl-color-primary-600: #e4e4e4; /* hover background */
+        background-color: var(--menu-dropdown-background-color);
+        border-color: var(--menu-dropdown-background-color);
+        color: var(--text-color);
+      }
+
+      sl-menu-item::part(base):hover{
+        color: var(--text-color);
+        background-color: var(--menu-item-hover-background-color);
+      }
+
+      sl-divider {
+        --color: var(--divider-color);
       }
 
       .menubar {
@@ -85,7 +83,6 @@ export class AppMenu extends LitElement {
 
       .settings-container {
         margin-right: 8px;
-        font-size: 42px;
       }
     `;
   }

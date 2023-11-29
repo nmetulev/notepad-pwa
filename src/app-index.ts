@@ -51,10 +51,10 @@ export class AppIndex extends LitElement {
         justify-content: flex-start;
         backdrop-filter: blur(1px);
 
-        background: hsla(207, 48%, 95%, 1);
-        background: linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%);
-        background: -moz-linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%);
-        background: -webkit-linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%);
+        background: var(--settings-background);
+        color: var(--text-color);
+        /* background: -moz-linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%);
+        background: -webkit-linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%); */
         filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#EEF4F9", endColorstr="#F9F2E9", GradientType=1 );
         overflow-y: auto;
       }
@@ -105,7 +105,7 @@ export class AppIndex extends LitElement {
       localStorage.setItem('notepadSettings', JSON.stringify(this.appSettings));
     }
 
-    console.log(this.appSettings);
+    this.updateTheme();
   }
 
   @query('.dialog', true) private dialog!: SlDialog
@@ -185,6 +185,11 @@ export class AppIndex extends LitElement {
     this.appSettings = JSON.parse(localStorage.getItem('notepadSettings')!)
   }
 
+  updateTheme(){
+    let html = document.querySelector('html');
+    html!.setAttribute("theme", this.appSettings.theme);
+  }
+
   render() {
     return html`
       <div class="root">
@@ -203,6 +208,7 @@ export class AppIndex extends LitElement {
             <app-settings
               .appSettings=${this.appSettings}
               @showEditor=${() => this.backToEditor()}
+              @changedTheme=${() => this.updateTheme()}
               @updateSettings=${() => this.updateSettings()}
             ></app-settings>
           `
