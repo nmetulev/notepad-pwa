@@ -1,0 +1,113 @@
+import { EventDispatcher, EventHandler } from "./utils/EventDispatcher";
+
+export type Theme = "light" | "dark" | "system";
+
+export type Font = {
+    family: string, style: fontStyle, size: number
+}
+
+export type fontStyle = "regular" | "bold" | "italic" | "bold+italic"
+
+export class Settings {
+    private static _instance: Settings;
+
+    // defaults
+    constructor(){
+        if(!localStorage.getItem('notepadSettings')){
+            this.theme = "system";
+            this.font = {
+             family: "Consolas", style: "regular", size: 11
+            }
+            this.wrap = true;
+            this.start_behavior = true;
+        }
+    }
+
+    static get instance() {
+        if (!this._instance) {
+            let settingsData = localStorage.getItem('notepadSettings');
+            if(settingsData){
+                let tempSettings = JSON.parse(settingsData);
+                this._instance = new Settings();
+                Object.assign(this._instance, tempSettings);
+
+                this._instance._eventDispatcher = new EventDispatcher<void | string>();
+            } else {
+                this._instance = new Settings()
+            }
+        }
+
+        return this._instance;
+    }
+
+    private _eventDispatcher = new EventDispatcher<void | string>();
+
+    public on(eventName: string, handler: EventHandler<void | string>) {
+        this._eventDispatcher.add(eventName, handler);
+    }
+
+    public removeListener(eventName: string, handler: EventHandler<void | string>) {
+        this._eventDispatcher.remove(eventName, handler);
+    }
+
+    private writeSettings(){
+        localStorage.setItem('notepadSettings', JSON.stringify(this));
+    }
+
+    private _theme!: Theme;
+    public get theme(): string {
+        return this._theme;
+    }
+    public set theme(v: Theme) {
+        if(this._theme !== v){
+            this._theme = v;
+            this.writeSettings();
+            this._eventDispatcher.fire(settingsEventNames.themeChanged);
+        }
+    }
+
+    private _font!: Font;
+    public get font(): Font {
+        return this._font;
+    }
+    public set font(v: Font) {
+        this._font = v;
+        this.writeSettings();
+        this._eventDispatcher.fire(settingsEventNames.settingsChanged);
+    }
+
+    private _wrap!: boolean;
+    public get wrap(): boolean {
+        return this._wrap;
+    }
+    public set wrap(v: boolean) {
+        this._wrap = v;
+        this.writeSettings();
+        this._eventDispatcher.fire(settingsEventNames.settingsChanged);
+    }
+
+    private _open_behavior!: boolean;
+    public get open_behavior(): boolean {
+        return this._open_behavior;
+    }
+    public set open_behavior(v: boolean) {
+        this._open_behavior = v;
+        this.writeSettings();
+        this._eventDispatcher.fire(settingsEventNames.settingsChanged);
+    }
+
+    private _start_behavior!: boolean;
+    public get start_behavior(): boolean {
+        return this._start_behavior;
+    }
+    public set start_behavior(v: boolean) {
+        this._start_behavior = v;
+        this.writeSettings();
+        this._eventDispatcher.fire(settingsEventNames.settingsChanged);
+    }
+}
+
+export const settingsEventNames = {
+    themeChanged: 'settings-theme-changed',
+    settingsChanged: 'settings-changed'
+}

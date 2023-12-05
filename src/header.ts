@@ -57,6 +57,7 @@ export class AppHeader extends LitElement {
       display: flex;
       align-items: center;
       justify-content: center;
+      app-region: no-drag;
     }
     #back-button:hover {
         background-color: #e8eaf0;

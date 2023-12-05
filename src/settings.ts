@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 
 import '@shoelace-style/shoelace/dist/components/details/details.js';
 import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
@@ -8,27 +8,18 @@ import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 import '@shoelace-style/shoelace/dist/components/select/select.js';
 import '@shoelace-style/shoelace/dist/components/option/option.js';
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
-import { Settings } from './utils/interfaces';
 import SlSelect from '@shoelace-style/shoelace/dist/components/select/select.js';
 import SlRadioGroup from '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
 import SlSwitch from '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import { styleMap } from 'lit/directives/style-map.js';
+import { Settings, Theme, fontStyle } from './settings-state';
 
 @customElement('app-settings')
 export class AppMenu extends LitElement {
 
-  // prefilled with the default settings
-  @property({type: Object}) appSettings: Settings = {
-    theme: "light",
-    font: {family: "Consolas", style: "regular", size: 11},
-    wrap: false,
-    open_behavior: true,
-    start_behavior: true
-  };
-
   /*
     Are the controls hooked up?
-    [~] - App Theme
+    [x - App Theme
     [x] - Font
     [x] - Wrap
     [ ] - Open Behavior
@@ -226,7 +217,7 @@ export class AppMenu extends LitElement {
       sl-switch::part(control) {
         --height: 21px;
         --width: 48px;
-        --sl-color-primary-600: #0067c0;
+        --sl-color-primary-600: var(--switch-background-color);
       }
 
       sl-switch::part(thumb){
@@ -351,12 +342,18 @@ export class AppMenu extends LitElement {
         background-color: #e6e6e6;
       }
       sl-radio::part(control--checked)  {
-        background-color: #0067c0;
-        border-color: #0067c0;
+        color: var(--radio-pit-color);
+        background-color: var(--radio-background-color);
+        border-color: var(--radio-background-color);
       }
       sl-radio::part(control--checked):hover  {
-        background-color: #0067c0;
-        border-color: #0067c0;
+        color: var(--radio-pit-color);
+        background-color: var(--radio-background-color);
+        border-color: var(--radio-background-color);
+      }
+
+      .subtext {
+        color: var(--subtext-color);
       }
     `;
   }
@@ -365,23 +362,9 @@ export class AppMenu extends LitElement {
     super();
   }
 
-  toggleWordsWrapping(){
-
-    const switcher = this.shadowRoot!.querySelector('sl-switch') as unknown as SlSwitch;
-
-    const wrapping = switcher.checked;
-
-    this.appSettings.wrap = wrapping;
-    this.writeSettings();
-
-    const event = new CustomEvent('updateSettings', {
-      bubbles: true, // if you want the event to bubble up through the DOM
-    });
-    this.dispatchEvent(event);
-  }
-
-  writeSettings(){
-    localStorage.setItem('notepadSettings', JSON.stringify(this.appSettings));
+  updateTheme(){
+    let group = this.shadowRoot!.querySelector("#theme-group") as unknown as SlRadioGroup;
+    Settings.instance.theme = group.value as Theme;
   }
 
   updateFont(){
@@ -391,50 +374,38 @@ export class AppMenu extends LitElement {
 
     let updatedFont = {
       family: family.value as string,
-      style: style.value as string,
+      style: style.value as fontStyle,
       size: parseInt(size.value as string)
     }
 
-    this.appSettings.font = updatedFont;
-    this.writeSettings();
+    Settings.instance.font = updatedFont;
 
-    const event = new CustomEvent('updateSettings', {
-      bubbles: true, // if you want the event to bubble up through the DOM
-    });
-    this.dispatchEvent(event);
+    this.requestUpdate();
+  }
+
+  toggleWordsWrapping(){
+
+    const switcher = this.shadowRoot!.querySelector('sl-switch') as unknown as SlSwitch;
+
+    const wrapping = switcher.checked;
+
+    Settings.instance.wrap = wrapping;
   }
 
   updateStartBehvaior(){
 
     let group = this.shadowRoot!.querySelector("#start-group") as unknown as SlRadioGroup;
 
-    this.appSettings.start_behavior = group.value === "true" ? true : false;
-    this.writeSettings();
-
-    const event = new CustomEvent('updateSettings', {
-      bubbles: true, // if you want the event to bubble up through the DOM
-    });
-    this.dispatchEvent(event);
-  }
-
-  updateTheme(){
-    let group = this.shadowRoot!.querySelector("#theme-group") as unknown as SlRadioGroup;
-
-    this.appSettings.theme = group.value;
-    this.writeSettings();
-
-    const event = new CustomEvent('changedTheme', {
-      bubbles: true, // if you want the event to bubble up through the DOM
-    });
-    this.dispatchEvent(event);
+    Settings.instance.start_behavior = group.value === "true" ? true : false;
   }
 
   render() {
+
     const styleInfo = {
-      'font-size': (this.appSettings.font.size).toString() + 'px',
-      'font-family': this.appSettings.font.family,
-      'font-style': this.appSettings.font.style.includes("italic") ? "italic" : "unset",
-      'font-weight':  this.appSettings.font.style.includes("bold") ? "bold" : "unset",
+      'font-size': (Settings.instance.font.size).toString() + 'px',
+      'font-family': Settings.instance.font.family,
+      'font-style': Settings.instance.font.style.includes("italic") ? "italic" : "unset",
+      'font-weight': Settings.instance.font.style.includes("bold") ? "bold" : "unset",
       'margin': '10px'
     };
 
@@ -449,10 +420,10 @@ export class AppMenu extends LitElement {
                     <sl-icon name="palette" label="palette"></sl-icon>
                     <div>
                         <h2 id="app-theme">App theme</h2>
-                        <p> Select which app theme to display</p>
+                        <p class="subtext"> Select which app theme to display</p>
                     </div>
                 </div>
-                <sl-radio-group aria-labelledby="app-theme" id="theme-group" value=${this.appSettings.theme} @sl-change=${() => this.updateTheme()}>
+                <sl-radio-group aria-labelledby="app-theme" id="theme-group" value=${Settings.instance.theme} @sl-change=${() => this.updateTheme()}>
                     <sl-radio value="light">Light</sl-radio>
                     <sl-radio value="dark">Dark</sl-radio>
                     <sl-radio value="system">Use system setting</sl-radio>
@@ -468,13 +439,13 @@ export class AppMenu extends LitElement {
               <div class="font-options">
                   <div class="font-option">
                       <h3 id="font-family">Family</h3>
-                      <sl-select id="family-select" aria-labelledby="font-family" value=${this.appSettings.font.family} @sl-change=${() => this.updateFont()}>
+                      <sl-select id="family-select" aria-labelledby="font-family" value=${Settings.instance.font.family} @sl-change=${() => this.updateFont()}>
                         ${fonts.map((font: string) => html`<sl-option value="${font}">${font}</sl-option>`)}
                       </sl-select>
                   </div>
                   <div class="font-option">
                       <h3 id="font-style">Style</h3>
-                      <sl-select id="style-select" aria-labelledby="font-style" value=${this.appSettings.font.style} @sl-change=${() => this.updateFont()}>
+                      <sl-select id="style-select" aria-labelledby="font-style" value=${Settings.instance.font.style} @sl-change=${() => this.updateFont()}>
                         <sl-option value="regular">Regular</sl-option>
                         <sl-option value="italic">Italic</sl-option>
                         <sl-option value="bold">Bold</sl-option>
@@ -483,7 +454,7 @@ export class AppMenu extends LitElement {
                   </div>
                   <div class="font-option">
                       <h3 id="font-size">Size</h3>
-                      <sl-select id="size-select" aria-labelledby="font-size" value=${this.appSettings.font.size} @sl-change=${() => this.updateFont()}>
+                      <sl-select id="size-select" aria-labelledby="font-size" value=${Settings.instance.font.size} @sl-change=${() => this.updateFont()}>
                           ${fontSizes.map((num: number) => html`<sl-option value=${num}>${num}</sl-option>`)}
                       </sl-select>
                   </div>
@@ -493,40 +464,40 @@ export class AppMenu extends LitElement {
                 </div>
             </sl-details>
             <div class="non-collapsable-setting">
-                <div class="ncs-item">
-                    <sl-icon name="text-wrap" label="text-wrap"></sl-icon>
-                    <div>
-                        <h2 id="app-theme">Word wrap</h2>
-                        <p>Fit text within window by default</p>
-                    </div>
-                </div>
-                <sl-switch @sl-change=${() => this.toggleWordsWrapping()} .checked=${this.appSettings.wrap}>${this.appSettings.wrap ? "On" : "Off"}</sl-switch>
-            </div>
-            <div class="non-collapsable-setting">
-                <div class="ncs-item">
-                    <sl-icon name="box-arrow-up-right" label="box-arrow-up-right"></sl-icon>
-                    <div>
-                        <h2 id="opening-files">Opening files</h2>
-                        <p>Choose where your files are opened</p>
-                    </div>
-                </div>
-                <sl-select id="open-behavior-select" aria-labelledby="opening-files" value="new-tab">
-                    <sl-option value="new-tab">Open in a new tab</sl-option>
-                    <sl-option value="new-window">Open in a new window</sl-option>
-                </sl-select>
-            </div>
-            <sl-details id="start-behavior-details">
-              <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
-              <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
-              <div class="icon-header" slot="summary">
-                  <sl-icon name="sticky" label="sticky"></sl-icon>
-                  <h2 id="start-behavior">When Notepad (PWA) starts</h2>
+              <div class="ncs-item">
+                  <sl-icon name="text-wrap" label="text-wrap"></sl-icon>
+                  <div>
+                      <h2 id="app-theme">Word wrap</h2>
+                      <p class="subtext">Fit text within window by default</p>
+                  </div>
               </div>
-              <sl-radio-group id="start-group" aria-labelledby="start-behavior" value=${this.appSettings.start_behavior} @sl-change=${() => this.updateStartBehvaior()}>
-                  <sl-radio value="true">Open content from the previous session</sl-radio>
-                  <sl-radio value="false">Open a new window</sl-radio>
-              </sl-radio-group>
-          </sl-details>
+              <sl-switch @sl-change=${() => this.toggleWordsWrapping()} .checked=${Settings.instance.wrap}>${Settings.instance.wrap ? "On" : "Off"}</sl-switch>
+          </div>
+        <div class="non-collapsable-setting">
+            <div class="ncs-item">
+                <sl-icon name="box-arrow-up-right" label="box-arrow-up-right"></sl-icon>
+                <div>
+                    <h2 id="opening-files">Opening files</h2>
+                    <p class="subtext">Choose where your files are opened</p>
+                </div>
+            </div>
+            <sl-select id="open-behavior-select" aria-labelledby="opening-files" value="new-tab">
+                <sl-option value="new-tab">Open in a new tab</sl-option>
+                <sl-option value="new-window">Open in a new window</sl-option>
+            </sl-select>
+        </div>
+          <sl-details id="start-behavior-details">
+            <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
+            <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
+            <div class="icon-header" slot="summary">
+                <sl-icon name="sticky" label="sticky"></sl-icon>
+                <h2 id="start-behavior">When Notepad (PWA) starts</h2>
+            </div>
+            <sl-radio-group id="start-group" aria-labelledby="start-behavior" value=${Settings.instance.start_behavior} @sl-change=${() => this.updateStartBehvaior()}>
+                <sl-radio value="true">Open content from the previous session</sl-radio>
+                <sl-radio value="false">Open a new window</sl-radio>
+            </sl-radio-group>
+        </sl-details>
         </div>
         <div class="about-this-app">
             <h2>About this app</h2>

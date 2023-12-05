@@ -3,14 +3,13 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { Notepad, notepadEventNames } from './state';
-import { Font } from './utils/interfaces';
+import { Font, Settings, settingsEventNames } from './settings-state';
 
 
 @customElement('app-editor')
 export class AppMenu extends LitElement {
 
-  @property({type: Object}) fontStyles: Font = {family: "Consolas", style: "regular", size: 11};
-  @property({type: Boolean}) openLastSession: boolean = false;
+  @property({type: Object}) selectedFonts: Font  = {family: "Consolas", style: "regular", size: 11};
   @property({type: Boolean}) wrapWords: boolean = false;
 
   static get styles() {
@@ -59,12 +58,14 @@ export class AppMenu extends LitElement {
 
   constructor() {
     super();
-    Notepad.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    Notepad.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler);
+    Settings.instance.on(settingsEventNames.settingsChanged, () => this.updateSettings(this));
   }
 
   disconnectedCallback(): void {
     localStorage.setItem('lastSession', this.editor.innerText);
-    Notepad.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    Notepad.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler);
+    //Settings.instance.removeListener(settingsEventNames.settingsChanged, this.updateSettings);
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -76,8 +77,8 @@ export class AppMenu extends LitElement {
 
   private setEditorContents() {
     if (this.editor) {
-      this.editor.textContent = Notepad.instance.fileContents || ""; // sets editor to file contents?
-      if(localStorage.getItem('lastSession') && this.openLastSession){
+      this.editor.textContent = Notepad.instance.fileContents || ""; // sets editor to file contents if file contents exist.
+      if(localStorage.getItem('lastSession') && Settings.instance.start_behavior){
         this.editor.innerText = localStorage.getItem('lastSession')!;
       }
       Notepad.instance.editorContents = this.editor.innerText; //
@@ -86,21 +87,24 @@ export class AppMenu extends LitElement {
 
   updateText(e: InputEvent){
     Notepad.instance.editorContents = (e.target as HTMLDivElement).innerText;
-    localStorage.setItem('lastSession', this.editor.innerText);
+  }
+
+  updateSettings(root: any){
+    root.requestUpdate();
   }
 
   render() {
 
     const styleInfo = {
-      'font-size': (this.fontStyles.size).toString() + 'px',
-      'font-family': this.fontStyles.family,
-      'font-style': this.fontStyles.style.includes("italic") ? "italic" : "unset",
-      'font-weight':  this.fontStyles.style.includes("bold") ? "bold" : "unset"
+      'font-size': (Settings.instance.font.size).toString() + 'px',
+      'font-family': Settings.instance.font.family,
+      'font-style': Settings.instance.font.style.includes("italic") ? "italic" : "unset",
+      'font-weight':  Settings.instance.font.style.includes("bold") ? "bold" : "unset"
     };
 
     const wrapClasses = {
-      'wrap': this.wrapWords,
-      'no-wrap': !this.wrapWords
+      'wrap': Settings.instance.wrap,
+      'no-wrap': !Settings.instance.wrap
     };
 
     return html`

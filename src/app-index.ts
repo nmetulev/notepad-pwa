@@ -13,7 +13,8 @@ import './status-bar';
 
 import './styles/global.css';
 import { Notepad, notepadEventNames } from './state';
-import { Settings } from './utils/interfaces';
+import { Settingss } from './utils/interfaces';
+import { Settings, settingsEventNames } from './settings-state';
 
 declare global {
   interface Window { launchQueue: any; }
@@ -27,13 +28,7 @@ setBasePath(rootUrl)
 export class AppIndex extends LitElement {
 
   // prefilled with the default settings
-  @state() appSettings: Settings = {
-    theme: "light",
-    font: {family: "Consolas", style: "regular", size: 11},
-    wrap: false,
-    open_behavior: true,
-    start_behavior: true
-  };
+  @state() appSettings: Settings | undefined;
 
   @state() showSettings: boolean = false;
 
@@ -95,7 +90,7 @@ export class AppIndex extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
 
-    // check if there are settings from before
+    /* // check if there are settings from before
     if(localStorage.getItem('notepadSettings')){
 
       // if there are, update the defaults to the saved settings
@@ -104,12 +99,15 @@ export class AppIndex extends LitElement {
 
       // else, save the default settings to storage
       localStorage.setItem('notepadSettings', JSON.stringify(this.appSettings));
-    }
+    } */
 
-    this.updateTheme();
+    //this.updateTheme();
+
+    //debugger
+    Settings.instance.on(settingsEventNames.themeChanged, this.updateTheme);
 
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    darkModeMediaQuery.addEventListener('change', (e: Event)  => this.handleColorSchemeChange(e));
+    darkModeMediaQuery.addEventListener('change', this.updateTheme);
 
   }
 
@@ -120,6 +118,7 @@ export class AppIndex extends LitElement {
     super();
 
     if ('launchQueue' in window ) {
+
       window.launchQueue.setConsumer((launchParams : any) => {
         if (!launchParams.files.length) {
           return;
@@ -190,34 +189,27 @@ export class AppIndex extends LitElement {
     this.appSettings = JSON.parse(localStorage.getItem('notepadSettings')!)
   }
 
-  handleColorSchemeChange(e: any) {
-    if (e.matches) {
-      // dark mode
-       this.appSettings.theme = 'dark'
-    } else {
-        // The user has switched to light mode
-        this.appSettings.theme = 'light'
-    }
-    this.updateTheme()
-  }
-
   updateTheme() {
+
     let html = document.querySelector('html');
-    if(this.appSettings.theme === "light"){
-        html!.classList.remove("dark-mode");
-        html!.classList.add("light-mode");
-    } else if(this.appSettings.theme === "dark"){
-        html!.classList.add("dark-mode");
-        html!.classList.remove("light-mode");
-    } else {
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+
+    if(Settings.instance.theme === "system"){
+      const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+      if (darkModeMediaQuery.matches) {
         html!.classList.add("dark-mode")
-        html!.classList.remove("light-mode");
       } else {
-        html!.classList.add("light-mode")
+        // The user has switched to light mode
         html!.classList.remove("dark-mode");
       }
+    } else if(Settings.instance.theme === "light"){
+        html!.classList.remove("dark-mode");
+    } else { // switched to dark mode
+        html!.classList.add("dark-mode");
     }
+
+
+
 }
 
   render() {
@@ -228,18 +220,12 @@ export class AppIndex extends LitElement {
           html`
             <app-menu @showSettingsPage=${() => this.updateStateForSettingsPage()}></app-menu>
             <app-editor
-              .fontStyles=${this.appSettings.font}
-              .openLastSession=${this.appSettings.start_behavior}
-              .wrapWords=${this.appSettings.wrap}
+              .fontStyles=${Settings.instance.font}
             ></app-editor>
             <app-status-bar></app-status-bar>
           ` :
           html`
-            <app-settings
-              .appSettings=${this.appSettings}
-              @changedTheme=${() => this.updateTheme()}
-              @updateSettings=${() => this.updateSettings()}
-            ></app-settings>
+            <app-settings></app-settings>
           `
         }
 

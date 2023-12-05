@@ -1,4 +1,4 @@
-export interface Settings {
+export interface Settingss {
     theme: string;
     font: Font;
     wrap: boolean;

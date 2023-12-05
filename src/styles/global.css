@@ -21,6 +21,7 @@
   --link-hover-text-color: #20377a;
   --link-hover-background-color: #eaeaea;
   --switch-thumb-color: #ffffff;
+  --switch-background-color: #0067c0;
   --select-background-color: #ffffff;
   --select-border-color: #ececec;
   --select-dropdown-background-color: #ffffff;
@@ -37,6 +38,11 @@
   --divider-color: #eeeeee;
   --status-bar-background-color: #f3f3f3;
   --status-bar-border-color: #e6e6e6;
+
+  --subtext-color: #5f5f5f;
+
+  --radio-background-color: #0067c0;
+  --radio-pit-color: #f4f4f4;
 
 }
 
@@ -70,6 +76,7 @@ body {
     --link-hover-text-color: #93e1f4;
     --link-hover-background-color: #2d2e2a;
     --switch-thumb-color: #000000;
+    --switch-background-color: #4cc2ff;
     --select-background-color: #373737;
     --select-border-color: #373737;
     --select-dropdown-background-color: #2c2c2c;
@@ -86,39 +93,50 @@ body {
     --divider-color: #393939;
     --status-bar-background-color: #2c2c2c;
     --status-bar-border-color: #1c1d1d;
+
+    --subtext-color: #cfcfcf;
+
+    --radio-background-color: #4cc2ff;
+    --radio-pit-color: #272727;
   }
 }
 
 html.dark-mode {
   --settings-background: #202020;
-  --text-color: #ffffff;
-  --details-header-color: #2b2b2b;
-  --details-content-color: #272727;
-  --details-border-color: #2b2b2b;
-  --button-background-color: #2d2d2d;
-  --button-hover-background-color: #313331;
-  --button-border-color: #303030;
-  --link-text-color: #93e1f4;
-  --link-hover-text-color: #93e1f4;
-  --link-hover-background-color: #2d2e2a;
-  --switch-thumb-color: #000000;
-  --select-background-color: #373737;
-  --select-border-color: #373737;
-  --select-dropdown-background-color: #2c2c2c;
-  --option-hover-background-color: #383838;
+    --text-color: #ffffff;
+    --details-header-color: #2b2b2b;
+    --details-content-color: #272727;
+    --details-border-color: #2b2b2b;
+    --button-background-color: #2d2d2d;
+    --button-hover-background-color: #313331;
+    --button-border-color: #303030;
+    --link-text-color: #93e1f4;
+    --link-hover-text-color: #93e1f4;
+    --link-hover-background-color: #2d2e2a;
+    --switch-thumb-color: #000000;
+    --switch-background-color: #4cc2ff;
+    --select-background-color: #373737;
+    --select-border-color: #373737;
+    --select-dropdown-background-color: #2c2c2c;
+    --option-hover-background-color: #383838;
 
-  --editor-background-color: #272727;
-  --header-background-color: #202020;
+    --editor-background-color: #272727;
+    --header-background-color: #202020;
 
-  --menu-background-color: #1a212a;
-  --menu-button-hover-background-color: #272e36;
-  --menu-button-click-background-color: #232a31;
-  --menu-dropdown-background-color: #2c2c2c;
-  --menu-item-hover-background-color: #383838;
-  --divider-color: #393939;
-  --status-bar-background-color: #2c2c2c;
-  --status-bar-border-color: #1c1d1d;
-}
+    --menu-background-color: #1a212a;
+    --menu-button-hover-background-color: #272e36;
+    --menu-button-click-background-color: #232a31;
+    --menu-dropdown-background-color: #2c2c2c;
+    --menu-item-hover-background-color: #383838;
+    --divider-color: #393939;
+    --status-bar-background-color: #2c2c2c;
+    --status-bar-border-color: #1c1d1d;
+
+    --subtext-color: #cfcfcf;
+
+    --radio-background-color: #4cc2ff;
+    --radio-pit-color: #272727;
+  }
 
 html.light-mode{
   --background-color: #ffffff;
@@ -134,6 +152,7 @@ html.light-mode{
   --link-hover-text-color: #20377a;
   --link-hover-background-color: #eaeaea;
   --switch-thumb-color: #ffffff;
+  --switch-background-color: #0067c0;
   --select-background-color: #ffffff;
   --select-border-color: #ececec;
   --select-dropdown-background-color: #ffffff;
@@ -150,4 +169,9 @@ html.light-mode{
   --divider-color: #eeeeee;
   --status-bar-background-color: #f3f3f3;
   --status-bar-border-color: #e6e6e6;
+
+  --subtext-color: #5f5f5f;
+
+  --radio-background-color: #0067c0;
+  --radio-pit-color: #f4f4f4;
 }
