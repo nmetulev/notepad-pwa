@@ -437,7 +437,8 @@ export class AppMenu extends LitElement {
       'font-size': (Settings.instance.font.size).toString() + 'px',
       'font-family': Settings.instance.font.family,
       'font-style': Settings.instance.font.style.includes("italic") ? "italic" : "unset",
-      'font-weight': Settings.instance.font.style.includes("bold") ? "bold" : "unset",
+      'font-weight': Settings.instance.font.style.includes("bold") ? "bold" : Settings.instance.font.style.includes("black") ? "900" : "unset",
+      'font-stretch': Settings.instance.font.style.includes("narrow") ? "condensed" : "unset",
       'margin': '10px'
     };
 
