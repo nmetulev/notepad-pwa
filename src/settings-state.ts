@@ -3,10 +3,10 @@ import { EventDispatcher, EventHandler } from "./utils/EventDispatcher";
 export type Theme = "light" | "dark" | "system";
 
 export type Font = {
-    family: string, style: fontStyle, size: number
+    family: string, style: string, size: number
 }
 
-export type fontStyle = "regular" | "bold" | "italic" | "bold+italic"
+//export type fontStyle = "regular" | "bold" | "italic" | "bold+italic"
 
 export class Settings {
     private static _instance: Settings;
@@ -16,10 +16,11 @@ export class Settings {
         if(!localStorage.getItem('notepadSettings')){
             this.theme = "system";
             this.font = {
-             family: "Consolas", style: "regular", size: 11
+             family: "times_new_roman", style: "regular", size: 11
             }
-            this.wrap = true;
-            this.start_behavior = true;
+            this.wrap = true; // true = wrap, false = don't wrap
+            this.open_behavior = true; // true = new tab, false = new window
+            this.start_behavior = true; // true = open from previous session, false = new note
         }
     }
 

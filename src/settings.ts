@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 
 import '@shoelace-style/shoelace/dist/components/details/details.js';
 import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
@@ -13,9 +13,12 @@ import SlRadioGroup from '@shoelace-style/shoelace/dist/components/radio-group/r
 import SlSwitch from '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { Settings, Theme, fontStyle } from './settings-state';
+import { getFonts } from './utils/font-factory';
 
 @customElement('app-settings')
 export class AppMenu extends LitElement {
+
+  @state() availableFonts: any = {};
 
   /*
     Are the controls hooked up?
@@ -362,6 +365,11 @@ export class AppMenu extends LitElement {
     super();
   }
 
+  async connectedCallback() {
+    super.connectedCallback();
+    this.availableFonts = await getFonts();
+  }
+
   updateTheme(){
     let group = this.shadowRoot!.querySelector("#theme-group") as unknown as SlRadioGroup;
     Settings.instance.theme = group.value as Theme;
@@ -372,6 +380,8 @@ export class AppMenu extends LitElement {
     const style = this.shadowRoot?.querySelector("#style-select") as unknown as SlSelect;
     const size = this.shadowRoot?.querySelector("#size-select") as unknown as SlSelect;
 
+    console.log(family.value)
+
     let updatedFont = {
       family: family.value as string,
       style: style.value as fontStyle,
@@ -379,6 +389,8 @@ export class AppMenu extends LitElement {
     }
 
     Settings.instance.font = updatedFont;
+
+    console.log("updated font", Settings.instance.font)
 
     this.requestUpdate();
   }
@@ -397,6 +409,26 @@ export class AppMenu extends LitElement {
     let group = this.shadowRoot!.querySelector("#start-group") as unknown as SlRadioGroup;
 
     Settings.instance.start_behavior = group.value === "true" ? true : false;
+  }
+
+  generateFontGroups(){
+    if(this.availableFonts){
+      return html`
+      <div class="font-option">
+        <h3 id="font-family">Family</h3>
+        <sl-select id="family-select" aria-labelledby="font-family" value=${Settings.instance.font.family} @sl-change=${() => this.updateFont()}>
+          ${Object.keys(this.availableFonts).map((font: string) => html`<sl-option value="${font}">${this.availableFonts[font].full_name}</sl-option>`)}
+        </sl-select>
+      </div>
+      <div class="font-option">
+        <h3 id="font-style">Style</h3>
+        <sl-select id="style-select" aria-labelledby="font-style" value=${this.availableFonts[Settings.instance.font.family].styles.includes(Settings.instance.font.style) ? Settings.instance.font.style : this.availableFonts[Settings.instance.font.family].styles[0]} @sl-change=${() => this.updateFont()}>
+          ${this.availableFonts[Settings.instance.font.family].styles.map((style: string) => html`<sl-option value="${style}">${style.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</sl-option>`)}
+        </sl-select>
+      </div>
+    `
+    }
+    return;
   }
 
   render() {
@@ -437,21 +469,9 @@ export class AppMenu extends LitElement {
                   <h2>Font</h2>
               </div>
               <div class="font-options">
-                  <div class="font-option">
-                      <h3 id="font-family">Family</h3>
-                      <sl-select id="family-select" aria-labelledby="font-family" value=${Settings.instance.font.family} @sl-change=${() => this.updateFont()}>
-                        ${fonts.map((font: string) => html`<sl-option value="${font}">${font}</sl-option>`)}
-                      </sl-select>
-                  </div>
-                  <div class="font-option">
-                      <h3 id="font-style">Style</h3>
-                      <sl-select id="style-select" aria-labelledby="font-style" value=${Settings.instance.font.style} @sl-change=${() => this.updateFont()}>
-                        <sl-option value="regular">Regular</sl-option>
-                        <sl-option value="italic">Italic</sl-option>
-                        <sl-option value="bold">Bold</sl-option>
-                        <sl-option value="bold+italic">Bold Italic</sl-option>
-                      </sl-select>
-                  </div>
+
+                  ${this.generateFontGroups()}
+
                   <div class="font-option">
                       <h3 id="font-size">Size</h3>
                       <sl-select id="size-select" aria-labelledby="font-size" value=${Settings.instance.font.size} @sl-change=${() => this.updateFont()}>
@@ -482,8 +502,8 @@ export class AppMenu extends LitElement {
                 </div>
             </div>
             <sl-select id="open-behavior-select" aria-labelledby="opening-files" value="new-tab">
-                <sl-option value="new-tab">Open in a new tab</sl-option>
-                <sl-option value="new-window">Open in a new window</sl-option>
+                <sl-option value="true">Open in a new tab</sl-option>
+                <sl-option value="false">Open in a new window</sl-option>
             </sl-select>
         </div>
           <sl-details id="start-behavior-details">
