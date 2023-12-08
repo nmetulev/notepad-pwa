@@ -16,6 +16,10 @@ export default {
         {
           src: normalizePath(path.resolve('./node_modules/@shoelace-style/shoelace/dist/assets/icons/gear.svg')),
           dest: normalizePath(path.resolve('./public/shoelace/assets/icons/'))
+        },
+        {
+          src: normalizePath(path.resolve('./node_modules/@shoelace-style/shoelace/dist/assets/icons/dot.svg')),
+          dest: normalizePath(path.resolve('./public/shoelace/assets/icons/'))
         }
       ]
     })

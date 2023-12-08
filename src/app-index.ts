@@ -11,7 +11,7 @@ import './editor';
 import './status-bar';
 
 import './styles/global.css';
-import { Notepad, notepadEventNames } from './state';
+import { Notepad } from './state';
 
 declare global {
   interface Window { launchQueue: any; }
@@ -66,7 +66,6 @@ export class AppIndex extends LitElement {
   }
 
   @query('.dialog', true) private dialog!: SlDialog
-  private afterDialogAction!: string
 
   constructor() {
     super();
@@ -93,19 +92,19 @@ export class AppIndex extends LitElement {
     });
 
     window.addEventListener('beforeunload', e => {
-      if (Notepad.current.isDirty) {
-        const message = `Do you want to save changes to ${Notepad.current.fileName || 'Untitled'}`;
+      let dirtyTab = Notepad.tabs.find(t => t.isDirty);
+      if (dirtyTab) {
+        const message = `Do you want to save changes to ${dirtyTab.fileName || 'Untitled'}`;
         e.returnValue = message;
         return message;
       }
       return;
     });
 
-    Notepad.on(notepadEventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
+    // Notepad.on(Notepad.eventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
   }
 
-  private showDialog(e: string) {
-    this.afterDialogAction = e;
+  public showDialog() {
     this.dialog.show();
   }
 
@@ -115,13 +114,6 @@ export class AppIndex extends LitElement {
     }
 
     this.dialog?.hide();
-
-    if (this.afterDialogAction === 'open') {
-      Notepad.current.openFile(true);
-    } else {
-      Notepad.current.newFile(true);
-    }
-
   }
 
 

@@ -1,6 +1,6 @@
 import { LitElement, css, html, PropertyValueMap } from 'lit';
-import { customElement, query } from 'lit/decorators.js';
-import { Notepad, notepadEventNames } from './state';
+import { customElement, query, state } from 'lit/decorators.js';
+import { Notepad, NotepadFile } from './state';
 
 @customElement('app-editor')
 export class AppMenu extends LitElement {
@@ -36,14 +36,19 @@ export class AppMenu extends LitElement {
   }
 
   @query('.editor', true) private editor!: HTMLDivElement;
+  @state() private file: NotepadFile | undefined;
 
   constructor() {
     super();
-    Notepad.on(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    Notepad.on(Notepad.eventNames.currentTabIndexChanged, this.onFileChangedHandler);
   }
 
   disconnectedCallback(): void {
-    Notepad.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler)
+    Notepad.removeListener(Notepad.eventNames.currentTabIndexChanged, this.onFileChangedHandler);
+
+    // if (this.file) {
+    //   this.file.removeListener(NotepadFile.eventNames.fileChanged, this.onFileChangedHandler)
+    // }
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -53,9 +58,26 @@ export class AppMenu extends LitElement {
 
   private onFileChangedHandler = this.setEditorContents.bind(this);
   private setEditorContents() {
+    this.file = Notepad.current;
     if (this.editor) {
-      this.editor.textContent = Notepad.current.fileContents || "";
-      Notepad.current.editorContents = this.editor.innerText;
+      this.editor.textContent = this.file.editorContents || this.file.fileContents || "";
+      // this.file.editorContents = this.editor.innerText;
+      this.editor?.focus();
+      this.setCaretPosition(this.editor, this.editor.innerText.length);
+    }
+  }
+
+  // function to set caret position
+  private setCaretPosition(el: HTMLDivElement, caretPos: number) {
+    try {
+      var range = document.createRange();
+      var sel = window.getSelection();
+      range.setStart(el.childNodes[0], caretPos);
+      range.collapse(true);
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+    } catch (error) {
+      // console.error(error);
     }
   }
 
@@ -65,7 +87,7 @@ export class AppMenu extends LitElement {
         <div class="editor"
           contenteditable
           spellcheck="false"
-          @input=${(e: InputEvent) => Notepad.current.editorContents = (e.target as HTMLDivElement).innerText}
+          @input=${(e: InputEvent) => this.file!.editorContents = (e.target as HTMLDivElement).innerText}
           @keydown=${this.handleTab}
           @paste=${this.pasteAsPlainText}></div>
       </div>
