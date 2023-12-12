@@ -38,7 +38,6 @@ export class AppMenu extends LitElement {
 
       .editor.wrap {
         white-space: unset;
-        width: 100vw;
         word-break: break-all;
       }
 
@@ -63,9 +62,8 @@ export class AppMenu extends LitElement {
   }
 
   disconnectedCallback(): void {
-    localStorage.setItem('lastSession', this.editor.innerText);
+    localStorage.setItem('lastSession', encodeURIComponent(Notepad.instance.editorContents));
     Notepad.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler);
-    //Settings.instance.removeListener(settingsEventNames.settingsChanged, this.updateSettings);
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -79,9 +77,9 @@ export class AppMenu extends LitElement {
     if (this.editor) {
       this.editor.textContent = Notepad.instance.fileContents || ""; // sets editor to file contents if file contents exist.
       if(localStorage.getItem('lastSession') && Settings.instance.start_behavior){
-        this.editor.innerText = localStorage.getItem('lastSession')!;
+        this.editor.innerText = decodeURIComponent(localStorage.getItem('lastSession')!);
       }
-      Notepad.instance.editorContents = this.editor.innerText; //
+      Notepad.instance.editorContents = this.editor.innerText;
     }
   }
 
@@ -99,8 +97,8 @@ export class AppMenu extends LitElement {
       'font-size': (Settings.instance.font.size).toString() + 'px',
       'font-family': Settings.instance.font.family,
       'font-style': Settings.instance.font.style.includes("italic") ? "italic" : "unset",
-      'font-weight':  Settings.instance.font.style.includes("bold") ? "bold" : "unset",
-      'font-stretch': Settings.instance.font.style.includes("narrow") ? "condensed" : "unset"
+      'font-weight': Settings.instance.font.style.includes("bold") ? "bold" : Settings.instance.font.style.includes("black") ? "900" : "unset",
+      'font-stretch': Settings.instance.font.style.includes("narrow") ? "condensed" : "unset",
     };
 
     const wrapClasses = {

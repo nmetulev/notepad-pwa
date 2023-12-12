@@ -54,11 +54,22 @@ function getDefaultFonts() {
 function transformFontFormat(fonts: Record<string, string[]>): Record<string, { full_name: string; styles: string[] }> {
     return Object.keys(fonts).reduce((acc, fontName) => {
         const key = fontName.toLowerCase().split(' ').join('_');
-        const styles = fonts[fontName].map((style: string) => style.toLowerCase().split(' ').join('_'))
+        const styles = fonts[fontName].map((style: string) => style.toLowerCase().split(' ').join('_'));
         acc[key] = {
             full_name: fontName,
-            styles: styles
+            styles: styles.filter((style: string) => supportedStyles.includes(style))
         };
         return acc;
     }, {} as Record<string, { full_name: string; styles: string[] }>);
 }
+
+const supportedStyles: string[] = [
+    "regular",
+    "bold",
+    "italic",
+    "bold_italic",
+    "narrow",
+    "narrow_italic",
+    "narrow_bold_italic",
+    "black"
+]

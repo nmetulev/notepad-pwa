@@ -42,7 +42,7 @@ export class Notepad {
     }
     public set editorContents(v : string) {
         this._editorContents = v;
-        localStorage.setItem('lastSession', this._editorContents);
+        localStorage.setItem('lastSession', encodeURIComponent(this._editorContents));
         this._eventDispatcher.fire(notepadEventNames.editorChanged);
     }
 
