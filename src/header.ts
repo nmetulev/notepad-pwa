@@ -62,6 +62,10 @@ export class AppHeader extends LitElement {
     #back-button:hover {
         background-color: #e8eaf0;
       }
+
+      sl-icon {
+        color: var(--text-color);
+      }
     `;
   }
 

@@ -12,7 +12,7 @@ import SlSelect from '@shoelace-style/shoelace/dist/components/select/select.js'
 import SlRadioGroup from '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
 import SlSwitch from '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { Settings, Theme, fontStyle } from './settings-state';
+import { Settings, Theme } from './settings-state';
 import { getFonts } from './utils/font-factory';
 
 @customElement('app-settings')
@@ -387,7 +387,7 @@ export class AppMenu extends LitElement {
 
     let updatedFont = {
       family: family.value as string,
-      style: style.value as fontStyle,
+      style: style.value as string,
       size: parseInt(size.value as string)
     }
 
@@ -413,7 +413,7 @@ export class AppMenu extends LitElement {
   }
 
   generateFontGroups(){
-    if(this.availableFonts){
+    if(this.availableFonts && Object.keys(this.availableFonts).length > 0){
       return html`
       <div class="font-option">
         <h3 id="font-family">Family</h3>
@@ -441,14 +441,43 @@ export class AppMenu extends LitElement {
     }
   }
 
+  decideFontWeight(){
+    const style = Settings.instance.font.style;
+    if(style.includes("light")){
+      return "300";
+    } else if(style.includes("semilight")) {
+      return "350";
+    } else if(style.includes("medium")){
+      return "500";
+    } else if(style.includes("demi") || style.includes("semibold")) {
+      return "600";
+    } else if(style.includes("bold")){
+      return "bold";
+    } else if(style.includes("black")){
+      return "900";
+    }
+
+    return "unset";
+  }
+
+  decideFontStyle(){
+    const style = Settings.instance.font.style;
+    if(style.includes("italic")){
+      return "italic";
+    } else if(style.includes("oblique")){
+      return "oblique";
+    }
+    return "unset";
+  }
+
   render() {
 
     const styleInfo = {
       'font-size': (Settings.instance.font.size).toString() + 'px',
       'font-family': Settings.instance.font.family,
-      'font-style': Settings.instance.font.style.includes("italic") ? "italic" : "unset",
-      'font-weight': Settings.instance.font.style.includes("bold") ? "bold" : Settings.instance.font.style.includes("black") ? "900" : "unset",
-      'font-stretch': Settings.instance.font.style.includes("narrow") ? "condensed" : "unset",
+      'font-style': this.decideFontStyle(),
+      'font-weight': this.decideFontWeight(),
+      'font-stretch': Settings.instance.font.style.includes("narrow") || Settings.instance.font.style.includes("condensed") ? "condensed" : "unset",
       'margin': '10px'
     };
 

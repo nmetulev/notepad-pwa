@@ -91,14 +91,33 @@ export class AppMenu extends LitElement {
     root.requestUpdate();
   }
 
+  decideFontWeight(){
+    const style = Settings.instance.font.style;
+    if(style.includes("light")){
+      return "300";
+    } else if(style.includes("semilight")) {
+      return "350";
+    } else if(style.includes("medium")){
+      return "500";
+    } else if(style.includes("demi") || style.includes("semibold")) {
+      return "600";
+    } else if(style.includes("bold")){
+      return "bold";
+    } else if(style.includes("black")){
+      return "900";
+    }
+
+    return "unset";
+  }
+
   render() {
 
     const styleInfo = {
       'font-size': (Settings.instance.font.size).toString() + 'px',
       'font-family': Settings.instance.font.family,
       'font-style': Settings.instance.font.style.includes("italic") ? "italic" : "unset",
-      'font-weight': Settings.instance.font.style.includes("bold") ? "bold" : Settings.instance.font.style.includes("black") ? "900" : "unset",
-      'font-stretch': Settings.instance.font.style.includes("narrow") ? "condensed" : "unset",
+      'font-weight': this.decideFontWeight(),
+      'font-stretch': Settings.instance.font.style.includes("narrow") || Settings.instance.font.style.includes("condensed") ? "condensed" : "unset",
     };
 
     const wrapClasses = {
