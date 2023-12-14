@@ -52,13 +52,14 @@ function getDefaultFonts() {
 }
 
 function transformFontFormat(fonts: Record<string, string[]>): Record<string, { full_name: string; styles: string[] }> {
-    console.log(fonts)
     return Object.keys(fonts).reduce((acc, fontName) => {
         const key = fontName.toLowerCase().split(' ').join('_');
 
         let styles = fonts[fontName].map((style: string) => style.toLowerCase().split(' ').join('_'));
         styles = styles.filter((style: string) => supportedStyles.includes(style));
 
+        // if the font only had styles that aren't supported they could
+        // end up with no styles. so we give them defaults here so none are empty.
         if(styles.length === 0){
             styles = ["regular", "bold", "italic", "bold_italic"];
         }

@@ -1,8 +1,10 @@
 import { LitElement, css, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 
 @customElement('app-status-bar')
 export class AppMenu extends LitElement {
+
+  @property() positon: number = 0;
 
   static get styles() {
     return css`

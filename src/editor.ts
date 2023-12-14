@@ -37,7 +37,7 @@ export class AppMenu extends LitElement {
       }
 
       .editor.wrap {
-        white-space: unset;
+        white-space: pre-wrap;
         word-break: break-all;
       }
 
@@ -149,8 +149,8 @@ export class AppMenu extends LitElement {
   }
 
   private handleTab(e: KeyboardEvent) {
-    if(e.keyCode == 9){ //Tab
-      e.preventDefault()
+    if(e.key == "Tab"){ //Tab
+      e.preventDefault();
       document.execCommand('insertHTML', false, '&#009');
     }
   }
