@@ -1,6 +1,5 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 
 import '@shoelace-style/shoelace/dist/components/details/details.js';
 import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
@@ -20,6 +19,7 @@ import { getFonts } from './utils/font-factory';
 export class AppMenu extends LitElement {
 
   @state() availableFonts: any = {};
+  @state() neededIconColor: string = "";
 
   /*
     Are the controls hooked up?
@@ -126,10 +126,14 @@ export class AppMenu extends LitElement {
         display: flex;
       }
 
-      sl-icon {
+      .flip_icon {
+        transform: scale(-1,1);
+      }
+
+      .settings-icon, sl-icon {
         margin-right: 15px;
         font-size: 18px;
-
+        fill: var(--text-color)
       }
 
       h1, h2, p {
@@ -437,17 +441,13 @@ export class AppMenu extends LitElement {
     const style = this.shadowRoot?.querySelector("#style-select") as unknown as SlSelect;
     const size = this.shadowRoot?.querySelector("#size-select") as unknown as SlSelect;
 
-    console.log(family.value)
-
     let updatedFont = {
       family: family.value as string,
-      style: style.value as fontStyle,
+      style: style.value as string,
       size: parseInt(size.value as string)
     }
 
     Settings.instance.font = updatedFont;
-
-    console.log("updated font", Settings.instance.font)
 
     this.requestUpdate();
   }
@@ -469,7 +469,7 @@ export class AppMenu extends LitElement {
   }
 
   generateFontGroups(){
-    if(this.availableFonts){
+    if(this.availableFonts && Object.keys(this.availableFonts).length > 0){
       return html`
       <div class="font-option">
         <h3 id="font-family">Family</h3>
@@ -496,15 +496,52 @@ export class AppMenu extends LitElement {
   // <!-- <sl-select id="style-select" aria-labelledby="font-style" value=${this.availableFonts[Settings.instance.font.family]?.styles?.includes(Settings.instance.font.style) ? Settings.instance.font.style : this.availableFonts[Settings.instance.font.family].styles[0]} @sl-change=${() => this.updateFont()}>
   //         ${this.availableFonts[Settings.instance.font.family].styles.map((style: string) => html`<sl-option value="${style}">${style.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</sl-option>`)}
   //       </sl-select> -->
+  getColorMode() {
+    const root = document.documentElement;
+    const varValue = getComputedStyle(root).getPropertyValue('--text-color').trim();
+
+    if(varValue !== "#191919"){
+      this.neededIconColor = "_white";
+    }
+  }
+
+  decideFontWeight(){
+    const style = Settings.instance.font.style;
+    if(style.includes("light")){
+      return "300";
+    } else if(style.includes("semilight")) {
+      return "350";
+    } else if(style.includes("medium")){
+      return "500";
+    } else if(style.includes("demi") || style.includes("semibold")) {
+      return "600";
+    } else if(style.includes("bold")){
+      return "bold";
+    } else if(style.includes("black")){
+      return "900";
+    }
+
+    return "unset";
+  }
+
+  decideFontStyle(){
+    const style = Settings.instance.font.style;
+    if(style.includes("italic")){
+      return "italic";
+    } else if(style.includes("oblique")){
+      return "oblique";
+    }
+    return "unset";
+  }
 
   render() {
 
     const styleInfo = {
       'font-size': (Settings.instance.font.size).toString() + 'px',
       'font-family': Settings.instance.font.family,
-      'font-style': Settings.instance.font.style.includes("italic") ? "italic" : "unset",
-      'font-weight': Settings.instance.font.style.includes("bold") ? "bold" : Settings.instance.font.style.includes("black") ? "900" : "unset",
-      'font-stretch': Settings.instance.font.style.includes("narrow") ? "condensed" : "unset",
+      'font-style': this.decideFontStyle(),
+      'font-weight': this.decideFontWeight(),
+      'font-stretch': Settings.instance.font.style.includes("narrow") || Settings.instance.font.style.includes("condensed") ? "condensed" : "unset",
       'margin': '10px'
     };
 
@@ -521,11 +558,11 @@ export class AppMenu extends LitElement {
             <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
             <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
                 <div class="icon-header" slot="summary">
-                    <sl-icon name="palette" label="palette"></sl-icon>
-                    <div>
-                        <h2 id="app-theme">App theme</h2>
-                        <p class="subtext"> Select which app theme to display</p>
-                    </div>
+                  ${iconSvgs["theme"]}
+                  <div>
+                      <h2 id="app-theme">App theme</h2>
+                      <p class="subtext"> Select which app theme to display</p>
+                  </div>
                 </div>
                 <sl-radio-group aria-labelledby="app-theme" id="theme-group" value=${Settings.instance.theme} @sl-change=${() => this.updateTheme()}>
                     <sl-radio value="light">Light</sl-radio>
@@ -537,7 +574,7 @@ export class AppMenu extends LitElement {
               <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
               <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
               <div class="icon-header" slot="summary">
-                  <sl-icon name="fonts" label="fonts"></sl-icon>
+                  ${iconSvgs["font"]}
                   <h2>Font</h2>
               </div>
               <div class="font-options">
@@ -557,7 +594,7 @@ export class AppMenu extends LitElement {
             </sl-details>
             <div class="non-collapsable-setting">
               <div class="ncs-item">
-                  <sl-icon name="text-wrap" label="text-wrap"></sl-icon>
+                  ${iconSvgs["wrap"]}
                   <div>
                       <h2 id="app-theme">Word wrap</h2>
                       <p class="subtext">Fit text within window by default</p>
@@ -567,13 +604,13 @@ export class AppMenu extends LitElement {
           </div>
         <div class="non-collapsable-setting">
             <div class="ncs-item">
-                <sl-icon name="box-arrow-up-right" label="box-arrow-up-right"></sl-icon>
-                <div>
-                    <h2 id="opening-files">Opening files</h2>
-                    <p class="subtext">Choose where your files are opened</p>
-                </div>
+              ${iconSvgs["open"]}
+              <div>
+                  <h2 id="opening-files">Opening files</h2>
+                  <p class="subtext">Choose where your files are opened</p>
+              </div>
             </div>
-            <sl-select id="open-behavior-select" aria-labelledby="opening-files" value="new-tab">
+            <sl-select id="open-behavior-select" aria-labelledby="opening-files" value="${Settings.instance.open_behavior}">
                 <sl-option value="true">Open in a new tab</sl-option>
                 <sl-option value="false">Open in a new window</sl-option>
             </sl-select>
@@ -582,7 +619,7 @@ export class AppMenu extends LitElement {
             <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
             <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
             <div class="icon-header" slot="summary">
-                <sl-icon name="sticky" label="sticky"></sl-icon>
+                ${iconSvgs["tab"]}
                 <h2 id="start-behavior">When Notepad (PWA) starts</h2>
             </div>
             <sl-radio-group id="start-group" aria-labelledby="start-behavior" value=${Settings.instance.start_behavior} @sl-change=${() => this.updateStartBehvaior()}>
@@ -613,15 +650,10 @@ export class AppMenu extends LitElement {
 }
 
 const fontSizes: number[] = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72];
-const fonts: string[] = [
-  "Arial",
-  "Calibri",
-  "Consolas",
-  "Georgia",
-  "Impact",
-  "Magneto",
-  "Segoe UI",
-  "Tahoma",
-  "Times New Roman",
-  "Verdana"
-]
+const iconSvgs = {
+  "theme": html`<svg class="settings-icon" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.75 6.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm3 1a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm2.5 1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm-.75 3.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM13.25 14a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm.45-11a7.82 7.82 0 0 0-7.93.17 9.6 9.6 0 0 0-3.25 3.89 5.9 5.9 0 0 0-.62 2.43c0 .8.27 1.57.94 2.12.61.5 1.14.74 1.66.77.51.02.92-.19 1.23-.37l.2-.12c.24-.15.44-.27.69-.35.28-.09.64-.12 1.16.04.19.06.3.14.38.24.09.1.16.26.2.47.06.21.09.46.1.76.02.1.02.24.03.37l.04.58c.05.67.17 1.44.57 2.14.42.7 1.1 1.3 2.2 1.68 1.6.54 3.07.1 4.21-.8a7.46 7.46 0 0 0 2.37-3.6C19.2 9.16 17.68 5.04 13.7 3ZM6.3 4.01a6.82 6.82 0 0 1 6.94-.14c3.5 1.8 4.87 5.4 3.69 9.25a6.46 6.46 0 0 1-2.04 3.1 3.33 3.33 0 0 1-3.26.64c-.9-.3-1.38-.76-1.66-1.24a4 4 0 0 1-.44-1.7l-.04-.54-.02-.41c-.03-.31-.06-.63-.13-.93-.07-.3-.2-.6-.4-.86-.22-.26-.5-.46-.87-.57a2.85 2.85 0 0 0-1.75-.03c-.38.12-.7.32-.95.47l-.14.09c-.29.16-.48.24-.68.23-.22-.01-.55-.12-1.08-.55-.38-.31-.57-.76-.57-1.34 0-.6.19-1.29.52-2.01A8.63 8.63 0 0 1 6.3 4.02Z"/></svg>`,
+  "font": html`<svg class="settings-icon" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M6 2c.2 0 .4.13.47.32L8.9 8.57v.02l.18.44-.53 1.4-.46-1.17H3.91l-.94 2.42a.5.5 0 1 1-.94-.36L3.1 8.59v-.02l2.43-6.25A.5.5 0 0 1 6 2ZM4.3 8.26h3.4L6 3.88 4.3 8.26Zm8.17-2.94a.5.5 0 0 0-.94 0L7.15 17H6.5a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-.28l1.13-3h5.37l1.15 3h-.37a.5.5 0 1 0 0 1h2a.5.5 0 1 0 0-1h-.56L12.47 5.32ZM14.34 13H9.72l2.29-6.09L14.34 13Z"/></svg>`,
+  "wrap": html`<svg class="settings-icon" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 4.5c0-.28.22-.5.5-.5h15a.5.5 0 0 1 0 1h-15a.5.5 0 0 1-.5-.5Zm0 5c0-.28.22-.5.5-.5H16a3 3 0 1 1 0 6h-4.3l.65.65a.5.5 0 0 1-.7.7l-1.5-1.5a.5.5 0 0 1 0-.7l1.5-1.5a.5.5 0 0 1 .7.7l-.64.65H16a2 2 0 1 0 0-4H2.5a.5.5 0 0 1-.5-.5Zm0 5c0-.28.22-.5.5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5Z"/></svg>`,
+  "open": html`<svg class="settings-icon" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M6 4a2 2 0 0 0-2 2v8c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2v-2.5a.5.5 0 0 1 1 0V14a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h2.5a.5.5 0 0 1 0 1H6Zm5-.5c0-.28.22-.5.5-.5h5c.28 0 .5.22.5.5v5a.5.5 0 0 1-1 0V4.7l-4.15 4.15a.5.5 0 0 1-.7-.7L15.29 4H11.5a.5.5 0 0 1-.5-.5Z"/></svg>`,
+  "tab": html`<svg class="settings-icon flip_icon" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M3 5.5A2.5 2.5 0 0 1 5.5 3h9A2.5 2.5 0 0 1 17 5.5v9a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 3 14.5v-9ZM16 6v-.5c0-.83-.67-1.5-1.5-1.5H9v1.5c0 .28.22.5.5.5H16ZM8 4H5.5C4.67 4 4 4.67 4 5.5v9c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5V7H9.5A1.5 1.5 0 0 1 8 5.5V4Z"/></svg>`
+}

@@ -36,8 +36,7 @@ export class AppMenu extends LitElement {
       }
 
       .editor.wrap {
-        white-space: unset;
-        width: 100vw;
+        white-space: pre-wrap;
         word-break: break-all;
       }
 
@@ -68,6 +67,8 @@ export class AppMenu extends LitElement {
     // if (this.file) {
     //   this.file.removeListener(NotepadFile.eventNames.fileChanged, this.onFileChangedHandler)
     // }
+    localStorage.setItem('lastSession', encodeURIComponent(Notepad.instance.editorContents));
+    Notepad.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler);
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -109,14 +110,33 @@ export class AppMenu extends LitElement {
     root.requestUpdate();
   }
 
+  decideFontWeight(){
+    const style = Settings.instance.font.style;
+    if(style.includes("light")){
+      return "300";
+    } else if(style.includes("semilight")) {
+      return "350";
+    } else if(style.includes("medium")){
+      return "500";
+    } else if(style.includes("demi") || style.includes("semibold")) {
+      return "600";
+    } else if(style.includes("bold")){
+      return "bold";
+    } else if(style.includes("black")){
+      return "900";
+    }
+
+    return "unset";
+  }
+
   render() {
 
     const styleInfo = {
       'font-size': (Settings.instance.font.size).toString() + 'px',
       'font-family': Settings.instance.font.family,
       'font-style': Settings.instance.font.style.includes("italic") ? "italic" : "unset",
-      'font-weight':  Settings.instance.font.style.includes("bold") ? "bold" : "unset",
-      'font-stretch': Settings.instance.font.style.includes("narrow") ? "condensed" : "unset"
+      'font-weight': this.decideFontWeight(),
+      'font-stretch': Settings.instance.font.style.includes("narrow") || Settings.instance.font.style.includes("condensed") ? "condensed" : "unset",
     };
 
     const wrapClasses = {
@@ -148,8 +168,8 @@ export class AppMenu extends LitElement {
   }
 
   private handleTab(e: KeyboardEvent) {
-    if(e.keyCode == 9){ //Tab
-      e.preventDefault()
+    if(e.key == "Tab"){ //Tab
+      e.preventDefault();
       document.execCommand('insertHTML', false, '&#009');
     }
   }

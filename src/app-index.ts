@@ -110,6 +110,8 @@ export class AppIndex extends LitElement {
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     darkModeMediaQuery.addEventListener('change', this.updateTheme);
 
+    this.updateTheme();
+
   }
 
   @query('.dialog', true) private dialog!: SlDialog

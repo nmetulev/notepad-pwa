@@ -80,6 +80,10 @@ export class AppHeader extends LitElement {
       .dirty-flag {
         font-size: 26px;
       }
+
+      sl-icon {
+        color: var(--text-color);
+      }
     `;
   }
 
