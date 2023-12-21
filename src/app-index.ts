@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, query, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js';
 import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog';
@@ -12,9 +13,8 @@ import './settings'
 import './status-bar';
 
 import './styles/global.css';
-import { Notepad, notepadEventNames } from './state';
-import { Settingss } from './utils/interfaces';
-import { Settings, settingsEventNames } from './settings-state';
+import { Settings, settingsEventNames } from './state/notepadSettings';
+import { Notepad } from './state';
 
 declare global {
   interface Window { launchQueue: any; }
@@ -35,23 +35,20 @@ export class AppIndex extends LitElement {
   static get styles() {
     return css`
 
-      .root {
+      .content-root {
         display: flex;
         flex-direction: column;
         height: 100vh;
         overflow: hidden;
       }
 
-      .root.settings-root {
-        justify-content: flex-start;
-        backdrop-filter: blur(1px);
-
-        background: var(--settings-background);
-        color: var(--text-color);
-        /* background: -moz-linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%);
-        background: -webkit-linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%); */
-        filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#EEF4F9", endColorstr="#F9F2E9", GradientType=1 );
+      .settings {
+        position: absolute;
         overflow-y: auto;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
       }
 
       app-editor {
@@ -77,6 +74,10 @@ export class AppIndex extends LitElement {
         border: 4px solid rgba(0, 0, 0, 0);
         background-clip: padding-box;
         border-radius: 9999px;
+      }
+
+      .settings.hidden {
+        display: none;
       }
 
       /* app-header,
@@ -112,7 +113,7 @@ export class AppIndex extends LitElement {
   }
 
   @query('.dialog', true) private dialog!: SlDialog
-  private afterDialogAction!: string
+  @query('.settings', true) private settingsView!: SlDialog
 
   constructor() {
     super();
@@ -124,7 +125,7 @@ export class AppIndex extends LitElement {
           return;
         }
         for (const fileHandle of launchParams.files) {
-          Notepad.instance.setFileHandle(fileHandle);
+          Notepad.current.setFileHandle(fileHandle);
         }
       });
     } else {
@@ -135,55 +136,48 @@ export class AppIndex extends LitElement {
       if (e.ctrlKey && e.key === 's') {
         // Prevent the Save dialog to open
         e.preventDefault();
-        Notepad.instance.saveFile();
+        Notepad.current.saveFile();
       }
     });
 
     window.addEventListener('beforeunload', e => {
-      if (Notepad.instance.isDirty) {
-        const message = `Do you want to save changes to ${Notepad.instance.fileName || 'Untitled'}`;
+      let dirtyTab = Notepad.tabs.find(t => t.isDirty);
+      if (dirtyTab) {
+        const message = `Do you want to save changes to ${dirtyTab.fileName || 'Untitled'}`;
         e.returnValue = message;
         return message;
       }
       return;
     });
 
-    Notepad.instance.on(notepadEventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
+    // Notepad.on(Notepad.eventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
   }
 
-  private showDialog(e: string) {
-    this.afterDialogAction = e;
+  public showDialog() {
     this.dialog.show();
   }
 
   private async continueFromDialog(shouldSave: boolean) {
     if (shouldSave) {
-      await Notepad.instance.saveFile();
+      await Notepad.current.saveFile();
     }
 
     this.dialog?.hide();
-
-    if (this.afterDialogAction === 'open') {
-      Notepad.instance.openFile(true);
-    } else {
-      Notepad.instance.newFile(true);
-    }
-
   }
 
-  updateStateForSettingsPage(){
-    this.showSettings = true;
-    let root: HTMLDivElement = this.shadowRoot!.querySelector('.root')! as HTMLDivElement;
-    //root.style.backgroundColor = '#f9f2e9';
-    root.classList.add("settings-root")
-  }
+  // updateStateForSettingsPage(){
+  //   this.showSettings = true;
+  //   let root: HTMLDivElement = this.shadowRoot!.querySelector('.root')! as HTMLDivElement;
+  //   //root.style.backgroundColor = '#f9f2e9';
+  //   root.classList.add("settings-root")
+  // }
 
-  backToEditor(){
-    this.showSettings = false;
-    let root: HTMLDivElement = this.shadowRoot!.querySelector('.root')! as HTMLDivElement;
-    //root.style.backgroundColor = '#f9f2e9';
-    root.classList.remove("settings-root")
-  }
+  // backToEditor(){
+  //   this.showSettings = false;
+  //   let root: HTMLDivElement = this.shadowRoot!.querySelector('.root')! as HTMLDivElement;
+  //   //root.style.backgroundColor = '#f9f2e9';
+  //   root.classList.remove("settings-root")
+  // }
 
   updateSettings(){
     this.appSettings = JSON.parse(localStorage.getItem('notepadSettings')!)
@@ -207,34 +201,28 @@ export class AppIndex extends LitElement {
     } else { // switched to dark mode
         html!.classList.add("dark-mode");
     }
-
-
-
-}
+  }
 
   render() {
     return html`
       <div class="root">
-        <app-header .settingsShowing=${this.showSettings} @showEditor=${() => this.backToEditor()}></app-header>
-        ${!this.showSettings ?
-          html`
-            <app-menu @showSettingsPage=${() => this.updateStateForSettingsPage()}></app-menu>
-            <app-editor
-              .fontStyles=${Settings.instance.font}
-            ></app-editor>
-            <app-status-bar></app-status-bar>
-          ` :
-          html`
-            <app-settings></app-settings>
-          `
-        }
-
-        <sl-dialog label="Notepad" class="dialog">
-          Do you want to save changes to ${Notepad.instance.fileName || 'Untitled'}?
-          <sl-button slot="footer" variant="primary" @click=${() => this.continueFromDialog(true)}>Save</sl-button>
-          <sl-button slot="footer" @click=${() => this.continueFromDialog(false)}>Don't save</sl-button>
-          <sl-button slot="footer" @click=${() => this.dialog?.hide()}>Cancel</sl-button>
-        </sl-dialog>
+        <div class="content-root">
+          <app-header></app-header>
+          <app-menu @showSettingsClicked=${() => this.showSettings = true}></app-menu>
+          <app-editor
+          .fontStyles=${Settings.instance.font}
+          ></app-editor>
+          <app-status-bar></app-status-bar>
+        </div>
+        <app-settings class=${classMap({settings: true, hidden: !this.showSettings})} @settingsClosed=${() => this.showSettings = false}></app-settings>
+        <div class="dialog">
+          <sl-dialog label="Notepad" class="dialog">
+            Do you want to save changes to ${Notepad.current.fileName || 'Untitled'}?
+            <sl-button slot="footer" variant="primary" @click=${() => this.continueFromDialog(true)}>Save</sl-button>
+            <sl-button slot="footer" @click=${() => this.continueFromDialog(false)}>Don't save</sl-button>
+            <sl-button slot="footer" @click=${() => this.dialog?.hide()}>Cancel</sl-button>
+          </sl-dialog>
+        </div>
       </div>
     `;
   }

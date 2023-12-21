@@ -1,10 +1,9 @@
 import { LitElement, css, html, PropertyValueMap } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { Notepad, notepadEventNames } from './state';
-import { Font, Settings, settingsEventNames } from './settings-state';
-
+import { Font, Settings, settingsEventNames } from './state/notepadSettings';
+import { Notepad, NotepadFile } from './state';
 
 @customElement('app-editor')
 export class AppMenu extends LitElement {
@@ -55,17 +54,20 @@ export class AppMenu extends LitElement {
   }
 
   @query('.editor', true) private editor!: HTMLDivElement;
+  @state() private file: NotepadFile | undefined;
 
   constructor() {
     super();
-    Notepad.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler);
-    Settings.instance.on(settingsEventNames.settingsChanged, () => this.updateSettings(this));
+    Notepad.on(Notepad.eventNames.currentTabIndexChanged, this.onFileChangedHandler);
   }
 
   disconnectedCallback(): void {
+    Notepad.removeListener(Notepad.eventNames.currentTabIndexChanged, this.onFileChangedHandler);
     localStorage.setItem('lastSession', this.editor.innerText);
-    Notepad.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler);
-    //Settings.instance.removeListener(settingsEventNames.settingsChanged, this.updateSettings);
+
+    // if (this.file) {
+    //   this.file.removeListener(NotepadFile.eventNames.fileChanged, this.onFileChangedHandler)
+    // }
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -76,17 +78,31 @@ export class AppMenu extends LitElement {
   private onFileChangedHandler = this.setEditorContents.bind(this);
 
   private setEditorContents() {
+    this.file = Notepad.current;
     if (this.editor) {
-      this.editor.textContent = Notepad.instance.fileContents || ""; // sets editor to file contents if file contents exist.
-      if(localStorage.getItem('lastSession') && Settings.instance.start_behavior){
-        this.editor.innerText = localStorage.getItem('lastSession')!;
-      }
-      Notepad.instance.editorContents = this.editor.innerText; //
+      this.editor.textContent = this.file.editorContents || this.file.fileContents || "";
+      // this.file.editorContents = this.editor.innerText;
+      this.editor?.focus();
+      this.setCaretPosition(this.editor, this.editor.innerText.length);
+    }
+  }
+
+  // function to set caret position
+  private setCaretPosition(el: HTMLDivElement, caretPos: number) {
+    try {
+      var range = document.createRange();
+      var sel = window.getSelection();
+      range.setStart(el.childNodes[0], caretPos);
+      range.collapse(true);
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+    } catch (error) {
+      // console.error(error);
     }
   }
 
   updateText(e: InputEvent){
-    Notepad.instance.editorContents = (e.target as HTMLDivElement).innerText;
+    this.file!.editorContents = (e.target as HTMLDivElement).innerText;
   }
 
   updateSettings(root: any){

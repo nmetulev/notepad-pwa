@@ -39,3 +39,19 @@
         }
     }
  }
+
+ export class EventProducer<T> {
+    protected _eventDispatcher = new EventDispatcher<T>();
+
+    on(eventName: string, handler: EventHandler<T>) {
+        this._eventDispatcher.add(eventName, handler);
+    }
+
+    removeListener(eventName: string, handler: EventHandler<T>) {
+        this._eventDispatcher.remove(eventName, handler);
+    }
+
+    protected fire(eventName: string, event: T) {
+        this._eventDispatcher.fire(eventName, event);
+    }
+ }

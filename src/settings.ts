@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 import '@shoelace-style/shoelace/dist/components/details/details.js';
 import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
@@ -12,7 +13,7 @@ import SlSelect from '@shoelace-style/shoelace/dist/components/select/select.js'
 import SlRadioGroup from '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
 import SlSwitch from '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { Settings, Theme, fontStyle } from './settings-state';
+import { Settings, Theme, fontStyle } from './state';
 import { getFonts } from './utils/font-factory';
 
 @customElement('app-settings')
@@ -32,7 +33,6 @@ export class AppMenu extends LitElement {
 
   static get styles() {
     return css`
-
       * {
         box-sizing: border-box;
       }
@@ -42,6 +42,12 @@ export class AppMenu extends LitElement {
         display: flex;
         flex-direction: column;
         gap: 20px;
+        background: var(--settings-background);
+        color: var(--text-color);
+        /* background: -moz-linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%);
+        background: -webkit-linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%); */
+        filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#EEF4F9", endColorstr="#F9F2E9", GradientType=1 );
+        min-height: 100vh;
       }
 
       .root h1 {
@@ -358,6 +364,57 @@ export class AppMenu extends LitElement {
       .subtext {
         color: var(--subtext-color);
       }
+
+      #back-button {
+        background-color: transparent;
+        border: none;
+        margin-left: 5px;
+        margin-top: 5px;
+        padding: 3px 5px;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        app-region: no-drag;
+      }
+
+    #back-button:hover {
+        background-color: #e8eaf0;
+      }
+
+      .header label {
+        font-size: 12px;
+        margin-left: 16px;
+
+      }
+
+      .header {
+        left: env(titlebar-area-x, 0);
+        top: env(titlebar-area-y, 0);
+        width: env(titlebar-area-width, 100%);
+        height: env(titlebar-area-height, 33px);
+        app-region: drag;
+
+        color: var(--text-color);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        align-content: center;
+        font-family: Segoe UI Variable Text, Segoe UI, SegoeUI, Helvetica Neue, Helvetica, Arial, sans-serif;
+      }
+
+      .header img {
+        margin-left: 14px;
+        height: 18px;
+        width: 18px;
+      }
+
+      .header label {
+        font-size: 12px;
+        margin-left: 16px;
+      }
+
+
     `;
   }
 
@@ -422,14 +479,23 @@ export class AppMenu extends LitElement {
       </div>
       <div class="font-option">
         <h3 id="font-style">Style</h3>
-        <sl-select id="style-select" aria-labelledby="font-style" value=${this.availableFonts[Settings.instance.font.family].styles.includes(Settings.instance.font.style) ? Settings.instance.font.style : this.availableFonts[Settings.instance.font.family].styles[0]} @sl-change=${() => this.updateFont()}>
-          ${this.availableFonts[Settings.instance.font.family].styles.map((style: string) => html`<sl-option value="${style}">${style.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</sl-option>`)}
-        </sl-select>
+        <!-- goes here -->
       </div>
     `
     }
     return;
   }
+
+   backButtonClicked() {
+    const event = new CustomEvent('settingsClosed', {
+      bubbles: true, // if you want the event to bubble up through the DOM
+    });
+    this.dispatchEvent(event);
+  }
+
+  // <!-- <sl-select id="style-select" aria-labelledby="font-style" value=${this.availableFonts[Settings.instance.font.family]?.styles?.includes(Settings.instance.font.style) ? Settings.instance.font.style : this.availableFonts[Settings.instance.font.family].styles[0]} @sl-change=${() => this.updateFont()}>
+  //         ${this.availableFonts[Settings.instance.font.family].styles.map((style: string) => html`<sl-option value="${style}">${style.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</sl-option>`)}
+  //       </sl-select> -->
 
   render() {
 
@@ -444,6 +510,11 @@ export class AppMenu extends LitElement {
 
     return html`
       <div class="root">
+        <div class="header">
+          <button id="back-button" type="button" @click=${() => this.backButtonClicked()}><sl-icon name="arrow-left"></sl-icon></button>
+          <img src="/assets/icons/Square44x44Logo.scale-100.png" alt="Notepad logo" />
+          <label>Notepad</label>
+        </div>
         <h1>Settings</h1>
         <div class="controls">
             <sl-details id="app-theme-details">
@@ -538,7 +609,6 @@ export class AppMenu extends LitElement {
       </div>
     `;
   }
-
 
 }
 

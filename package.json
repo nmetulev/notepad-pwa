@@ -4,10 +4,8 @@
   "description": "A starter kit for building PWAs!",
   "main": "index.js",
   "scripts": {
-    "dev-server": "vite --open --port 3000",
-    "dev": "npx @azure/static-web-apps-cli start http://localhost:3000 --run \"npm run dev-server\"",
+    "dev": "vite --open --port 3000",
     "dev-task": "vite",
-    "deploy": " npx @azure/static-web-apps-cli login --no-use-keychain && npx @azure/static-web-apps-cli deploy",
     "build": "tsc && vite build",
     "start": "npm run dev",
     "start-remote": "vite --host"
@@ -15,10 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@pwabuilder/pwainstall": "^1.6.7",
-    "@shoelace-style/shoelace": "^2.10.0",
-    "@types/wicg-file-system-access": "^2020.9.5",
-    "lit": "^2.2.1"
+    "@shoelace-style/shoelace": "^2.12.0",
+    "@types/wicg-file-system-access": "^2023.10.4",
+    "lit": "^3.1.0"
   },
   "devDependencies": {
     "rollup-plugin-postcss-lit": "^2.0.0",

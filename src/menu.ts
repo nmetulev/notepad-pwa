@@ -98,15 +98,18 @@ export class AppMenu extends LitElement {
           <sl-dropdown>
             <sl-button slot="trigger">File</sl-button>
             <sl-menu @sl-select=${(e: any) => this.menuItemClicked(e.detail.item.value)}>
-              <sl-menu-item value="new">New</sl-menu-item>
+              <sl-menu-item value="new">New Tab</sl-menu-item>
               <sl-menu-item value="new-window">New window</sl-menu-item>
               <sl-menu-item value="open">Open</sl-menu-item>
               <sl-menu-item value="save">Save</sl-menu-item>
               <sl-menu-item value="save-as">Save as</sl-menu-item>
+              <sl-menu-item value="save-all">Save all</sl-menu-item>
               <sl-divider></sl-divider>
               <sl-menu-item value="page-setup">Page setup</sl-menu-item>
               <sl-menu-item value="print">Print</sl-menu-item>
               <sl-divider></sl-divider>
+              <sl-menu-item value="close-tab">Close Tab</sl-menu-item>
+              <sl-menu-item value="close-window">Close Window</sl-menu-item>
               <sl-menu-item value="exit">Exit</sl-menu-item>
             </sl-menu>
           </sl-dropdown>
@@ -123,7 +126,7 @@ export class AppMenu extends LitElement {
   }
 
   showSettingsPage(){
-    const event = new CustomEvent('showSettingsPage', {
+    const event = new CustomEvent('showSettingsClicked', {
       bubbles: true, // if you want the event to bubble up through the DOM
     });
     this.dispatchEvent(event);
@@ -132,19 +135,25 @@ export class AppMenu extends LitElement {
   private async menuItemClicked(item: string) {
     switch (item) {
       case 'new':
-        Notepad.instance.newFile();
+        Notepad.addNewTab();
         break;
       case 'new-window':
         window.open('/', '', 'width=1200, height=750');
         break;
       case 'open':
-        Notepad.instance.openFile();
+        Notepad.openFile();
         break;
       case 'save':
-        Notepad.instance.saveFile();
+        Notepad.current.saveFile();
+        break;
+      case 'save-all':
+        // save all files
+        // Notepad.tabs.forEach(async tab => {
+        //   await tab.saveFile();
+        // });
         break;
       case 'save-as':
-        Notepad.instance.saveAsFile();
+        Notepad.current.saveAsFile();
         break;
       case 'print':
         var response = await fetch('http://localhost:7083');

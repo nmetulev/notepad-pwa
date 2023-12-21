@@ -1,4 +1,4 @@
-import { EventDispatcher, EventHandler } from "./utils/EventDispatcher";
+import { EventDispatcher, EventHandler } from "../utils/EventDispatcher";
 
 export type Theme = "light" | "dark" | "system";
 
@@ -6,7 +6,7 @@ export type Font = {
     family: string, style: string, size: number
 }
 
-//export type fontStyle = "regular" | "bold" | "italic" | "bold+italic"
+export type fontStyle = "regular" | "bold" | "italic" | "bold+italic"
 
 export class Settings {
     private static _instance: Settings;
