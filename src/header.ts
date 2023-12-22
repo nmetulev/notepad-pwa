@@ -33,33 +33,30 @@ export class AppHeader extends LitElement {
     return css`
       :host {
         display: block;
-        width: env(titlebar-area-width, 100%);
-        height: env(titlebar-area-height, 33px);
         min-height: env(titlebar-area-height, 33px);
+        background-color: var(--header-background-color);
       }
 
       .root {
-        position: fixed;
-
         left: env(titlebar-area-x, 0);
         top: env(titlebar-area-y, 0);
         width: env(titlebar-area-width, 100%);
-        height: env(titlebar-area-height, 33px);
+        height: 40px;
         app-region: drag;
 
-        background-color: var(--header-background-color);
         color: var(--text-color);
         display: flex;
         flex-direction: row;
-        align-items: center;
+        align-items: end;
         align-content: center;
         font-family: Segoe UI Variable Text, Segoe UI, SegoeUI, Helvetica Neue, Helvetica, Arial, sans-serif;
       }
 
       .root img {
         margin-left: 14px;
-        height: 18px;
-        width: 18px;
+        margin-bottom: 8px;
+        height: 20px;
+        width: 20px;
       }
 
       .root label {
@@ -67,14 +64,44 @@ export class AppHeader extends LitElement {
         margin-left: 16px;
       }
 
-      .tabGroup,
       .new-tab-button {
+        background-color: transparent;
+        border: none;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         app-region: no-drag;
+        font-weight: 100;
+        color: #4f4f4f;
+        padding: 2px 8px;
+        align-self: end;
+        margin: 3px 12px;
+      }
+
+      .new-tab-button:hover {
+        background-color: #e8eaf0;
+      }
+
+      .tabGroup {
+        app-region: no-drag;
+        margin-left: 16px;
+        align-self: end;
+        --track-color: transparent;
+      }
+
+      .tabGroup::part(active-tab-indicator) {
+        display: none;
+      }
+
+      .tabGroup::part(tabs) {
+        border: none
       }
 
       .file-name {
         width: 160px;
-        overflow: hidden
+        overflow: hidden;
+        font-size: 12px;
       }
 
       .dirty-flag {
@@ -83,6 +110,23 @@ export class AppHeader extends LitElement {
 
       sl-icon {
         color: var(--text-color);
+      }
+
+      sl-tab {
+        height: 30px;
+        border-radius: 8px 8px 0 0;
+        font-size: 8px;
+      }
+
+      sl-tab::part(base) {
+        padding: 6px;
+      }
+
+      sl-tab[active] {
+        background: var(--menu-background-color);
+        border: solid 1.5px var(--status-bar-border-color);
+        border-width: 1px 1px 0 1px;
+        --sl-color-primary-600: #4f4f4f;
       }
     `;
   }
@@ -230,12 +274,11 @@ export class AppHeader extends LitElement {
               @click=${(e: Event) => {Notepad.changeTabById(tab.id)}}
               draggable="true"
               closable
-              ><div class="file-name">${tab.fileName}</div>
-              ${tab.isDirty ? html`<sl-icon class="dirty-flag" name="dot"></sl-icon>` : html``}</sl-tab>
+              ><span class="file-name">${tab.fileName}</span>${tab.isDirty ? html`<sl-icon class="dirty-flag" name="dot"></sl-icon>` : html``}</sl-tab>
 
           `})}
         </sl-tab-group>
-        <sl-button class="new-tab-button" @click=${(_: any) => this.handleNewTabClicked()}>+</sl-button>
+        <button class="new-tab-button" @click=${(_: any) => this.handleNewTabClicked()}>+</button>
       </div>
     `;
   }

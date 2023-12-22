@@ -38,16 +38,78 @@ export class AppMenu extends LitElement {
       }
 
       .root {
-        padding: 5px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        background: var(--settings-background);
+        /* background: var(--settings-background); */
+        background: var(--header-background-color);
         color: var(--text-color);
         /* background: -moz-linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%);
         background: -webkit-linear-gradient(45deg, hsla(207, 48%, 95%, 1) 0%, hsla(34, 57%, 95%, 1) 100%); */
         filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#EEF4F9", endColorstr="#F9F2E9", GradientType=1 );
         min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      .header label {
+        font-size: 12px;
+        margin-left: 16px;
+
+      }
+
+      .header {
+        left: env(titlebar-area-x, 0);
+        top: env(titlebar-area-y, 0);
+        width: env(titlebar-area-width, 100%);
+        height: 44px;
+        app-region: drag;
+
+        color: var(--text-color);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        align-content: center;
+        font-family: Segoe UI Variable Text, Segoe UI, SegoeUI, Helvetica Neue, Helvetica, Arial, sans-serif;
+        padding: 6px;
+      }
+
+      .back-button {
+        background-color: transparent;
+        border: none;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        app-region: no-drag;
+      }
+
+      .back-button:hover {
+        background-color: #e8eaf0;
+      }
+
+      .back-button sl-icon {
+        margin: 6px 2px;
+        font-size: 14px
+      }
+
+
+      .header img {
+        height: 20px;
+        width: 20px;
+        margin-left: 10px
+      }
+
+      .header label {
+        font-size: 13px;
+        margin-left: 12px;
+      }
+
+      .content {
+        padding: 40px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        flex: 1 1 auto;
+        overflow: auto;
       }
 
       .root h1 {
@@ -368,57 +430,6 @@ export class AppMenu extends LitElement {
       .subtext {
         color: var(--subtext-color);
       }
-
-      #back-button {
-        background-color: transparent;
-        border: none;
-        margin-left: 5px;
-        margin-top: 5px;
-        padding: 3px 5px;
-        font-size: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        app-region: no-drag;
-      }
-
-    #back-button:hover {
-        background-color: #e8eaf0;
-      }
-
-      .header label {
-        font-size: 12px;
-        margin-left: 16px;
-
-      }
-
-      .header {
-        left: env(titlebar-area-x, 0);
-        top: env(titlebar-area-y, 0);
-        width: env(titlebar-area-width, 100%);
-        height: env(titlebar-area-height, 33px);
-        app-region: drag;
-
-        color: var(--text-color);
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        align-content: center;
-        font-family: Segoe UI Variable Text, Segoe UI, SegoeUI, Helvetica Neue, Helvetica, Arial, sans-serif;
-      }
-
-      .header img {
-        margin-left: 14px;
-        height: 18px;
-        width: 18px;
-      }
-
-      .header label {
-        font-size: 12px;
-        margin-left: 16px;
-      }
-
-
     `;
   }
 
@@ -548,100 +559,102 @@ export class AppMenu extends LitElement {
     return html`
       <div class="root">
         <div class="header">
-          <button id="back-button" type="button" @click=${() => this.backButtonClicked()}><sl-icon name="arrow-left"></sl-icon></button>
+          <button class="back-button" type="button" @click=${() => this.backButtonClicked()}><sl-icon name="arrow-left"></sl-icon></button>
           <img src="/assets/icons/Square44x44Logo.scale-100.png" alt="Notepad logo" />
           <label>Notepad</label>
         </div>
-        <h1>Settings</h1>
-        <div class="controls">
-            <sl-details id="app-theme-details">
-            <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
-            <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
-                <div class="icon-header" slot="summary">
-                  ${iconSvgs["theme"]}
-                  <div>
-                      <h2 id="app-theme">App theme</h2>
-                      <p class="subtext"> Select which app theme to display</p>
+        <div class="content">
+          <h1>Settings</h1>
+          <div class="controls">
+              <sl-details id="app-theme-details">
+              <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
+              <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
+                  <div class="icon-header" slot="summary">
+                    ${iconSvgs["theme"]}
+                    <div>
+                        <h2 id="app-theme">App theme</h2>
+                        <p class="subtext"> Select which app theme to display</p>
+                    </div>
                   </div>
+                  <sl-radio-group aria-labelledby="app-theme" id="theme-group" value=${Settings.instance.theme} @sl-change=${() => this.updateTheme()}>
+                      <sl-radio value="light">Light</sl-radio>
+                      <sl-radio value="dark">Dark</sl-radio>
+                      <sl-radio value="system">Use system setting</sl-radio>
+                  </sl-radio-group>
+              </sl-details>
+              <sl-details id="font-details">
+                <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
+                <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
+                <div class="icon-header" slot="summary">
+                    ${iconSvgs["font"]}
+                    <h2>Font</h2>
                 </div>
-                <sl-radio-group aria-labelledby="app-theme" id="theme-group" value=${Settings.instance.theme} @sl-change=${() => this.updateTheme()}>
-                    <sl-radio value="light">Light</sl-radio>
-                    <sl-radio value="dark">Dark</sl-radio>
-                    <sl-radio value="system">Use system setting</sl-radio>
-                </sl-radio-group>
-            </sl-details>
-            <sl-details id="font-details">
+                <div class="font-options">
+
+                    ${this.generateFontGroups()}
+
+                    <div class="font-option">
+                        <h3 id="font-size">Size</h3>
+                        <sl-select id="size-select" aria-labelledby="font-size" value=${Settings.instance.font.size} @sl-change=${() => this.updateFont()}>
+                            ${fontSizes.map((num: number) => html`<sl-option value=${num}>${num}</sl-option>`)}
+                        </sl-select>
+                    </div>
+                    <div class="font-demo">
+                        <p style=${styleMap(styleInfo)}>The sound of ocean waves calms my soul.</p>
+                    </div>
+                  </div>
+              </sl-details>
+              <div class="non-collapsable-setting">
+                <div class="ncs-item">
+                    ${iconSvgs["wrap"]}
+                    <div>
+                        <h2 id="app-theme">Word wrap</h2>
+                        <p class="subtext">Fit text within window by default</p>
+                    </div>
+                </div>
+                <sl-switch @sl-change=${() => this.toggleWordsWrapping()} .checked=${Settings.instance.wrap}>${Settings.instance.wrap ? "On" : "Off"}</sl-switch>
+            </div>
+          <div class="non-collapsable-setting">
+              <div class="ncs-item">
+                ${iconSvgs["open"]}
+                <div>
+                    <h2 id="opening-files">Opening files</h2>
+                    <p class="subtext">Choose where your files are opened</p>
+                </div>
+              </div>
+              <sl-select id="open-behavior-select" aria-labelledby="opening-files" value="${Settings.instance.open_behavior}">
+                  <sl-option value="true">Open in a new tab</sl-option>
+                  <sl-option value="false">Open in a new window</sl-option>
+              </sl-select>
+          </div>
+            <sl-details id="start-behavior-details">
               <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
               <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
               <div class="icon-header" slot="summary">
-                  ${iconSvgs["font"]}
-                  <h2>Font</h2>
+                  ${iconSvgs["tab"]}
+                  <h2 id="start-behavior">When Notepad (PWA) starts</h2>
               </div>
-              <div class="font-options">
-
-                  ${this.generateFontGroups()}
-
-                  <div class="font-option">
-                      <h3 id="font-size">Size</h3>
-                      <sl-select id="size-select" aria-labelledby="font-size" value=${Settings.instance.font.size} @sl-change=${() => this.updateFont()}>
-                          ${fontSizes.map((num: number) => html`<sl-option value=${num}>${num}</sl-option>`)}
-                      </sl-select>
-                  </div>
-                  <div class="font-demo">
-                      <p style=${styleMap(styleInfo)}>The sound of ocean waves calms my soul.</p>
-                  </div>
-                </div>
-            </sl-details>
-            <div class="non-collapsable-setting">
-              <div class="ncs-item">
-                  ${iconSvgs["wrap"]}
-                  <div>
-                      <h2 id="app-theme">Word wrap</h2>
-                      <p class="subtext">Fit text within window by default</p>
-                  </div>
-              </div>
-              <sl-switch @sl-change=${() => this.toggleWordsWrapping()} .checked=${Settings.instance.wrap}>${Settings.instance.wrap ? "On" : "Off"}</sl-switch>
+              <sl-radio-group id="start-group" aria-labelledby="start-behavior" value=${Settings.instance.start_behavior} @sl-change=${() => this.updateStartBehvaior()}>
+                  <sl-radio value="true">Open content from the previous session</sl-radio>
+                  <sl-radio value="false">Open a new window</sl-radio>
+              </sl-radio-group>
+          </sl-details>
           </div>
-        <div class="non-collapsable-setting">
-            <div class="ncs-item">
-              ${iconSvgs["open"]}
-              <div>
-                  <h2 id="opening-files">Opening files</h2>
-                  <p class="subtext">Choose where your files are opened</p>
-              </div>
-            </div>
-            <sl-select id="open-behavior-select" aria-labelledby="opening-files" value="${Settings.instance.open_behavior}">
-                <sl-option value="true">Open in a new tab</sl-option>
-                <sl-option value="false">Open in a new window</sl-option>
-            </sl-select>
-        </div>
-          <sl-details id="start-behavior-details">
-            <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
-            <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
-            <div class="icon-header" slot="summary">
-                ${iconSvgs["tab"]}
-                <h2 id="start-behavior">When Notepad (PWA) starts</h2>
-            </div>
-            <sl-radio-group id="start-group" aria-labelledby="start-behavior" value=${Settings.instance.start_behavior} @sl-change=${() => this.updateStartBehvaior()}>
-                <sl-radio value="true">Open content from the previous session</sl-radio>
-                <sl-radio value="false">Open a new window</sl-radio>
-            </sl-radio-group>
-        </sl-details>
-        </div>
-        <div class="about-this-app">
-            <h2>About this app</h2>
-            <p>Windows Notepad 11.2310.12.0<br>
-            © 2023 Microsoft. All rights reserved.</p>
-        </div>
-        <div class="links">
-            <a href="https://www.microsoft.com/en-us/Useterms/Retail/Windows/10/UseTerms_Retail_Windows_10_English.htm" target="_blank" rel="noopener">Microsoft Software License Terms</a>
-            <a href="https://www.microsoft.com/en-us/servicesagreement" target="_blank" rel="noopener">Microsoft Services Agreement</a>
-            <a href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank" rel="noopener">Microsoft Privacy Statement</a>
-            <button>Third-Party Software Acknowledgements</button>
-        </div>
-        <div class="buttons">
-            <button>Send feedback</button>
-            <a class="link-button" href="https://support.microsoft.com/en-us/windows/help-in-notepad-4d68c388-2ff2-0e7f-b706-35fb2ab88a8c" target="_blank" rel="noopener">Help</a>
+          <div class="about-this-app">
+              <h2>About this app</h2>
+              <p>Windows Notepad 11.2310.12.0<br>
+              © 2023 Microsoft. All rights reserved.</p>
+          </div>
+          <div class="links">
+              <a href="https://www.microsoft.com/en-us/Useterms/Retail/Windows/10/UseTerms_Retail_Windows_10_English.htm" target="_blank" rel="noopener">Microsoft Software License Terms</a>
+              <a href="https://www.microsoft.com/en-us/servicesagreement" target="_blank" rel="noopener">Microsoft Services Agreement</a>
+              <a href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank" rel="noopener">Microsoft Privacy Statement</a>
+              <button>Third-Party Software Acknowledgements</button>
+          </div>
+          <div class="buttons">
+              <button>Send feedback</button>
+              <a class="link-button" href="https://support.microsoft.com/en-us/windows/help-in-notepad-4d68c388-2ff2-0e7f-b706-35fb2ab88a8c" target="_blank" rel="noopener">Help</a>
+          </div>
         </div>
       </div>
     `;

@@ -1,4 +1,5 @@
 import { EventDispatcher, EventHandler } from "../utils/EventDispatcher";
+import { MessageDialogService } from "../utils/messageDialogService";
 import { NotepadFile } from "./notepadFile";
 
 export abstract class Notepad {
@@ -45,6 +46,7 @@ export abstract class Notepad {
 
         let tab = Notepad._tabs[index];
         if (tab.isDirty) {
+            MessageDialogService.show(`Do you want to save changes to ${tab.fileName || 'Untitled'}`);
             return;
         }
 
