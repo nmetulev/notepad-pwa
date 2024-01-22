@@ -84,6 +84,7 @@ export class AppMenu extends LitElement {
   }
 
   updateText(e: InputEvent){
+    this.updateCursorPosition();
     Notepad.instance.editorContents = (e.target as HTMLDivElement).innerText;
   }
 
@@ -110,6 +111,20 @@ export class AppMenu extends LitElement {
     return "unset";
   }
 
+
+  updateCursorPosition() {
+    //@ts-ignore
+    const selection = this.shadowRoot!.getSelection();
+    console.log(selection!.get)
+    if (selection!.rangeCount > 0) {
+        const range = selection!.getRangeAt(0);
+        const start = range.startOffset;
+        const end = range.endOffset;
+
+        console.log(`Cursor start position: ${start}, end position: ${end}`);
+    }
+  }
+
   render() {
 
     const styleInfo = {
@@ -132,7 +147,8 @@ export class AppMenu extends LitElement {
           spellcheck="false"
           @input=${(e: InputEvent) => this.updateText(e)}
           @keydown=${this.handleTab}
-          @paste=${this.pasteAsPlainText}></div>
+          @paste=${this.pasteAsPlainText}
+          @click=${() => this.updateCursorPosition()}></div>
       </div>
     `;
   }
