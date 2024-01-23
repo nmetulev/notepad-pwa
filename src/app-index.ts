@@ -13,7 +13,6 @@ import './status-bar';
 
 import './styles/global.css';
 import { Notepad, notepadEventNames } from './state';
-import { Settingss } from './utils/interfaces';
 import { Settings, settingsEventNames } from './settings-state';
 
 declare global {

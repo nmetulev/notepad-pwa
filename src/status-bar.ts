@@ -17,12 +17,15 @@ export class AppMenu extends LitElement {
         background-color: var(--status-bar-background-color);
         border-top: solid 1.5px var(--status-bar-border-color);
         display: grid;
-        grid-template-columns: 10fr 1fr 3fr 2fr;
+        grid-template-columns: 9fr 2fr 4fr 3fr;
         padding: 7px;
+        font-family: "Segoe UI Variable Text", "Segoe UI", SegoeUI, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 12px;
+        color: #696969;
       }
 
       .position, .zoom, .line-endings {
-        border-right: 1px solid #b3babb;
+        border-right: 1px solid #d6dcdd;
       }
 
       .root > * {

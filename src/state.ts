@@ -10,7 +10,7 @@ export class Notepad {
     private static _instance: Notepad;
 
     constructor(){
-        this._cursorPosition = { start: 0, end: 0, line: 0 };
+        this._cursorPosition = { start: 1, end: 1, line: 1 };
     }
 
     static get instance() {
