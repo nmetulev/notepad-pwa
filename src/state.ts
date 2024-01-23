@@ -1,7 +1,17 @@
 import { EventDispatcher, EventHandler } from "./utils/EventDispatcher";
 
+type cursorInformation = {
+    start: number;
+    end: number;
+    line: number;
+}
+
 export class Notepad {
     private static _instance: Notepad;
+
+    constructor(){
+        this._cursorPosition = { start: 0, end: 0, line: 0 };
+    }
 
     static get instance() {
         if (!this._instance) {
@@ -44,6 +54,16 @@ export class Notepad {
         this._editorContents = v;
         localStorage.setItem('lastSession', encodeURIComponent(this._editorContents));
         this._eventDispatcher.fire(notepadEventNames.editorChanged);
+    }
+
+    private _cursorPosition!: cursorInformation;
+    public get cursorPosition(): cursorInformation {
+        return this._cursorPosition;
+    }
+
+    public set cursorPosition(v: cursorInformation){
+        this._cursorPosition = v;
+        this._eventDispatcher.fire(notepadEventNames.cursorPositionChanged)
     }
 
     public async setFileHandle(handle: FileSystemFileHandle) {
@@ -149,5 +169,6 @@ export class Notepad {
 export const notepadEventNames = {
     fileChanged: 'notepad-file-changed',
     editorChanged: 'notepad-editor-contents-changed',
-    decideOnChanges: 'notepad-need-to-decide-on-changes'
+    decideOnChanges: 'notepad-need-to-decide-on-changes',
+    cursorPositionChanged: 'cursor-position-changed'
 }

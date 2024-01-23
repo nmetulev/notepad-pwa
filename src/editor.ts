@@ -34,6 +34,7 @@ export class AppMenu extends LitElement {
         min-width: 100%;
         overflow-wrap: normal;
         box-sizing: border-box;
+        line-height: 1.2;
       }
 
       .editor.wrap {
@@ -69,6 +70,7 @@ export class AppMenu extends LitElement {
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     this.setEditorContents();
     this.editor?.focus();
+    this.updateCursorPosition();
   }
 
   private onFileChangedHandler = this.setEditorContents.bind(this);
@@ -113,15 +115,27 @@ export class AppMenu extends LitElement {
 
 
   updateCursorPosition() {
+    const contentEditableDiv = this.shadowRoot!.querySelector(".editor")!;
+
     //@ts-ignore
     const selection = this.shadowRoot!.getSelection();
-    console.log(selection!.get)
     if (selection!.rangeCount > 0) {
         const range = selection!.getRangeAt(0);
         const start = range.startOffset;
         const end = range.endOffset;
 
-        console.log(`Cursor start position: ${start}, end position: ${end}`);
+        const contentDivRect = contentEditableDiv.getBoundingClientRect();
+        const rangeRect = range.getBoundingClientRect();
+
+        const lineHeight = parseInt(getComputedStyle(contentEditableDiv).lineHeight);
+        const line = Math.floor((rangeRect.top - contentDivRect.top) / lineHeight) + 1;
+
+
+        Notepad.instance.cursorPosition = {
+          start: start + 1,
+          end: end + 1,
+          line: line
+        }
     }
   }
 
