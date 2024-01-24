@@ -86,7 +86,6 @@ export class AppMenu extends LitElement {
   }
 
   updateText(e: InputEvent){
-    this.updateCursorPosition();
     Notepad.instance.editorContents = (e.target as HTMLDivElement).innerText;
   }
 
@@ -115,27 +114,36 @@ export class AppMenu extends LitElement {
 
 
   updateCursorPosition() {
+
     const contentEditableDiv = this.shadowRoot!.querySelector(".editor")!;
 
     //@ts-ignore
     const selection = this.shadowRoot!.getSelection();
     if (selection!.rangeCount > 0) {
-        const range = selection!.getRangeAt(0);
-        const start = range.startOffset;
-        const end = range.endOffset;
+      const range = selection!.getRangeAt(0);
+      const start = range.startOffset;
+      const end = range.endOffset;
 
-        const contentDivRect = contentEditableDiv.getBoundingClientRect();
-        const rangeRect = range.getBoundingClientRect();
+      const contentDivRect = contentEditableDiv.getBoundingClientRect();
+      const rangeRect = range.getBoundingClientRect();
 
-        const lineHeight = parseInt(getComputedStyle(contentEditableDiv).lineHeight);
-        const line = Math.floor((rangeRect.top - contentDivRect.top) / lineHeight) + 1;
+      const lineHeight = parseInt(getComputedStyle(contentEditableDiv).lineHeight);
 
+      // Calculate line number, ensuring it's not negative
+      let line = Math.floor((rangeRect.top - contentDivRect.top) / lineHeight) + 1;
+      line = Math.max(line, 1); // Ensure line number is at least 1
 
-        Notepad.instance.cursorPosition = {
+      // Handling special cases
+      if (contentEditableDiv.textContent === '') {
+          // If there's no text, default to the first line
+          line = 1;
+      }
+
+      Notepad.instance.cursorPosition = {
           start: start + 1,
           end: end + 1,
           line: line
-        }
+      }
     }
   }
 
@@ -162,7 +170,8 @@ export class AppMenu extends LitElement {
           @input=${(e: InputEvent) => this.updateText(e)}
           @keydown=${this.handleTab}
           @paste=${this.pasteAsPlainText}
-          @click=${() => this.updateCursorPosition()}></div>
+          @click=${() => this.updateCursorPosition()}
+          @keyup=${() => this.updateCursorPosition()}></div>
       </div>
     `;
   }

@@ -75,7 +75,6 @@ export class AppMenu extends LitElement {
         <div class="zoom">100%</div>
         <div class="line-endings">${this.lineEnding}</div>
         <div class="text-type">UTF-8</div>
-
       </div>
     `;
   }
