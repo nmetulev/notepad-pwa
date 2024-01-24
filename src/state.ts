@@ -11,6 +11,8 @@ export class Notepad {
 
     constructor(){
         this._cursorPosition = { start: 1, end: 1, line: 1 };
+        this._encoding = "UTF-8";
+        this._fileEnding = "Windows (CRLF)";
     }
 
     static get instance() {
@@ -66,9 +68,63 @@ export class Notepad {
         this._eventDispatcher.fire(notepadEventNames.cursorPositionChanged)
     }
 
+    private _encoding!: string;
+    public get encoding(): string {
+        return this._encoding;
+    }
+
+    public set encoding(v: string){
+        this._encoding = v;
+        this._eventDispatcher.fire(notepadEventNames.encodingChanged)
+    }
+
+    private _fileEnding!: string;
+    public get fileEnding(): string {
+        return this._fileEnding;
+    }
+
+    public set fileEnding(v: string){
+        this._fileEnding = v;
+        this._eventDispatcher.fire(notepadEventNames.fileEndingChanged);
+    }
+
+    private getCarraigeReturn(file: File){
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            const buffer = reader.result;
+
+            if (buffer) {
+                const text = new TextDecoder("utf-8").decode(buffer as ArrayBuffer);
+                const containsCRLF = text.includes('\r\n');
+                const containsLF = text.includes('\n');
+                const containsCR = text.includes('\r') && !text.includes('\n');
+
+                if (containsCRLF) {
+                    Notepad._instance.fileEnding = 'Windows (CRLF)';
+                } else if (containsLF) {
+                    Notepad._instance.fileEnding = 'Unix (LF)';
+                } else if (containsCR) {
+                    Notepad._instance.fileEnding = 'Macintosh (CR)';
+                } else {
+                    console.log("No standard line endings found.");
+                }
+            } else {
+                console.error("Buffer is null");
+            }
+        };
+
+        reader.onerror = () => {
+            console.error("Error reading file:", reader.error);
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+
     public async setFileHandle(handle: FileSystemFileHandle) {
         try {
             const file = await handle.getFile();
+            this.getCarraigeReturn(file);
             this.fileName = handle.name;
             this.fileContents = await file.text();
             this.fileHandle = handle;
@@ -170,5 +226,7 @@ export const notepadEventNames = {
     fileChanged: 'notepad-file-changed',
     editorChanged: 'notepad-editor-contents-changed',
     decideOnChanges: 'notepad-need-to-decide-on-changes',
-    cursorPositionChanged: 'cursor-position-changed'
+    cursorPositionChanged: 'cursor-position-changed',
+    encodingChanged: 'encoding-changed',
+    fileEndingChanged: 'file-ending-changed'
 }

@@ -8,6 +8,7 @@ export class AppMenu extends LitElement {
   @state() start: number = 0;
   @state() end: number = 0;
   @state() line: number = 0;
+  @state() lineEnding: string = "Windows (CRLF)";
 
   static get styles() {
     return css`
@@ -40,10 +41,12 @@ export class AppMenu extends LitElement {
   constructor() {
     super();
     Notepad.instance.on(notepadEventNames.cursorPositionChanged, () => this.handleCursorUpdate(this));
+    Notepad.instance.on(notepadEventNames.fileEndingChanged, () => this.handleFileEndingChange(this));
   }
 
   disconnectedCallback(): void {
     Notepad.instance.removeListener(notepadEventNames.cursorPositionChanged, this.handleCursorUpdate);
+    Notepad.instance.removeListener(notepadEventNames.fileEndingChanged, this.handleFileEndingChange);
   }
 
   handleCursorUpdate(root: any){
@@ -56,6 +59,13 @@ export class AppMenu extends LitElement {
     }
   }
 
+  handleFileEndingChange(root: any){
+    if(Notepad.instance.fileEnding){
+      root.lineEnding = Notepad.instance.fileEnding;
+    }
+    this.requestUpdate();
+  }
+
   render() {
     return html`
       <div class="root">
@@ -63,7 +73,7 @@ export class AppMenu extends LitElement {
           Ln ${this.line}, Col ${this.end}
         </div>
         <div class="zoom">100%</div>
-        <div class="line-endings">Windows (CRLF)</div>
+        <div class="line-endings">${this.lineEnding}</div>
         <div class="text-type">UTF-8</div>
 
       </div>

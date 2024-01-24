@@ -19,6 +19,7 @@
     "@pwabuilder/pwainstall": "^1.6.7",
     "@shoelace-style/shoelace": "^2.10.0",
     "@types/wicg-file-system-access": "^2020.9.5",
+    "jschardet": "^3.0.0",
     "lit": "^2.2.1"
   },
   "devDependencies": {
