@@ -9,6 +9,7 @@ export class AppMenu extends LitElement {
   @state() end: number = 0;
   @state() line: number = 0;
   @state() lineEnding: string = "Windows (CRLF)";
+  @state() encoding: string = "UTF-8";
 
   static get styles() {
     return css`
@@ -42,6 +43,7 @@ export class AppMenu extends LitElement {
     super();
     Notepad.instance.on(notepadEventNames.cursorPositionChanged, () => this.handleCursorUpdate(this));
     Notepad.instance.on(notepadEventNames.fileEndingChanged, () => this.handleFileEndingChange(this));
+    Notepad.instance.on(notepadEventNames.encodingChanged, () => this.handleEncondingChange(this));
   }
 
   disconnectedCallback(): void {
@@ -66,6 +68,13 @@ export class AppMenu extends LitElement {
     this.requestUpdate();
   }
 
+  handleEncondingChange(root: any){
+    if(Notepad.instance.encoding){
+      root.encoding = Notepad.instance.encoding
+    }
+    this.requestUpdate();
+  }
+
   render() {
     return html`
       <div class="root">
@@ -74,7 +83,7 @@ export class AppMenu extends LitElement {
         </div>
         <div class="zoom">100%</div>
         <div class="line-endings">${this.lineEnding}</div>
-        <div class="text-type">UTF-8</div>
+        <div class="text-type">${this.encoding}</div>
       </div>
     `;
   }

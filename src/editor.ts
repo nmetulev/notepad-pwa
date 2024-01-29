@@ -78,7 +78,7 @@ export class AppMenu extends LitElement {
   private setEditorContents() {
     if (this.editor) {
       this.editor.textContent = Notepad.instance.fileContents || ""; // sets editor to file contents if file contents exist.
-      if(localStorage.getItem('lastSession') && Settings.instance.start_behavior){
+      if(localStorage.getItem('lastSession') && Settings.instance.start_behavior && this.editor.textContent.length === 0){
         this.editor.innerText = decodeURIComponent(localStorage.getItem('lastSession')!);
       }
       Notepad.instance.editorContents = this.editor.innerText;

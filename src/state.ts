@@ -1,4 +1,5 @@
 import { EventDispatcher, EventHandler } from "./utils/EventDispatcher";
+import jschardet  from 'jschardet';
 
 type cursorInformation = {
     start: number;
@@ -78,6 +79,34 @@ export class Notepad {
         this._eventDispatcher.fire(notepadEventNames.encodingChanged)
     }
 
+    private getEncoding(file: File){
+        const reader = new FileReader();
+        const bom = [0xEF, 0xBB, 0xBF];
+        const blob = file.slice(0, bom.length); // Read only the first few bytes
+
+        reader.onloadend = (e) => {
+            const arr = new Uint8Array(e.target!.result as ArrayBuffer);
+            let hasBOM = true;
+            for (let i = 0; i < bom.length; i++) {
+                if (arr[i] !== bom[i]) {
+                    hasBOM = false;
+                    break;
+                }
+            }
+
+            if (hasBOM) {
+                Notepad._instance.encoding = "UTF-8 with BOM";
+            }
+        };
+
+        reader.onerror = () => {
+            console.log("Error reading the file");
+        };
+
+        reader.readAsArrayBuffer(blob);
+
+    }
+
     private _fileEnding!: string;
     public get fileEnding(): string {
         return this._fileEnding;
@@ -106,8 +135,6 @@ export class Notepad {
                     Notepad._instance.fileEnding = 'Unix (LF)';
                 } else if (containsCR) {
                     Notepad._instance.fileEnding = 'Macintosh (CR)';
-                } else {
-                    console.log("No standard line endings found.");
                 }
             } else {
                 console.error("Buffer is null");
@@ -125,8 +152,10 @@ export class Notepad {
         try {
             const file = await handle.getFile();
             this.getCarraigeReturn(file);
+            this.getEncoding(file);
             this.fileName = handle.name;
             this.fileContents = await file.text();
+            console.log(this.fileContents)
             this.fileHandle = handle;
             return true;
         } catch (_) {
