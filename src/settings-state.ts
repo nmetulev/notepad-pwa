@@ -23,6 +23,7 @@ export class Settings {
             this.start_behavior = true; // true = open from previous session, false = new note
             this.zoom = 100;
             this.displayFontSize = 11
+            this.showingStatusBar = true;
         }
     }
 
@@ -127,10 +128,20 @@ export class Settings {
         this._displayFontSize = v;
         this._eventDispatcher.fire(settingsEventNames.settingsChanged);
     }
+
+    private _showingStatusBar!: boolean;
+    public get showingStatusBar(): boolean {
+        return this._showingStatusBar;
+    }
+    public set showingStatusBar(v: boolean) {
+        this._showingStatusBar = v;
+        this._eventDispatcher.fire(settingsEventNames.showingStatusBarChanged);
+    }
 }
 
 export const settingsEventNames = {
     themeChanged: 'settings-theme-changed',
     settingsChanged: 'settings-changed',
-    zoomChanged: 'zoom-changed'
+    zoomChanged: 'zoom-changed',
+    showingStatusBarChanged: 'showing-status-bar-changed'
 }

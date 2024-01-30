@@ -31,6 +31,8 @@ export class AppIndex extends LitElement {
 
   @state() showSettings: boolean = false;
 
+  @state() showingStatusBar: boolean = true;
+
   static get styles() {
     return css`
 
@@ -166,6 +168,13 @@ export class AppIndex extends LitElement {
     });
 
     Notepad.instance.on(notepadEventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
+    Settings.instance.on(settingsEventNames.showingStatusBarChanged, () => this.toggleStatusBar() )
+  }
+
+  toggleStatusBar(){
+    console.log(Settings.instance.showingStatusBar)
+    this.showingStatusBar = Settings.instance.showingStatusBar;
+    this.requestUpdate();
   }
 
   private showDialog(e: string) {
@@ -239,7 +248,7 @@ export class AppIndex extends LitElement {
             <app-editor
               .fontStyles=${Settings.instance.font}
             ></app-editor>
-            <app-status-bar></app-status-bar>
+            ${this.showingStatusBar ? html`<app-status-bar></app-status-bar>` : null }
           ` :
           html`
             <app-settings></app-settings>

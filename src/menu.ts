@@ -8,6 +8,7 @@ import '@shoelace-style/shoelace/dist/components/dropdown/dropdown'
 import '@shoelace-style/shoelace/dist/components/menu/menu'
 import '@shoelace-style/shoelace/dist/components/menu-item/menu-item'
 import '@shoelace-style/shoelace/dist/components/divider/divider'
+import { Settings } from './settings-state';
 
 // import { setDefaultAnimation } from '@shoelace-style/shoelace/dist/utilities/animation-registry.js';
 // setDefaultAnimation('dropdown.show', {
@@ -106,7 +107,7 @@ export class AppMenu extends LitElement {
         <div class="menubar">
           <sl-dropdown>
             <sl-button slot="trigger">File</sl-button>
-            <sl-menu @sl-select=${(e: any) => this.menuItemClicked(e.detail.item.value)}>
+            <sl-menu @sl-select=${(e: any) => this.menuItemClicked("file", e.detail.item.value)}>
               <sl-menu-item value="new">New</sl-menu-item>
               <sl-menu-item value="new-window">New window</sl-menu-item>
               <sl-menu-item value="open">Open</sl-menu-item>
@@ -119,8 +120,27 @@ export class AppMenu extends LitElement {
               <sl-menu-item value="exit">Exit</sl-menu-item>
             </sl-menu>
           </sl-dropdown>
-          <sl-button>Edit</sl-button>
-          <sl-button>View</sl-button>
+          <sl-dropdown>
+            <sl-button slot="trigger">Edit</sl-button>
+            <sl-menu @sl-select=${(e: any) => this.menuItemClicked("edit", e.detail.item.value)}>
+
+            </sl-menu>
+          </sl-dropdown>
+          <sl-dropdown>
+            <sl-button slot="trigger">View</sl-button>
+            <sl-menu @sl-select=${(e: any) => this.menuItemClicked("view", e.detail.item.value)}>
+            <sl-menu-item>
+              Zoom
+              <sl-menu slot="submenu">
+                <sl-menu-item value="zoom-in" @click=${() => Settings.instance.zoom += 10}>Zoom in</sl-menu-item>
+                <sl-menu-item value="zoom-out" @click=${() => Settings.instance.zoom -= 10}>Zoom out</sl-menu-item>
+                <sl-menu-item value="restore" @click=${() => Settings.instance.zoom = 100}>Restore default zoom</sl-menu-item>
+              </sl-menu>
+            </sl-menu-item>
+            <sl-menu-item type="checkbox" value="status-bar" @click=${() => Settings.instance.showingStatusBar = !Settings.instance.showingStatusBar} ?checked=${Settings.instance.showingStatusBar}>Status Bar</sl-menu-item>
+            <sl-menu-item type="checkbox" value="word-wrap" @click=${() => Settings.instance.wrap = !Settings.instance.wrap} ?checked=${Settings.instance.wrap}>Word wrap</sl-menu-item>
+            </sl-menu>
+          </sl-dropdown>
         </div>
         <div class="settings-container">
           <sl-button class="settings-button" @click=${() => this.showSettingsPage()}>
@@ -138,7 +158,19 @@ export class AppMenu extends LitElement {
     this.dispatchEvent(event);
   }
 
-  private async menuItemClicked(item: string) {
+  private async menuItemClicked(menu: string, item: string){
+    if(menu === "file"){
+      await this.fileMenuItemClicked(item);
+      return;
+    }
+
+    // should i move the item clicks here? or is it okay in line?
+    if(menu === "view"){
+      return;
+    }
+  }
+
+  private async fileMenuItemClicked(item: string) {
     switch (item) {
       case 'new':
         Notepad.instance.newFile();
