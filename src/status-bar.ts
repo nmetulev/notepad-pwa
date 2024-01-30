@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Notepad, notepadEventNames } from './state';
+import { Settings, settingsEventNames } from './settings-state';
 
 @customElement('app-status-bar')
 export class AppMenu extends LitElement {
@@ -10,6 +11,7 @@ export class AppMenu extends LitElement {
   @state() line: number = 0;
   @state() lineEnding: string = "Windows (CRLF)";
   @state() encoding: string = "UTF-8";
+  @state() zoom: number = 100;
 
   static get styles() {
     return css`
@@ -44,6 +46,7 @@ export class AppMenu extends LitElement {
     Notepad.instance.on(notepadEventNames.cursorPositionChanged, () => this.handleCursorUpdate(this));
     Notepad.instance.on(notepadEventNames.fileEndingChanged, () => this.handleFileEndingChange(this));
     Notepad.instance.on(notepadEventNames.encodingChanged, () => this.handleEncondingChange(this));
+    Settings.instance.on(settingsEventNames.zoomChanged, () => this.handleZoomChange(this));
   }
 
   disconnectedCallback(): void {
@@ -75,13 +78,20 @@ export class AppMenu extends LitElement {
     this.requestUpdate();
   }
 
+  handleZoomChange(root: any){
+    if(Settings.instance.zoom){
+      root.zoom = Settings.instance.zoom;
+    }
+    this.requestUpdate();
+  }
+
   render() {
     return html`
       <div class="root">
         <div class="position">
           Ln ${this.line}, Col ${this.end}
         </div>
-        <div class="zoom">100%</div>
+        <div class="zoom">${this.zoom}%</div>
         <div class="line-endings">${this.lineEnding}</div>
         <div class="text-type">${this.encoding}</div>
       </div>

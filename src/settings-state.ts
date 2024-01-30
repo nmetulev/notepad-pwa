@@ -116,6 +116,7 @@ export class Settings {
     public set zoom(v: number) {
         this._zoom = Math.max(10, Math.min(v, 500));
         Settings.instance.displayFontSize = (this._zoom / 100) * this._font.size;
+        this._eventDispatcher.fire(settingsEventNames.zoomChanged);
     }
 
     private _displayFontSize!: number;
