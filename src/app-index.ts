@@ -158,6 +158,14 @@ export class AppIndex extends LitElement {
       }
     });
 
+    // restore default zoom
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && (e.key === '0' || e.key === ')')) {
+          e.preventDefault();
+          Settings.instance.zoom = 100;
+      }
+    });
+
     window.addEventListener('beforeunload', e => {
       if (Notepad.instance.isDirty) {
         const message = `Do you want to save changes to ${Notepad.instance.fileName || 'Untitled'}`;

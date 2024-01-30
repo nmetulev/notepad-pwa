@@ -58,11 +58,50 @@ export class AppMenu extends LitElement {
         background-color: var(--menu-dropdown-background-color);
         border-color: var(--menu-dropdown-background-color);
         color: var(--text-color);
+        width: 300px;
+        padding: 5px;
+      }
+
+      sl-menu-item::part(base){
+        border-radius: 4px;
+        width: 100%;
+      }
+
+      sl-menu-item:hover {
+        cursor: default;
       }
 
       sl-menu-item::part(base):hover{
+        cursor: default;
         color: var(--text-color);
         background-color: var(--menu-item-hover-background-color);
+      }
+
+      sl-menu-item::part(label){
+        font-size: 14px;
+      }
+
+      .no-check-menu sl-menu-item::part(checked-icon){
+        display: none;
+      }
+      .no-check-menu sl-menu-item::part(submenu-icon){
+        display: none;
+      }
+
+      .with-shortcut::part(label){
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        place-items: flex-start;
+        place-content: center;
+      }
+
+      .with-shortcut p {
+        margin: 0;
+        width: min-content;
+      }
+
+      .subtext {
+        color: var(--subtext-color);
       }
 
       sl-divider {
@@ -107,34 +146,52 @@ export class AppMenu extends LitElement {
         <div class="menubar">
           <sl-dropdown>
             <sl-button slot="trigger">File</sl-button>
-            <sl-menu @sl-select=${(e: any) => this.menuItemClicked("file", e.detail.item.value)}>
-              <sl-menu-item value="new">New</sl-menu-item>
-              <sl-menu-item value="new-window">New window</sl-menu-item>
-              <sl-menu-item value="open">Open</sl-menu-item>
-              <sl-menu-item value="save">Save</sl-menu-item>
-              <sl-menu-item value="save-as">Save as</sl-menu-item>
+            <sl-menu class="no-check-menu" @sl-select=${(e: any) => this.menuItemClicked("file", e.detail.item.value)}>
+              <sl-menu-item class="with-shortcut" value="new"><p>New</p><p class="subtext">Ctrl+N</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="new-window"><p>New Window</p><p class="subtext">Ctrl+Shift+N</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="open"><p>Open</p><p class="subtext">Ctrl+O</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="save"><p>Save</p><p class="subtext">Ctrl+S</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="save-as"><p>Save as</p><p class="subtext">Ctrl+Shift+S</p></sl-menu-item>
               <sl-divider></sl-divider>
               <sl-menu-item value="page-setup">Page setup</sl-menu-item>
-              <sl-menu-item value="print">Print</sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="print"><p>Print</p><p class="subtext">Ctrl+P</p></sl-menu-item>
+              <sl-divider></sl-divider>
+              <sl-menu-item class="with-shortcut" value="close-window"><p>Close window</p><p class="subtext">Ctrl+Shift+W</p></sl-menu-item>
               <sl-divider></sl-divider>
               <sl-menu-item value="exit">Exit</sl-menu-item>
             </sl-menu>
           </sl-dropdown>
           <sl-dropdown>
             <sl-button slot="trigger">Edit</sl-button>
-            <sl-menu @sl-select=${(e: any) => this.menuItemClicked("edit", e.detail.item.value)}>
-
+            <sl-menu class="no-check-menu" @sl-select=${(e: any) => this.menuItemClicked("edit", e.detail.item.value)}>
+              <sl-menu-item class="with-shortcut" value="undo"><p>Undo</p><p class="subtext">Ctrl+Z</p></sl-menu-item>
+              <sl-divider></sl-divider>
+              <sl-menu-item class="with-shortcut" value="cut"><p>Cut</p><p class="subtext">Ctrl+X</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="cut"><p>Cut</p><p class="subtext">Ctrl+X</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="paste"><p>Paste</p><p class="subtext">Ctrl+V</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="delete"><p>Delete</p><p class="subtext">Del</p></sl-menu-item>
+              <sl-divider></sl-divider>
+              <sl-menu-item class="with-shortcut" value="find"><p>Find</p><p class="subtext">Ctrl+F</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="find-next"><p>Find next</p><p class="subtext">F3</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="find-previous"><p>Find previous</p><p class="subtext">Shift-F3</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="replace"><p>Replace</p><p class="subtext">Ctrl+H</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="go-to"><p>Go to</p><p class="subtext">Ctrl+G</p></sl-menu-item>
+              <sl-divider></sl-divider>
+              <sl-menu-item class="with-shortcut" value="select-all"><p>Select all</p><p class="subtext">Ctrl+A</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="time-date"><p>Time/Date</p><p class="subtext">F5</p></sl-menu-item>
+              <sl-divider></sl-divider>
+              <sl-menu-item value="font">Font</sl-menu-item>
             </sl-menu>
           </sl-dropdown>
           <sl-dropdown>
             <sl-button slot="trigger">View</sl-button>
-            <sl-menu @sl-select=${(e: any) => this.menuItemClicked("view", e.detail.item.value)}>
+            <sl-menu class="zoom-menu" @sl-select=${(e: any) => this.menuItemClicked("view", e.detail.item.value)}>
             <sl-menu-item>
               Zoom
-              <sl-menu slot="submenu">
-                <sl-menu-item value="zoom-in" @click=${() => Settings.instance.zoom += 10}>Zoom in</sl-menu-item>
-                <sl-menu-item value="zoom-out" @click=${() => Settings.instance.zoom -= 10}>Zoom out</sl-menu-item>
-                <sl-menu-item value="restore" @click=${() => Settings.instance.zoom = 100}>Restore default zoom</sl-menu-item>
+              <sl-menu class="zoom-submenu" slot="submenu">
+                <sl-menu-item class="with-shortcut" value="zoom-in" @click=${() => Settings.instance.zoom += 10}><p>Zoom in</p><p class="subtext">Ctrl+Plus</p></sl-menu-item>
+                <sl-menu-item class="with-shortcut" value="zoom-out" @click=${() => Settings.instance.zoom -= 10}><p>Zoom out</p><p class="subtext">Ctrl+Minus</p></sl-menu-item>
+                <sl-menu-item class="with-shortcut" value="restore" @click=${() => Settings.instance.zoom = 100}><p>Restore default zoom</p><p class="subtext">Ctrl+0</p></sl-menu-item>
               </sl-menu>
             </sl-menu-item>
             <sl-menu-item type="checkbox" value="status-bar" @click=${() => Settings.instance.showingStatusBar = !Settings.instance.showingStatusBar} ?checked=${Settings.instance.showingStatusBar}>Status Bar</sl-menu-item>
@@ -165,6 +222,11 @@ export class AppMenu extends LitElement {
     }
 
     // should i move the item clicks here? or is it okay in line?
+    if(menu === "edit"){
+      // await this.editMenuItemClicked(item);
+      return;
+    }
+
     if(menu === "view"){
       return;
     }

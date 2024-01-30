@@ -76,6 +76,7 @@ export class Settings {
     }
     public set font(v: Font) {
         this._font = v;
+        Settings.instance.displayFontSize = this._font.size * (this._zoom / 100);
         this.writeSettings();
         this._eventDispatcher.fire(settingsEventNames.settingsChanged);
     }
