@@ -140,6 +140,22 @@ export class AppIndex extends LitElement {
       }
     });
 
+    // zoom in
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && (e.key === '+' || e.key === '=')) {
+          e.preventDefault();
+          Settings.instance.zoom += 10;
+      }
+    });
+
+     // zoom out
+     document.addEventListener('keydown', e => {
+      if (e.ctrlKey && (e.key === '-' || e.key === '_')) {
+          e.preventDefault();
+          Settings.instance.zoom += -10;
+      }
+    });
+
     window.addEventListener('beforeunload', e => {
       if (Notepad.instance.isDirty) {
         const message = `Do you want to save changes to ${Notepad.instance.fileName || 'Untitled'}`;

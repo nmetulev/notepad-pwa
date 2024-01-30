@@ -150,7 +150,7 @@ export class AppMenu extends LitElement {
   render() {
 
     const styleInfo = {
-      'font-size': (Settings.instance.font.size).toString() + 'px',
+      'font-size': (Settings.instance.displayFontSize).toString() + 'px',
       'font-family': Settings.instance.font.family,
       'font-style': Settings.instance.font.style.includes("italic") ? "italic" : "unset",
       'font-weight': this.decideFontWeight(),

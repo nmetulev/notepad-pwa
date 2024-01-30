@@ -21,6 +21,8 @@ export class Settings {
             this.wrap = true; // true = wrap, false = don't wrap
             this.open_behavior = true; // true = new tab, false = new window
             this.start_behavior = true; // true = open from previous session, false = new note
+            this.zoom = 100;
+            this.displayFontSize = 11
         }
     }
 
@@ -106,9 +108,28 @@ export class Settings {
         this.writeSettings();
         this._eventDispatcher.fire(settingsEventNames.settingsChanged);
     }
+
+    private _zoom!: number;
+    public get zoom(): number {
+        return this._zoom;
+    }
+    public set zoom(v: number) {
+        this._zoom = Math.max(10, Math.min(v, 500));
+        Settings.instance.displayFontSize = (this._zoom / 100) * this._font.size;
+    }
+
+    private _displayFontSize!: number;
+    public get displayFontSize(): number {
+        return this._displayFontSize;
+    }
+    private set displayFontSize(v: number) {
+        this._displayFontSize = v;
+        this._eventDispatcher.fire(settingsEventNames.settingsChanged);
+    }
 }
 
 export const settingsEventNames = {
     themeChanged: 'settings-theme-changed',
-    settingsChanged: 'settings-changed'
+    settingsChanged: 'settings-changed',
+    zoomChanged: 'zoom-changed'
 }
