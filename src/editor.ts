@@ -59,6 +59,7 @@ export class AppMenu extends LitElement {
   constructor() {
     super();
     Notepad.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler);
+    Notepad.instance.on(notepadEventNames.insertedText, () => this.updateText());
     Settings.instance.on(settingsEventNames.settingsChanged, () => this.updateSettings(this));
   }
 
@@ -85,8 +86,13 @@ export class AppMenu extends LitElement {
     }
   }
 
-  updateText(e: InputEvent){
-    Notepad.instance.editorContents = (e.target as HTMLDivElement).innerText;
+  updateText(root = this.shadowRoot){
+
+    console.log(root);
+    const editor = root!.querySelector('.editor') as HTMLDivElement;
+
+    Notepad.instance.editorContents = editor.innerText;
+    console.log("new editor contents", root!.getSelection())
   }
 
   updateSettings(root: any){
@@ -119,6 +125,9 @@ export class AppMenu extends LitElement {
 
     //@ts-ignore
     const selection = this.shadowRoot!.getSelection();
+
+    Notepad.instance.selection = selection;
+
     if (selection!.rangeCount > 0) {
       const range = selection!.getRangeAt(0);
       const start = range.startOffset;
@@ -167,7 +176,7 @@ export class AppMenu extends LitElement {
         <div class="${classMap(wrapClasses)} editor"
           contenteditable
           spellcheck="false"
-          @input=${(e: InputEvent) => this.updateText(e)}
+          @input=${() => this.updateText()}
           @keydown=${this.handleTab}
           @paste=${this.pasteAsPlainText}
           @click=${() => this.updateCursorPosition()}
@@ -193,4 +202,6 @@ export class AppMenu extends LitElement {
       document.execCommand('insertHTML', false, '&#009');
     }
   }
+
+
 }

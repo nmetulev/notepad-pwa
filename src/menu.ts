@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { Notepad } from './state';
+import { Notepad, notepadEventNames } from './state';
 
 import '@shoelace-style/shoelace/dist/components/button/button'
 import '@shoelace-style/shoelace/dist/components/icon/icon'
@@ -138,6 +138,7 @@ export class AppMenu extends LitElement {
 
   constructor() {
     super();
+    Notepad.instance.on(notepadEventNames.cursorPositionChanged, () => this.requestUpdate());
   }
 
   render() {
@@ -166,10 +167,10 @@ export class AppMenu extends LitElement {
             <sl-menu class="no-check-menu" @sl-select=${(e: any) => this.menuItemClicked("edit", e.detail.item.value)}>
               <sl-menu-item class="with-shortcut" value="undo"><p>Undo</p><p class="subtext">Ctrl+Z</p></sl-menu-item>
               <sl-divider></sl-divider>
-              <sl-menu-item class="with-shortcut" value="cut"><p>Cut</p><p class="subtext">Ctrl+X</p></sl-menu-item>
-              <sl-menu-item class="with-shortcut" value="cut"><p>Cut</p><p class="subtext">Ctrl+X</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="cut" ?disabled=${Notepad.instance.cursorPosition.start == Notepad.instance.cursorPosition.end}><p>Cut</p><p class="subtext">Ctrl+X</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="copy" ?disabled=${Notepad.instance.cursorPosition.start == Notepad.instance.cursorPosition.end}><p>Copy</p><p class="subtext">Ctrl+C</p></sl-menu-item>
               <sl-menu-item class="with-shortcut" value="paste"><p>Paste</p><p class="subtext">Ctrl+V</p></sl-menu-item>
-              <sl-menu-item class="with-shortcut" value="delete"><p>Delete</p><p class="subtext">Del</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="delete" ?disabled=${Notepad.instance.cursorPosition.start == Notepad.instance.cursorPosition.end}><p>Delete</p><p class="subtext">Del</p></sl-menu-item>
               <sl-divider></sl-divider>
               <sl-menu-item class="with-shortcut" value="find"><p>Find</p><p class="subtext">Ctrl+F</p></sl-menu-item>
               <sl-menu-item class="with-shortcut" value="find-next"><p>Find next</p><p class="subtext">F3</p></sl-menu-item>
@@ -223,7 +224,7 @@ export class AppMenu extends LitElement {
 
     // should i move the item clicks here? or is it okay in line?
     if(menu === "edit"){
-      // await this.editMenuItemClicked(item);
+      await this.editMenuItemClicked(item);
       return;
     }
 
@@ -252,6 +253,34 @@ export class AppMenu extends LitElement {
       case 'print':
         var response = await fetch('http://localhost:7083');
         console.log(await response.text());
+        break;
+      default:
+        console.log(`${item} NOT IMPLEMENTED`)
+    }
+  }
+
+  private async editMenuItemClicked(item: string) {
+
+
+
+    switch (item) {
+      case 'cut':
+        Notepad.instance.cut()
+        break;
+      case 'copy':
+        Notepad.instance.copy()
+        break;
+      case 'paste':
+        Notepad.instance.paste()
+        break;
+      case 'delete':
+        Notepad.instance.delete()
+        break;
+      case 'select-all':
+        Notepad.instance.selectAll()
+        break;
+      case 'time-date':
+        Notepad.instance.insertTimeDate()
         break;
       default:
         console.log(`${item} NOT IMPLEMENTED`)

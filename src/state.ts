@@ -1,5 +1,4 @@
 import { EventDispatcher, EventHandler } from "./utils/EventDispatcher";
-import jschardet  from 'jschardet';
 
 type cursorInformation = {
     start: number;
@@ -67,6 +66,16 @@ export class Notepad {
     public set cursorPosition(v: cursorInformation){
         this._cursorPosition = v;
         this._eventDispatcher.fire(notepadEventNames.cursorPositionChanged)
+    }
+
+    private _selection!: Selection;
+    public get selection(): Selection {
+        return this._selection;
+    }
+
+    public set selection(v: Selection){
+        this._selection = v;
+        this._eventDispatcher.fire(notepadEventNames.selectionChanged)
     }
 
     private _encoding!: string;
@@ -249,6 +258,124 @@ export class Notepad {
     private handleAboutToLoseChanges(continueWith: 'open' | 'new') {
         this._eventDispatcher.fire(notepadEventNames.decideOnChanges, continueWith);
     }
+
+    public async cut(){
+        const selection = this._selection
+        const selectedText = selection.toString();
+        navigator.clipboard.writeText(selectedText).then(() => {
+            document.execCommand('cut');
+        }).catch(err => {
+            console.error('Failed to cut text: ', err);
+        });
+        this._eventDispatcher.fire(notepadEventNames.insertedText)
+      }
+
+    public async copy(){
+        const selection = this._selection
+        const selectedText = selection.toString();
+
+        navigator.clipboard.writeText(selectedText).then(() => {
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+        });
+    }
+
+    public async paste(){
+        const selection = this._selection
+
+        navigator.clipboard.readText().then(text => {
+            if (text) {
+                if (!selection!.rangeCount) return false;
+                selection!.deleteFromDocument();
+                selection!.getRangeAt(0).insertNode(document.createTextNode(text));
+
+                // Move the cursor to the end of the inserted text
+                selection!.collapseToEnd();
+            }
+            this._eventDispatcher.fire(notepadEventNames.insertedText)
+            return;
+        })
+
+    }
+
+    public async delete(){
+        const selection = this._selection
+
+        // Delete the contents of the selection
+        selection.deleteFromDocument();
+
+        // Clear the selection
+        selection.removeAllRanges();
+
+        this._eventDispatcher.fire(notepadEventNames.insertedText)
+
+    }
+
+    public async selectAll(){
+        const selection = this._selection;
+        // Get the first range of the selection
+        const tRange = selection.getRangeAt(0);
+
+        // Get the node that starts the range
+        const editableContent = tRange.startContainer;
+
+        console.log(selection)
+
+         // Clear any existing selections
+        selection.removeAllRanges();
+
+        // Create a new range
+        const range = document.createRange();
+        try {
+            range.selectNodeContents(editableContent);
+
+            // Add the range to the selection
+            selection.addRange(range);
+        } catch (error) {
+            console.error("Error selecting node contents:", error);
+        }
+    }
+
+    public async insertTimeDate(){
+
+        const selection: Selection = this._selection;
+        if (!selection || selection.rangeCount === 0) {
+            console.error("No selection available");
+            return;
+        }
+
+        const currentDateTime = this.getCurrentDateTimeFormatted();
+        // Get the first range of the selection
+        const range = selection.getRangeAt(0);
+
+        // Create a new text node
+        const textNode = document.createTextNode(currentDateTime);
+
+        range.deleteContents(); // Delete any selected text
+        range.insertNode(textNode); // Insert the new text
+
+        // Move the cursor to the end of the inserted text
+        range.setStartAfter(textNode);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        this._eventDispatcher.fire(notepadEventNames.insertedText)
+
+    }
+
+    private getCurrentDateTimeFormatted() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+        const day = now.getDate().toString().padStart(2, '0');
+        const year = now.getFullYear();
+
+        return `${hours}:${minutes} ${month}/${day}/${year}`;
+    }
+
+
 }
 
 export const notepadEventNames = {
@@ -257,5 +384,7 @@ export const notepadEventNames = {
     decideOnChanges: 'notepad-need-to-decide-on-changes',
     cursorPositionChanged: 'cursor-position-changed',
     encodingChanged: 'encoding-changed',
-    fileEndingChanged: 'file-ending-changed'
+    fileEndingChanged: 'file-ending-changed',
+    selectionChanged: 'selection-changed',
+    insertedText: 'insert-text-to-editor'
 }
