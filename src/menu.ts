@@ -167,7 +167,7 @@ export class AppMenu extends LitElement {
               <sl-menu-item class="with-shortcut" value="undo"><p>Undo</p><p class="subtext">Ctrl+Z</p></sl-menu-item>
               <sl-divider></sl-divider>
               <sl-menu-item class="with-shortcut" value="cut"><p>Cut</p><p class="subtext">Ctrl+X</p></sl-menu-item>
-              <sl-menu-item class="with-shortcut" value="cut"><p>Cut</p><p class="subtext">Ctrl+X</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="copy"><p>Copy</p><p class="subtext">Ctrl+C</p></sl-menu-item>
               <sl-menu-item class="with-shortcut" value="paste"><p>Paste</p><p class="subtext">Ctrl+V</p></sl-menu-item>
               <sl-menu-item class="with-shortcut" value="delete"><p>Delete</p><p class="subtext">Del</p></sl-menu-item>
               <sl-divider></sl-divider>
@@ -223,7 +223,7 @@ export class AppMenu extends LitElement {
 
     // should i move the item clicks here? or is it okay in line?
     if(menu === "edit"){
-      // await this.editMenuItemClicked(item);
+      await this.editMenuItemClicked(item);
       return;
     }
 
@@ -252,6 +252,31 @@ export class AppMenu extends LitElement {
       case 'print':
         var response = await fetch('http://localhost:7083');
         console.log(await response.text());
+        break;
+      default:
+        console.log(`${item} NOT IMPLEMENTED`)
+    }
+  }
+
+  private async editMenuItemClicked(item: string) {
+    switch (item) {
+      case 'cut':
+        Notepad.instance.cut();
+        break;
+      case 'copy':
+        Notepad.instance.copy();
+        break;
+      case 'paste':
+        Notepad.instance.paste();
+        break;
+      case 'delete':
+        Notepad.instance.delete()
+        break;
+      case 'select-all':
+        Notepad.instance.selectAll();
+        break;
+      case 'time-date':
+        Notepad.instance.insertTimeDate();
         break;
       default:
         console.log(`${item} NOT IMPLEMENTED`)

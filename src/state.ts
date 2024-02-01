@@ -1,5 +1,4 @@
 import { EventDispatcher, EventHandler } from "./utils/EventDispatcher";
-import jschardet  from 'jschardet';
 
 type cursorInformation = {
     start: number;
@@ -67,6 +66,26 @@ export class Notepad {
     public set cursorPosition(v: cursorInformation){
         this._cursorPosition = v;
         this._eventDispatcher.fire(notepadEventNames.cursorPositionChanged)
+    }
+
+    private _selection!: Selection;
+    public get selection(): Selection {
+        return this._selection;
+    }
+
+    public set selection(v: Selection){
+        this._selection = v;
+        //this._eventDispatcher.fire(notepadEventNames.cursorPositionChanged)
+    }
+
+    private _editorDiv!: HTMLDivElement;
+    public get editorDiv(): HTMLDivElement {
+        return this._editorDiv;
+    }
+
+    public set editorDiv(v: HTMLDivElement){
+        this._editorDiv = v;
+        //this._eventDispatcher.fire(notepadEventNames.fileEndingChanged);
     }
 
     private _encoding!: string;
@@ -249,6 +268,102 @@ export class Notepad {
     private handleAboutToLoseChanges(continueWith: 'open' | 'new') {
         this._eventDispatcher.fire(notepadEventNames.decideOnChanges, continueWith);
     }
+
+    public async cut(){
+        const selection = this._selection
+        const selectedText = selection.toString();
+        navigator.clipboard.writeText(selectedText).then(() => {
+            document.execCommand('cut');
+        }).catch(err => {
+            console.error('Failed to cut text: ', err);
+        });
+        this._eventDispatcher.fire(notepadEventNames.insertedText)
+      }
+
+    public async copy(){
+        const selection = this._selection
+        const selectedText = selection.toString();
+
+        navigator.clipboard.writeText(selectedText).then(() => {
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+        });
+    }
+
+    public async paste(){
+        const selection = this._selection
+
+        navigator.clipboard.readText().then(text => {
+            if (text) {
+                if (!selection!.rangeCount) return false;
+                selection!.deleteFromDocument();
+                selection!.getRangeAt(0).insertNode(document.createTextNode(text));
+
+                // Move the cursor to the end of the inserted text
+                selection!.collapseToEnd();
+            }
+            this._eventDispatcher.fire(notepadEventNames.insertedText)
+            return;
+        })
+
+    }
+
+    public async delete(){
+        const selection = this._selection
+
+        // Delete the contents of the selection
+        selection.deleteFromDocument();
+
+        // Clear the selection
+        selection.removeAllRanges();
+
+        this._eventDispatcher.fire(notepadEventNames.insertedText)
+
+    }
+
+    public selectAll(){
+        var range = document.createRange();
+        range.selectNodeContents(this._editorDiv);
+        var selection = this._selection;
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+
+    public async insertTimeDate(){
+
+        const selection: Selection = this._selection;
+
+        const currentDateTime = this.getCurrentDateTimeFormatted();
+        // Get the first range of the selection
+        const range = selection.getRangeAt(0);
+
+        // Create a new text node
+        const textNode = document.createTextNode(currentDateTime);
+
+        range.deleteContents(); // Delete any selected text
+        range.insertNode(textNode); // Insert the new text
+
+        // Move the cursor to the end of the inserted text
+        range.setStartAfter(textNode);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        this._eventDispatcher.fire(notepadEventNames.insertedText)
+
+    }
+
+    private getCurrentDateTimeFormatted() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+        const day = now.getDate().toString().padStart(2, '0');
+        const year = now.getFullYear();
+
+        return `${hours}:${minutes} ${month}/${day}/${year}`;
+    }
+
 }
 
 export const notepadEventNames = {
@@ -257,5 +372,6 @@ export const notepadEventNames = {
     decideOnChanges: 'notepad-need-to-decide-on-changes',
     cursorPositionChanged: 'cursor-position-changed',
     encodingChanged: 'encoding-changed',
-    fileEndingChanged: 'file-ending-changed'
+    fileEndingChanged: 'file-ending-changed',
+    insertedText: 'insert-text-to-editor'
 }

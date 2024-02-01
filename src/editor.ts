@@ -59,6 +59,7 @@ export class AppMenu extends LitElement {
   constructor() {
     super();
     Notepad.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler);
+    Notepad.instance.on(notepadEventNames.insertedText, this.updateText);
     Settings.instance.on(settingsEventNames.settingsChanged, () => this.updateSettings(this));
   }
 
@@ -71,6 +72,9 @@ export class AppMenu extends LitElement {
     this.setEditorContents();
     this.editor?.focus();
     this.updateCursorPosition();
+    Notepad.instance.editorDiv = this.shadowRoot!.querySelector('.editor') as HTMLDivElement;
+    //@ts-ignore
+    Notepad.instance.selection = this.shadowRoot!.getSelection();
   }
 
   private onFileChangedHandler = this.setEditorContents.bind(this);
@@ -85,8 +89,8 @@ export class AppMenu extends LitElement {
     }
   }
 
-  updateText(e: InputEvent){
-    Notepad.instance.editorContents = (e.target as HTMLDivElement).innerText;
+  updateText(){
+    Notepad.instance.editorContents = Notepad.instance.editorDiv.innerText;
   }
 
   updateSettings(root: any){
@@ -167,7 +171,7 @@ export class AppMenu extends LitElement {
         <div class="${classMap(wrapClasses)} editor"
           contenteditable
           spellcheck="false"
-          @input=${(e: InputEvent) => this.updateText(e)}
+          @input=${() => this.updateText()}
           @keydown=${this.handleTab}
           @paste=${this.pasteAsPlainText}
           @click=${() => this.updateCursorPosition()}
