@@ -371,13 +371,14 @@ export class Notepad {
         return this._substringToFind;
     }
 
-    private findPostions: { startIndex: number; endIndex: number; }[] = [];
+    private findPositions: { startIndex: number; endIndex: number; }[] = [];
     public set substringToFind(v: string){
         this._substringToFind = v;
-        this.findPostions = this.find();
-        if(this.findPostions.length > 0){
+        this._findListIndex = 0;
+        this.findPositions = this.find();
+        /* if(this.findPositions.length > 0){
             this.highlightText()
-        }
+        } */
     }
 
 
@@ -409,30 +410,58 @@ export class Notepad {
     }
 
     // bug where it can't find stuff past the first line
-    private highlightText() {
-        // Get the element
+    public highlightText() {
+        console.log("hit")
         const element = this._editorDiv;
-        const startIndex = this.findPostions[this._findListIndex].startIndex
-        const endIndex = this.findPostions[this._findListIndex].endIndex
+        if (!element) return;
 
-        console.log(startIndex, endIndex)
+        const { startIndex, endIndex } = this.findPositions[this._findListIndex];
+        let cumulativeLength = 0;
+        let startNode: any = null;
+        let startNodeOffset = 0;
+        let endNode: any = null;
+        let endNodeOffset = 0;
 
-        if (element) {
-            // Create a range
+        const iterateNodes = (node: any) => {
+            node.childNodes.forEach((child: any) => {
+                if (child.nodeType === Node.TEXT_NODE) {
+                    const textLength = child.textContent.length;
+                    if (!startNode && cumulativeLength + textLength >= startIndex) {
+                        startNode = child;
+                        startNodeOffset = startIndex - cumulativeLength;
+                    }
+                    if (!endNode && cumulativeLength + textLength >= endIndex) {
+                        endNode = child;
+                        endNodeOffset = endIndex - cumulativeLength;
+                    }
+                    cumulativeLength += textLength;
+                } else if (child.nodeType === Node.ELEMENT_NODE) {
+                    // Assuming that <br>, <div>, and <p> could introduce new lines
+                    if (child.nodeName === "BR" || child.nodeName === "DIV" || child.nodeName === "P") {
+                        cumulativeLength++; // Adjust this based on how you count line breaks
+                    }
+                    iterateNodes(child); // Recurse into child elements
+                }
+            });
+        };
+
+        iterateNodes(element);
+
+        if (startNode && endNode) {
             const range = document.createRange();
             const selection = this._selection;
-
-            // Set start and end positions
-            range.setStart(element.childNodes[0], startIndex);
-            range.setEnd(element.childNodes[0], endIndex);
-
-            // Remove any existing selections
-            selection.removeAllRanges();
-
-            // Add the new range to the selection
-            selection.addRange(range);
+            try {
+                range.setStart(startNode, startNodeOffset);
+                range.setEnd(endNode, endNodeOffset);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } catch (error) {
+                console.error('Error setting range:', error);
+            }
         }
     }
+
+
 
     private _findListIndex!: number;
     public get findListIndex(): number {
@@ -440,10 +469,10 @@ export class Notepad {
     }
 
     public set findListIndex(v: number){
-        if(v < 0) v = 0;
-        if(v > this.findPostions.length) v = this.findPostions.length - 1;
+        if(v < 0) v = this.findPositions.length - 1;
+        if(v >= this.findPositions.length) v = 0;
         this._findListIndex = v;
-        if(this.findPostions.length > 0){
+        if(this.findPositions.length > 0){
             this.highlightText()
         }
     }

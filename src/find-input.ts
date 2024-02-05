@@ -1,9 +1,11 @@
 import { LitElement, css, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import { Notepad } from './state';
 
 @customElement('find-input')
 export class AppMenu extends LitElement {
+
+    @state() firstEnter = false;
 
   static get styles() {
     return css`
@@ -21,17 +23,24 @@ export class AppMenu extends LitElement {
     //input?.focus()
   }
 
+  handleSubmit(e: Event){
+    e.preventDefault()
+    Notepad.instance.highlightText()
+  }
+
   updateIndex(value: number){
     Notepad.instance.findListIndex += value;
   }
 
   render() {
     return html`
-      <div class="root">
-        <input @input=${() => this.updateSubstringToFind()} />
-        <button type="button" @click=${() => this.updateIndex(-1)}>prev</button>
-        <button type="button" @click=${() => this.updateIndex(1)}>next</button>
-    </div>
+        <div class="root">
+            <form @submit=${(e: Event) => this.handleSubmit(e)}>
+                <input @input=${() => this.updateSubstringToFind()} />
+            </form>
+            <button type="button" @click=${() => this.updateIndex(-1)}>prev</button>
+            <button type="button" @click=${() => this.updateIndex(1)}>next</button>
+        </div>
     `;
   }
 }
