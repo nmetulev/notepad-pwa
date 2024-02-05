@@ -10,6 +10,7 @@ import './menu';
 import './editor';
 import './settings'
 import './status-bar';
+import './find-input';
 
 import './styles/global.css';
 import { Notepad, notepadEventNames } from './state';
@@ -32,6 +33,8 @@ export class AppIndex extends LitElement {
   @state() showSettings: boolean = false;
 
   @state() showingStatusBar: boolean = true;
+
+  @state() showingFindInput: boolean = false;
 
   static get styles() {
     return css`
@@ -241,14 +244,11 @@ export class AppIndex extends LitElement {
     } else { // switched to dark mode
         html!.classList.add("dark-mode");
     }
-
-
-
 }
 
   render() {
     return html`
-      <div class="root">
+      <div class="root" @show-find-input=${() => this.showingFindInput = true}>
         <app-header .settingsShowing=${this.showSettings} @showEditor=${() => this.backToEditor()}></app-header>
         ${!this.showSettings ?
           html`
@@ -269,6 +269,8 @@ export class AppIndex extends LitElement {
           <sl-button slot="footer" @click=${() => this.continueFromDialog(false)}>Don't save</sl-button>
           <sl-button slot="footer" @click=${() => this.dialog?.hide()}>Cancel</sl-button>
         </sl-dialog>
+
+        ${this.showingFindInput ? html`<find-input></find-input>` : null}
       </div>
     `;
   }

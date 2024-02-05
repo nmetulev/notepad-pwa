@@ -13,6 +13,8 @@ export class Notepad {
         this._cursorPosition = { start: 1, end: 1, line: 1 };
         this._encoding = "UTF-8";
         this._fileEnding = "Windows (CRLF)";
+        this._substringToFind = "";
+        this._findListIndex = 0;
     }
 
     static get instance() {
@@ -364,6 +366,89 @@ export class Notepad {
         return `${hours}:${minutes} ${month}/${day}/${year}`;
     }
 
+    private _substringToFind!: string;
+    public get substringToFind(): string {
+        return this._substringToFind;
+    }
+
+    private findPostions: { startIndex: number; endIndex: number; }[] = [];
+    public set substringToFind(v: string){
+        this._substringToFind = v;
+        this.findPostions = this.find();
+        if(this.findPostions.length > 0){
+            this.highlightText()
+        }
+    }
+
+
+    private find(){
+        let startIndex = 0;
+        let positions = [];
+        const substring = this._substringToFind;
+        const str = this._editorContents;
+
+        while (startIndex < str.length) {
+            // Find the start position of the substring, searching from the current startIndex
+            let index = str.indexOf(substring, startIndex);
+
+            // If the substring is not found, break out of the loop
+            if (index === -1) break;
+
+            // Calculate the end position
+            let endIndex = index + substring.length;
+
+            // Add the start and end positions to the positions array
+            positions.push({startIndex: index, endIndex});
+
+            // Set the next start index to be one after the current start index
+            startIndex = index + 1;
+        }
+
+       return positions;
+
+    }
+
+    // bug where it can't find stuff past the first line
+    private highlightText() {
+        // Get the element
+        const element = this._editorDiv;
+        const startIndex = this.findPostions[this._findListIndex].startIndex
+        const endIndex = this.findPostions[this._findListIndex].endIndex
+
+        console.log(startIndex, endIndex)
+
+        if (element) {
+            // Create a range
+            const range = document.createRange();
+            const selection = this._selection;
+
+            // Set start and end positions
+            range.setStart(element.childNodes[0], startIndex);
+            range.setEnd(element.childNodes[0], endIndex);
+
+            // Remove any existing selections
+            selection.removeAllRanges();
+
+            // Add the new range to the selection
+            selection.addRange(range);
+        }
+    }
+
+    private _findListIndex!: number;
+    public get findListIndex(): number {
+        return this._findListIndex;
+    }
+
+    public set findListIndex(v: number){
+        if(v < 0) v = 0;
+        if(v > this.findPostions.length) v = this.findPostions.length - 1;
+        this._findListIndex = v;
+        if(this.findPostions.length > 0){
+            this.highlightText()
+        }
+    }
+
+
 }
 
 export const notepadEventNames = {
@@ -373,5 +458,7 @@ export const notepadEventNames = {
     cursorPositionChanged: 'cursor-position-changed',
     encodingChanged: 'encoding-changed',
     fileEndingChanged: 'file-ending-changed',
-    insertedText: 'insert-text-to-editor'
+    insertedText: 'insert-text-to-editor',
+    findSubstringChanged: 'find-substring-changed',
+    showFindInput: 'show-find-input'
 }

@@ -272,6 +272,17 @@ export class AppMenu extends LitElement {
       case 'delete':
         Notepad.instance.delete()
         break;
+      case 'find':
+        const event = new Event('show-find-input', {bubbles: true, composed: true});
+        this.dispatchEvent(event)
+        break;
+
+      case 'find-next':
+        Notepad.instance.findListIndex += 1;
+        break;
+      case 'find-previous':
+        Notepad.instance.findListIndex -= 1;
+        break;
       case 'select-all':
         Notepad.instance.selectAll();
         break;
