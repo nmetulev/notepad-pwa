@@ -24,6 +24,8 @@ export class Settings {
             this.zoom = 100;
             this.displayFontSize = 11
             this.showingStatusBar = true;
+            this.matchCaseForSearchResult = false;
+            this.wrapSearchResults = true;
         }
     }
 
@@ -58,11 +60,11 @@ export class Settings {
         localStorage.setItem('notepadSettings', JSON.stringify(this));
     }
 
-    private _theme!: Theme;
+    private _theme!: string;
     public get theme(): string {
         return this._theme;
     }
-    public set theme(v: Theme) {
+    public set theme(v: string) {
         if(this._theme !== v){
             this._theme = v;
             this.writeSettings();
@@ -138,11 +140,29 @@ export class Settings {
         this._showingStatusBar = v;
         this._eventDispatcher.fire(settingsEventNames.showingStatusBarChanged);
     }
+
+    private _wrapSearchResults!: boolean;
+    public get wrapSearchResults(): boolean {
+        return this._wrapSearchResults;
+    }
+    public set wrapSearchResults(v: boolean) {
+        this._wrapSearchResults = v;
+    }
+
+    private _matchCaseForSearchResult!: boolean;
+    public get matchCaseForSearchResult(): boolean {
+        return this._matchCaseForSearchResult;
+    }
+    public set matchCaseForSearchResult(v: boolean) {
+        this._matchCaseForSearchResult = v;
+        this._eventDispatcher.fire(settingsEventNames.matchCaseSettingChanged);
+    }
 }
 
 export const settingsEventNames = {
     themeChanged: 'settings-theme-changed',
     settingsChanged: 'settings-changed',
     zoomChanged: 'zoom-changed',
-    showingStatusBarChanged: 'showing-status-bar-changed'
+    showingStatusBarChanged: 'showing-status-bar-changed',
+    matchCaseSettingChanged: 'match-case-setting-changed'
 }

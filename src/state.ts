@@ -1,3 +1,4 @@
+import { Settings } from "./settings-state";
 import { EventDispatcher, EventHandler } from "./utils/EventDispatcher";
 
 type cursorInformation = {
@@ -375,18 +376,16 @@ export class Notepad {
     public set substringToFind(v: string){
         this._substringToFind = v;
         this._findListIndex = 0;
-        this.findPositions = this.find();
-        /* if(this.findPositions.length > 0){
-            this.highlightText()
-        } */
+        this.findPositions = this.findSubstringPositions();
+        console.log(this.findPositions)
     }
 
 
-    private find(){
+    public findSubstringPositions(){
         let startIndex = 0;
         let positions = [];
-        const substring = this._substringToFind;
-        const str = this._editorContents;
+        const substring = Settings.instance.matchCaseForSearchResult ? this._substringToFind.toLowerCase() : this._substringToFind;
+        const str = Settings.instance.matchCaseForSearchResult ? this._editorContents.toLowerCase() : this._editorContents;
 
         while (startIndex < str.length) {
             // Find the start position of the substring, searching from the current startIndex
@@ -409,9 +408,7 @@ export class Notepad {
 
     }
 
-    // bug where it can't find stuff past the first line
-    public highlightText() {
-        console.log("hit")
+    public search() {
         const element = this._editorDiv;
         if (!element) return;
 
@@ -455,13 +452,27 @@ export class Notepad {
                 range.setEnd(endNode, endNodeOffset);
                 selection.removeAllRanges();
                 selection.addRange(range);
+
+                let tempEl = document.createElement("span"); // Create a temporary element
+
+                // Insert the temporary element into the range
+                range.insertNode(tempEl);
+
+                // Scroll the temporary element into view
+                tempEl.scrollIntoView({
+                    behavior: "smooth", // Optional: Defines the transition animation
+                    block: "center", // Optional: Vertical alignment
+                    inline: "nearest" // Optional: Horizontal alignment
+                });
+
+                // Remove the temporary element from the document
+                tempEl.parentNode!.removeChild(tempEl);
+
             } catch (error) {
                 console.error('Error setting range:', error);
             }
         }
     }
-
-
 
     private _findListIndex!: number;
     public get findListIndex(): number {
@@ -469,11 +480,23 @@ export class Notepad {
     }
 
     public set findListIndex(v: number){
-        if(v < 0) v = this.findPositions.length - 1;
-        if(v >= this.findPositions.length) v = 0;
+        if(v < 0){
+            if(Settings.instance.wrapSearchResults){
+                v = this.findPositions.length - 1;
+            } else {
+                v = 0;
+            }
+        }
+        if(v >= this.findPositions.length){
+            if(Settings.instance.wrapSearchResults){
+                v = 0;
+            } else {
+                v = this.findPositions.length - 1;
+            }
+        }
         this._findListIndex = v;
         if(this.findPositions.length > 0){
-            this.highlightText()
+            this.search()
         }
     }
 

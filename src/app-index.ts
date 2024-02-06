@@ -44,6 +44,7 @@ export class AppIndex extends LitElement {
         flex-direction: column;
         height: 100vh;
         overflow: hidden;
+        position: relative;
       }
 
       .root.settings-root {
@@ -77,10 +78,22 @@ export class AppIndex extends LitElement {
       }
 
       app-editor::-webkit-scrollbar-thumb {
-        background-color: #8a8a8a;
+        background-color: #a1a1a1;
         border: 4px solid rgba(0, 0, 0, 0);
         background-clip: padding-box;
         border-radius: 9999px;
+      }
+
+      .search-holder {
+        position: absolute;
+        width: 100%;
+        top: 100px;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: fit-content;
       }
 
       /* app-header,
@@ -169,6 +182,29 @@ export class AppIndex extends LitElement {
       }
     });
 
+    // open find window
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && e.key === 'f') {
+          e.preventDefault();
+          this.showingFindInput = true;
+      }
+    });
+
+    // restore default zoom
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && (e.key === '0' || e.key === ')')) {
+          e.preventDefault();
+          Settings.instance.zoom = 100;
+      }
+    });
+
+    // restore default zoom
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && (e.key === '0' || e.key === ')')) {
+          e.preventDefault();
+          Settings.instance.zoom = 100;
+      }
+    });
     window.addEventListener('beforeunload', e => {
       if (Notepad.instance.isDirty) {
         const message = `Do you want to save changes to ${Notepad.instance.fileName || 'Untitled'}`;
@@ -248,7 +284,7 @@ export class AppIndex extends LitElement {
 
   render() {
     return html`
-      <div class="root" @show-find-input=${() => this.showingFindInput = true}>
+      <div class="root" @show-find-input=${() => this.showingFindInput = true} @close-find-input=${() => this.showingFindInput = false}>
         <app-header .settingsShowing=${this.showSettings} @showEditor=${() => this.backToEditor()}></app-header>
         ${!this.showSettings ?
           html`
@@ -270,7 +306,7 @@ export class AppIndex extends LitElement {
           <sl-button slot="footer" @click=${() => this.dialog?.hide()}>Cancel</sl-button>
         </sl-dialog>
 
-        ${this.showingFindInput ? html`<find-input></find-input>` : null}
+        ${this.showingFindInput ? html`<div class="search-holder"><find-input></find-input></div>` : null}
       </div>
     `;
   }

@@ -60,7 +60,7 @@ export class AppMenu extends LitElement {
     super();
     Notepad.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler);
     Notepad.instance.on(notepadEventNames.insertedText, this.updateText);
-    Settings.instance.on(settingsEventNames.settingsChanged, () => this.updateSettings(this));
+    Settings.instance.on(settingsEventNames.settingsChanged, () => this.updateSettings(this))
   }
 
   disconnectedCallback(): void {
