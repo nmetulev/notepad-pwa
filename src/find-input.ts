@@ -7,6 +7,7 @@ import { Settings } from './settings-state';
 export class AppMenu extends LitElement {
 
     @state() showClear = false;
+    @state() inputValue = "";
 
   static get styles() {
     return css`
@@ -21,7 +22,7 @@ export class AppMenu extends LitElement {
         align-items: center;
         justify-content: center;
         padding: 5px;
-        border: 1px solid #777777;
+        border: 1px solid #bfbfbf;
         background-color: var(--editor-background-color);
         border-radius: 8px;
         gap: 10px;
@@ -119,12 +120,20 @@ export class AppMenu extends LitElement {
 
   constructor() {
     super();
+    // puts the last value back in the box
+    if(localStorage.getItem("search-string-setting-state")){
+      console.log("hit", JSON.parse(localStorage.getItem("search-string-setting-state")!))
+      Notepad.instance.substringToFind = JSON.parse(localStorage.getItem("search-string-setting-state")!);
+    }
+    if(localStorage.getItem('notepadSettings')){
+      Settings.instance.matchCaseForSearchResult = JSON.parse(localStorage.getItem('notepadSettings')!).matchCaseForSearchResult || false;
+    }
+    this.inputValue = Notepad.instance.substringToFind;
   }
 
-  firstUpdated(): void {
-    // puts the last value back in the box
+
+  firstUpdated(){
     let input = this.shadowRoot!.querySelector('input')!;
-    input.value = Notepad.instance.substringToFind;
     input?.focus();
   }
 
@@ -176,7 +185,7 @@ export class AppMenu extends LitElement {
             <button type="button" class="icon-button" value="show-more"><sl-icon name="chevron-up" label="chevron-up"></sl-icon></button>
 
             <form class="input-and-actions" @submit=${(e: Event) => this.handleSubmit(e)}>
-                <input class="the-input" placeholder="Find" @input=${() => this.updateSubstringToFind()} />
+                <input .value=${this.inputValue} class="the-input" placeholder="Find" @input=${() => this.updateSubstringToFind()} />
                 ${this.showClear ? html`<button type="button" class="search-action" value="clear" @click=${() => this.clearInput()}><sl-icon name="x-lg" label="close"></sl-icon></button>` : null }
                 <button type="button" class="search-action" value="search" @click=${() => Notepad.instance.search()}><sl-icon name="search" label="search"></sl-icon></button>
             </form>

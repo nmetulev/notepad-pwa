@@ -16,6 +16,7 @@ export class Notepad {
         this._fileEnding = "Windows (CRLF)";
         this._substringToFind = "";
         this._findListIndex = 0;
+        this._findPositions = [];
     }
 
     static get instance() {
@@ -36,6 +37,9 @@ export class Notepad {
         this._eventDispatcher.remove(eventName, handler);
     }
 
+    private writeSettings(settingName: string, settingValue: any){
+        localStorage.setItem(`${settingName}-state-setting`, JSON.stringify(settingValue));
+    }
 
     private fileHandle: FileSystemFileHandle | undefined;
     public fileName: string | undefined;
@@ -372,20 +376,29 @@ export class Notepad {
         return this._substringToFind;
     }
 
-    private findPositions: { startIndex: number; endIndex: number; }[] = [];
     public set substringToFind(v: string){
         this._substringToFind = v;
+        this.writeSettings('search-string', this._substringToFind);
         this._findListIndex = 0;
-        this.findPositions = this.findSubstringPositions();
-        console.log(this.findPositions)
+        this.findSubstringPositions();
     }
 
+
+    private _findPositions: { startIndex: number; endIndex: number; }[];
+    public get findPositions(): { startIndex: number; endIndex: number; }[] {
+        return this._findPositions;
+    }
+
+    private set findPositions(v: { startIndex: number; endIndex: number; }[]){
+        this._findPositions = v;
+    }
 
     public findSubstringPositions(){
         let startIndex = 0;
         let positions = [];
-        const substring = Settings.instance.matchCaseForSearchResult ? this._substringToFind.toLowerCase() : this._substringToFind;
-        const str = Settings.instance.matchCaseForSearchResult ? this._editorContents.toLowerCase() : this._editorContents;
+
+        const substring = Settings.instance.matchCaseForSearchResult ? this._substringToFind : this._substringToFind.toLowerCase() ;
+        const str = Settings.instance.matchCaseForSearchResult ? this._editorContents : this._editorContents.toLowerCase();
 
         while (startIndex < str.length) {
             // Find the start position of the substring, searching from the current startIndex
@@ -404,7 +417,7 @@ export class Notepad {
             startIndex = index + 1;
         }
 
-       return positions;
+       this._findPositions = positions;
 
     }
 
@@ -412,7 +425,9 @@ export class Notepad {
         const element = this._editorDiv;
         if (!element) return;
 
-        const { startIndex, endIndex } = this.findPositions[this._findListIndex];
+        //console.log("after searching from changing case", this.findPositions)
+
+        const { startIndex, endIndex } = this._findPositions[this._findListIndex];
         let cumulativeLength = 0;
         let startNode: any = null;
         let startNodeOffset = 0;
@@ -482,20 +497,23 @@ export class Notepad {
     public set findListIndex(v: number){
         if(v < 0){
             if(Settings.instance.wrapSearchResults){
-                v = this.findPositions.length - 1;
+                v = this._findPositions.length - 1;
             } else {
                 v = 0;
             }
         }
-        if(v >= this.findPositions.length){
+        if(v >= this._findPositions.length){
             if(Settings.instance.wrapSearchResults){
                 v = 0;
             } else {
-                v = this.findPositions.length - 1;
+                v = this._findPositions.length - 1;
             }
         }
         this._findListIndex = v;
-        if(this.findPositions.length > 0){
+
+        //console.log("searching next", this.findPositions)
+
+        if(this._findPositions.length > 0){
             this.search()
         }
     }

@@ -21,7 +21,7 @@ export class AppMenu extends LitElement {
         background-color: var(--status-bar-background-color);
         border-top: solid 1.5px var(--status-bar-border-color);
         display: grid;
-        grid-template-columns: 9fr 2fr 4fr 3fr;
+        grid-template-columns: 2fr 8fr 2fr 4fr 3fr;
         padding: 7px;
         font-family: "Segoe UI Variable Text", "Segoe UI", SegoeUI, "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-size: 12px;
@@ -91,6 +91,7 @@ export class AppMenu extends LitElement {
         <div class="position">
           Ln ${this.line}, Col ${this.end}
         </div>
+        <div class="zoom">${Notepad.instance.editorContents.length} characters</div>
         <div class="zoom">${this.zoom}%</div>
         <div class="line-endings">${this.lineEnding}</div>
         <div class="text-type">${this.encoding}</div>

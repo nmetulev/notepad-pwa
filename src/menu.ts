@@ -173,7 +173,7 @@ export class AppMenu extends LitElement {
               <sl-divider></sl-divider>
               <sl-menu-item class="with-shortcut" value="find"><p>Find</p><p class="subtext">Ctrl+F</p></sl-menu-item>
               <sl-menu-item class="with-shortcut" value="find-next"><p>Find next</p><p class="subtext">F3</p></sl-menu-item>
-              <sl-menu-item class="with-shortcut" value="find-previous"><p>Find previous</p><p class="subtext">Shift-F3</p></sl-menu-item>
+              <sl-menu-item class="with-shortcut" value="find-previous"><p>Find previous</p><p class="subtext">Shift+F3</p></sl-menu-item>
               <sl-menu-item class="with-shortcut" value="replace"><p>Replace</p><p class="subtext">Ctrl+H</p></sl-menu-item>
               <sl-menu-item class="with-shortcut" value="go-to"><p>Go to</p><p class="subtext">Ctrl+G</p></sl-menu-item>
               <sl-divider></sl-divider>

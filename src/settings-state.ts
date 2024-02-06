@@ -1,3 +1,4 @@
+import { Notepad } from "./state";
 import { EventDispatcher, EventHandler } from "./utils/EventDispatcher";
 
 export type Theme = "light" | "dark" | "system";
@@ -155,7 +156,9 @@ export class Settings {
     }
     public set matchCaseForSearchResult(v: boolean) {
         this._matchCaseForSearchResult = v;
-        this._eventDispatcher.fire(settingsEventNames.matchCaseSettingChanged);
+        this.writeSettings();
+        Notepad.instance.selection.removeAllRanges();
+        Notepad.instance.findSubstringPositions();
     }
 }
 

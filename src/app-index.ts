@@ -190,21 +190,25 @@ export class AppIndex extends LitElement {
       }
     });
 
-    // restore default zoom
+    /* // find next
     document.addEventListener('keydown', e => {
-      if (e.ctrlKey && (e.key === '0' || e.key === ')')) {
+      if (e.key === 'F3') {
           e.preventDefault();
-          Settings.instance.zoom = 100;
+          Notepad.instance.findListIndex += 1;
+
+          Notepad.instance.findSubstringPositions()
+          Notepad.instance.search();
       }
     });
 
-    // restore default zoom
+    // find previous
     document.addEventListener('keydown', e => {
-      if (e.ctrlKey && (e.key === '0' || e.key === ')')) {
+      if (e.shiftKey && e.key === "F3") {
           e.preventDefault();
           Settings.instance.zoom = 100;
       }
-    });
+    });*/
+
     window.addEventListener('beforeunload', e => {
       if (Notepad.instance.isDirty) {
         const message = `Do you want to save changes to ${Notepad.instance.fileName || 'Untitled'}`;
