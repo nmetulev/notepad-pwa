@@ -191,7 +191,7 @@ export class AppMenu extends LitElement {
             </form>
             <button type="button" class="icon-button" value="previous" @click=${() => this.updateIndex(1)}><sl-icon name="arrow-down" label="arrow-down"></sl-icon></button>
             <button type="button" class="icon-button" value="next" @click=${() => this.updateIndex(-1)}><sl-icon name="arrow-up" label="arrow-up"></sl-icon></button>
-            <sl-dropdown placement="top">
+            <sl-dropdown placement="bottom">
                 <button type="button" slot="trigger" class="icon-button" value="options"><sl-icon name="sliders" label="sliders"></sl-icon></button>
                 <sl-menu class="zoom-menu" @sl-select=${(e: any) => this.menuItemClicked(e.detail.item.value)}>
                     <sl-menu-item type="checkbox" value="match-case" ?checked=${Settings.instance.matchCaseForSearchResult}>Match case</sl-menu-item>

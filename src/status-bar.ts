@@ -21,7 +21,7 @@ export class AppMenu extends LitElement {
         background-color: var(--status-bar-background-color);
         border-top: solid 1.5px var(--status-bar-border-color);
         display: grid;
-        grid-template-columns: 2fr 8fr 2fr 4fr 3fr;
+        grid-template-columns: 6fr 13fr 5fr 10fr 10fr;
         padding: 7px;
         font-family: "Segoe UI Variable Text", "Segoe UI", SegoeUI, "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-size: 12px;
@@ -36,7 +36,7 @@ export class AppMenu extends LitElement {
         display: flex;
         align-items: center;
         justify-content: flex-start;
-        margin-left: 5px;
+        margin-left: 10px;
       }
     `;
   }
@@ -44,14 +44,15 @@ export class AppMenu extends LitElement {
   constructor() {
     super();
     Notepad.instance.on(notepadEventNames.cursorPositionChanged, () => this.handleCursorUpdate(this));
-    Notepad.instance.on(notepadEventNames.fileEndingChanged, () => this.handleFileEndingChange(this));
-    Notepad.instance.on(notepadEventNames.encodingChanged, () => this.handleEncondingChange(this));
-    Settings.instance.on(settingsEventNames.zoomChanged, () => this.handleZoomChange(this));
+    Notepad.instance.on(notepadEventNames.fileEndingChanged, () => this.handleDataChange(this, 'file-ending'));
+    Notepad.instance.on(notepadEventNames.encodingChanged, () => this.handleDataChange(this, 'encoding'));
+    Settings.instance.on(settingsEventNames.zoomChanged, () => this.handleDataChange(this, 'zoom'));
   }
 
   disconnectedCallback(): void {
     Notepad.instance.removeListener(notepadEventNames.cursorPositionChanged, this.handleCursorUpdate);
-    Notepad.instance.removeListener(notepadEventNames.fileEndingChanged, this.handleFileEndingChange);
+    Notepad.instance.removeListener(notepadEventNames.fileEndingChanged, () => this.handleDataChange(this, 'file-ending'));
+    Notepad.instance.removeListener(notepadEventNames.encodingChanged, () => this.handleDataChange(this, 'encoding'));
   }
 
   handleCursorUpdate(root: any){
@@ -64,23 +65,25 @@ export class AppMenu extends LitElement {
     }
   }
 
-  handleFileEndingChange(root: any){
-    if(Notepad.instance.fileEnding){
-      root.lineEnding = Notepad.instance.fileEnding;
-    }
-    this.requestUpdate();
-  }
-
-  handleEncondingChange(root: any){
-    if(Notepad.instance.encoding){
-      root.encoding = Notepad.instance.encoding
-    }
-    this.requestUpdate();
-  }
-
-  handleZoomChange(root: any){
-    if(Settings.instance.zoom){
-      root.zoom = Settings.instance.zoom;
+  handleDataChange(root: any, changedField: string){
+    switch (changedField) {
+      case 'file-ending':
+        if(Notepad.instance.fileEnding){
+          root.lineEnding = Notepad.instance.fileEnding;
+        }
+        break;
+      case 'encoding':
+        if(Notepad.instance.encoding){
+          root.encoding = Notepad.instance.encoding
+        }
+        break;
+      case 'zoom':
+        if(Settings.instance.zoom){
+          root.zoom = Settings.instance.zoom
+        }
+        break
+      default:
+        console.log(`No implementation for ${changedField}`);
     }
     this.requestUpdate();
   }

@@ -233,7 +233,6 @@ export class Notepad {
         }
 
         try {
-
             const writable = await this.fileHandle.createWritable();
             await writable.write(this.editorContents || '');
             await writable.close();
@@ -245,6 +244,8 @@ export class Notepad {
     }
 
     public async saveAsFile() {
+
+
         const options = {
             types: [
                 {

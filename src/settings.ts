@@ -559,7 +559,7 @@ export class AppMenu extends LitElement {
             </sl-radio-group>
         </sl-details>
         </div>
-        <div class="about-this-app">
+        <!-- <div class="about-this-app">
             <h2>About this app</h2>
             <p>Windows Notepad 11.2310.12.0<br>
             © 2023 Microsoft. All rights reserved.</p>
@@ -573,7 +573,7 @@ export class AppMenu extends LitElement {
         <div class="buttons">
             <button>Send feedback</button>
             <a class="link-button" href="https://support.microsoft.com/en-us/windows/help-in-notepad-4d68c388-2ff2-0e7f-b706-35fb2ab88a8c" target="_blank" rel="noopener">Help</a>
-        </div>
+        </div> -->
       </div>
     `;
   }
