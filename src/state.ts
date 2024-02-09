@@ -122,6 +122,8 @@ export class Notepad {
 
             if (hasBOM) {
                 Notepad._instance.encoding = "UTF-8 with BOM";
+            } else {
+                Notepad._instance.encoding = "UTF-8";
             }
         };
 
@@ -161,6 +163,8 @@ export class Notepad {
                     Notepad._instance.fileEnding = 'Unix (LF)';
                 } else if (containsCR) {
                     Notepad._instance.fileEnding = 'Macintosh (CR)';
+                } else {
+                    Notepad._instance.fileEnding = 'Windows (CRLF)';
                 }
             } else {
                 console.error("Buffer is null");
@@ -181,7 +185,6 @@ export class Notepad {
             this.getEncoding(file);
             this.fileName = handle.name;
             this.fileContents = await file.text();
-            console.log(this.fileContents)
             this.fileHandle = handle;
             return true;
         } catch (_) {

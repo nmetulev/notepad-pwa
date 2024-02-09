@@ -37,6 +37,11 @@
     //     import.meta.env.MODE === 'production' ? '/sw.js' : '/sw.js?dev-sw'
     //   );
     // }
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register(
+        '/sw.js'
+      );
+    }
   </script>
 </body>
 
