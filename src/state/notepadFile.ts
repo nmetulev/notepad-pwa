@@ -103,6 +103,7 @@ export class NotepadFile extends EventProducer<void | string> {
     }
 
     public set selection(v: Selection){
+        console.log("Setting selection")
         this._selection = v;
         //this._eventDispatcher.fire(notepadEventNames.cursorPositionChanged)
     }

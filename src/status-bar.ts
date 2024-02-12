@@ -55,6 +55,7 @@ export class AppMenu extends LitElement {
   }
 
   handleCursorUpdate(root: any){
+    console.log("cursor changed")
     if(Notepad.current.cursorPosition){
       const cursorPosition = Notepad.current.cursorPosition;
 

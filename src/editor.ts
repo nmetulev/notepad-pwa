@@ -81,7 +81,7 @@ export class AppMenu extends LitElement {
     this.updateCursorPosition();
     Notepad.current.editorDiv = this.shadowRoot!.querySelector('.editor') as HTMLDivElement;
     //@ts-ignore
-    Notepad.instance.selection = this.shadowRoot!.getSelection();
+    Notepad.current.selection = this.shadowRoot!.getSelection();
   }
 
   private onFileChangedHandler = this.setEditorContents.bind(this);
@@ -111,13 +111,13 @@ export class AppMenu extends LitElement {
   }
 
   updateText(e: InputEvent){
-    this.file!.editorContents = (e.target as HTMLDivElement).innerText;
-      this.editor.textContent = Notepad.current.fileContents || ""; // sets editor to file contents if file contents exist.
-      if(localStorage.getItem('lastSession') && Settings.instance.start_behavior && this.editor.textContent.length === 0){
-        this.editor.textContent = decodeURIComponent(localStorage.getItem('lastSession')!);
-      }
-      Notepad.current.editorContents = this.editor.textContent;
-    }
+    /* this.file!.editorContents = (e.target as HTMLDivElement).innerText;
+    this.editor.textContent = Notepad.current.fileContents || ""; // sets editor to file contents if file contents exist.
+    if(localStorage.getItem('lastSession') && Settings.instance.start_behavior && this.editor.textContent.length === 0){
+      this.editor.textContent = decodeURIComponent(localStorage.getItem('lastSession')!);
+    } */
+    Notepad.current.editorContents = this.editor.textContent!;
+  }
 
   updateSettings(root: any){
     root.requestUpdate();
