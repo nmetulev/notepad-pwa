@@ -158,13 +158,13 @@ export class Notepad {
                 const containsCR = text.includes('\r') && !text.includes('\n');
 
                 if (containsCRLF) {
-                    Notepad._instance.fileEnding = 'Windows (CRLF)';
+                    this.fileEnding = 'Windows (CRLF)';
                 } else if (containsLF) {
-                    Notepad._instance.fileEnding = 'Unix (LF)';
+                    this.fileEnding = 'Unix (LF)';
                 } else if (containsCR) {
-                    Notepad._instance.fileEnding = 'Macintosh (CR)';
+                    this.fileEnding = 'Macintosh (CR)';
                 } else {
-                    Notepad._instance.fileEnding = 'Windows (CRLF)';
+                    this.fileEnding = 'Windows (CRLF)';
                 }
             } else {
                 console.error("Buffer is null");
