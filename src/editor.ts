@@ -60,7 +60,7 @@ export class AppMenu extends LitElement {
     super();
     Notepad.instance.on(notepadEventNames.fileChanged, this.onFileChangedHandler);
     Notepad.instance.on(notepadEventNames.insertedText, this.updateText);
-    Settings.instance.on(settingsEventNames.settingsChanged, () => this.updateSettings(this));
+    Settings.instance.on(settingsEventNames.settingsChanged, () => this.updateSettings(this))
   }
 
   disconnectedCallback(): void {
@@ -83,9 +83,9 @@ export class AppMenu extends LitElement {
     if (this.editor) {
       this.editor.textContent = Notepad.instance.fileContents || ""; // sets editor to file contents if file contents exist.
       if(localStorage.getItem('lastSession') && Settings.instance.start_behavior && this.editor.textContent.length === 0){
-        this.editor.innerText = decodeURIComponent(localStorage.getItem('lastSession')!);
+        this.editor.textContent = decodeURIComponent(localStorage.getItem('lastSession')!);
       }
-      Notepad.instance.editorContents = this.editor.innerText;
+      Notepad.instance.editorContents = this.editor.textContent;
     }
   }
 

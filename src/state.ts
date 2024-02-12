@@ -1,3 +1,4 @@
+import { Settings } from "./settings-state";
 import { EventDispatcher, EventHandler } from "./utils/EventDispatcher";
 
 type cursorInformation = {
@@ -13,6 +14,9 @@ export class Notepad {
         this._cursorPosition = { start: 1, end: 1, line: 1 };
         this._encoding = "UTF-8";
         this._fileEnding = "Windows (CRLF)";
+        this._substringToFind = "";
+        this._findListIndex = 0;
+        this._findPositions = [];
     }
 
     static get instance() {
@@ -33,6 +37,9 @@ export class Notepad {
         this._eventDispatcher.remove(eventName, handler);
     }
 
+    private writeSettings(settingName: string, settingValue: any){
+        localStorage.setItem(`${settingName}-state-setting`, JSON.stringify(settingValue));
+    }
 
     private fileHandle: FileSystemFileHandle | undefined;
     public fileName: string | undefined;
@@ -115,6 +122,8 @@ export class Notepad {
 
             if (hasBOM) {
                 Notepad._instance.encoding = "UTF-8 with BOM";
+            } else {
+                Notepad._instance.encoding = "UTF-8";
             }
         };
 
@@ -154,6 +163,8 @@ export class Notepad {
                     Notepad._instance.fileEnding = 'Unix (LF)';
                 } else if (containsCR) {
                     Notepad._instance.fileEnding = 'Macintosh (CR)';
+                } else {
+                    Notepad._instance.fileEnding = 'Windows (CRLF)';
                 }
             } else {
                 console.error("Buffer is null");
@@ -174,7 +185,6 @@ export class Notepad {
             this.getEncoding(file);
             this.fileName = handle.name;
             this.fileContents = await file.text();
-            console.log(this.fileContents)
             this.fileHandle = handle;
             return true;
         } catch (_) {
@@ -226,7 +236,6 @@ export class Notepad {
         }
 
         try {
-
             const writable = await this.fileHandle.createWritable();
             await writable.write(this.editorContents || '');
             await writable.close();
@@ -238,6 +247,8 @@ export class Notepad {
     }
 
     public async saveAsFile() {
+
+
         const options = {
             types: [
                 {
@@ -364,6 +375,154 @@ export class Notepad {
         return `${hours}:${minutes} ${month}/${day}/${year}`;
     }
 
+    private _substringToFind!: string;
+    public get substringToFind(): string {
+        return this._substringToFind;
+    }
+
+    public set substringToFind(v: string){
+        this._substringToFind = v;
+        this.writeSettings('search-string', this._substringToFind);
+        this._findListIndex = 0;
+        this.findSubstringPositions();
+    }
+
+
+    private _findPositions: { startIndex: number; endIndex: number; }[];
+    public get findPositions(): { startIndex: number; endIndex: number; }[] {
+        return this._findPositions;
+    }
+
+    private set findPositions(v: { startIndex: number; endIndex: number; }[]){
+        this._findPositions = v;
+    }
+
+    public findSubstringPositions(){
+        let startIndex = 0;
+        let positions = [];
+
+        const substring = Settings.instance.matchCaseForSearchResult ? this._substringToFind : this._substringToFind.toLowerCase() ;
+        const str = Settings.instance.matchCaseForSearchResult ? this._editorContents : this._editorContents.toLowerCase();
+
+        while (startIndex < str.length) {
+            // Find the start position of the substring, searching from the current startIndex
+            let index = str.indexOf(substring, startIndex);
+
+            // If the substring is not found, break out of the loop
+            if (index === -1) break;
+
+            // Calculate the end position
+            let endIndex = index + substring.length;
+
+            // Add the start and end positions to the positions array
+            positions.push({startIndex: index, endIndex});
+
+            // Set the next start index to be one after the current start index
+            startIndex = index + 1;
+        }
+
+       this._findPositions = positions;
+
+    }
+
+    public search() {
+        const element = this._editorDiv;
+        if (!element) return;
+
+        //console.log("after searching from changing case", this.findPositions)
+
+        const { startIndex, endIndex } = this._findPositions[this._findListIndex];
+        let cumulativeLength = 0;
+        let startNode: any = null;
+        let startNodeOffset = 0;
+        let endNode: any = null;
+        let endNodeOffset = 0;
+
+        const iterateNodes = (node: any) => {
+            node.childNodes.forEach((child: any) => {
+                if (child.nodeType === Node.TEXT_NODE) {
+                    const textLength = child.textContent.length;
+                    if (!startNode && cumulativeLength + textLength >= startIndex) {
+                        startNode = child;
+                        startNodeOffset = startIndex - cumulativeLength;
+                    }
+                    if (!endNode && cumulativeLength + textLength >= endIndex) {
+                        endNode = child;
+                        endNodeOffset = endIndex - cumulativeLength;
+                    }
+                    cumulativeLength += textLength;
+                } else if (child.nodeType === Node.ELEMENT_NODE) {
+                    // Assuming that <br>, <div>, and <p> could introduce new lines
+                    if (child.nodeName === "BR" || child.nodeName === "DIV" || child.nodeName === "P") {
+                        cumulativeLength++; // Adjust this based on how you count line breaks
+                    }
+                    iterateNodes(child); // Recurse into child elements
+                }
+            });
+        };
+
+        iterateNodes(element);
+
+        if (startNode && endNode) {
+            const range = document.createRange();
+            const selection = this._selection;
+            try {
+                range.setStart(startNode, startNodeOffset);
+                range.setEnd(endNode, endNodeOffset);
+                selection.removeAllRanges();
+                selection.addRange(range);
+
+                let tempEl = document.createElement("span"); // Create a temporary element
+
+                // Insert the temporary element into the range
+                range.insertNode(tempEl);
+
+                // Scroll the temporary element into view
+                tempEl.scrollIntoView({
+                    behavior: "smooth", // Optional: Defines the transition animation
+                    block: "center", // Optional: Vertical alignment
+                    inline: "nearest" // Optional: Horizontal alignment
+                });
+
+                // Remove the temporary element from the document
+                tempEl.parentNode!.removeChild(tempEl);
+
+            } catch (error) {
+                console.error('Error setting range:', error);
+            }
+        }
+    }
+
+    private _findListIndex!: number;
+    public get findListIndex(): number {
+        return this._findListIndex;
+    }
+
+    public set findListIndex(v: number){
+        if(v < 0){
+            if(Settings.instance.wrapSearchResults){
+                v = this._findPositions.length - 1;
+            } else {
+                v = 0;
+            }
+        }
+        if(v >= this._findPositions.length){
+            if(Settings.instance.wrapSearchResults){
+                v = 0;
+            } else {
+                v = this._findPositions.length - 1;
+            }
+        }
+        this._findListIndex = v;
+
+        //console.log("searching next", this.findPositions)
+
+        if(this._findPositions.length > 0){
+            this.search()
+        }
+    }
+
+
 }
 
 export const notepadEventNames = {
@@ -373,5 +532,7 @@ export const notepadEventNames = {
     cursorPositionChanged: 'cursor-position-changed',
     encodingChanged: 'encoding-changed',
     fileEndingChanged: 'file-ending-changed',
-    insertedText: 'insert-text-to-editor'
+    insertedText: 'insert-text-to-editor',
+    findSubstringChanged: 'find-substring-changed',
+    showFindInput: 'show-find-input'
 }

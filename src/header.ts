@@ -1,4 +1,4 @@
-import { LitElement, css, html, PropertyValueMap } from 'lit';
+import { LitElement, css, html } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { Notepad, notepadEventNames } from './state';
 import { styleMap } from 'lit/directives/style-map.js';
