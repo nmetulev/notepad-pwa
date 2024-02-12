@@ -655,7 +655,47 @@ export class AppMenu extends LitElement {
               <button>Send feedback</button>
               <a class="link-button" href="https://support.microsoft.com/en-us/windows/help-in-notepad-4d68c388-2ff2-0e7f-b706-35fb2ab88a8c" target="_blank" rel="noopener">Help</a>
           </div>
+        <div class="non-collapsable-setting">
+            <div class="ncs-item">
+              ${iconSvgs["open"]}
+              <div>
+                  <h2 id="opening-files">Opening files</h2>
+                  <p class="subtext">Choose where your files are opened</p>
+              </div>
+            </div>
+            <sl-select id="open-behavior-select" aria-labelledby="opening-files" value="${Settings.instance.open_behavior}">
+                <sl-option value="true">Open in a new tab</sl-option>
+                <sl-option value="false">Open in a new window</sl-option>
+            </sl-select>
         </div>
+          <sl-details id="start-behavior-details">
+            <sl-icon name="chevron-up" label="chevron-up" slot="expand-icon"></sl-icon>
+            <sl-icon name="chevron-down" label="chevron-down" slot="collapse-icon"></sl-icon>
+            <div class="icon-header" slot="summary">
+                ${iconSvgs["tab"]}
+                <h2 id="start-behavior">When Notepad (PWA) starts</h2>
+            </div>
+            <sl-radio-group id="start-group" aria-labelledby="start-behavior" value=${Settings.instance.start_behavior} @sl-change=${() => this.updateStartBehvaior()}>
+                <sl-radio value="true">Open content from the previous session</sl-radio>
+                <sl-radio value="false">Open a new window</sl-radio>
+            </sl-radio-group>
+        </sl-details>
+        </div>
+        <!-- <div class="about-this-app">
+            <h2>About this app</h2>
+            <p>Windows Notepad 11.2310.12.0<br>
+            © 2023 Microsoft. All rights reserved.</p>
+        </div>
+        <div class="links">
+            <a href="https://www.microsoft.com/en-us/Useterms/Retail/Windows/10/UseTerms_Retail_Windows_10_English.htm" target="_blank" rel="noopener">Microsoft Software License Terms</a>
+            <a href="https://www.microsoft.com/en-us/servicesagreement" target="_blank" rel="noopener">Microsoft Services Agreement</a>
+            <a href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank" rel="noopener">Microsoft Privacy Statement</a>
+            <button>Third-Party Software Acknowledgements</button>
+        </div>
+        <div class="buttons">
+            <button>Send feedback</button>
+            <a class="link-button" href="https://support.microsoft.com/en-us/windows/help-in-notepad-4d68c388-2ff2-0e7f-b706-35fb2ab88a8c" target="_blank" rel="noopener">Help</a>
+        </div> -->
       </div>
     `;
   }

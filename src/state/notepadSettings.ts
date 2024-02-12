@@ -1,4 +1,5 @@
 import { EventDispatcher, EventHandler } from "../utils/EventDispatcher";
+import { Notepad } from "./notepad";
 
 export type Theme = "light" | "dark" | "system";
 
@@ -21,6 +22,11 @@ export class Settings {
             this.wrap = true; // true = wrap, false = don't wrap
             this.open_behavior = true; // true = new tab, false = new window
             this.start_behavior = true; // true = open from previous session, false = new note
+            this.zoom = 100;
+            this.displayFontSize = 11
+            this.showingStatusBar = true;
+            this.matchCaseForSearchResult = false;
+            this.wrapSearchResults = true;
         }
     }
 
@@ -55,11 +61,11 @@ export class Settings {
         localStorage.setItem('notepadSettings', JSON.stringify(this));
     }
 
-    private _theme!: Theme;
+    private _theme!: string;
     public get theme(): string {
         return this._theme;
     }
-    public set theme(v: Theme) {
+    public set theme(v: string) {
         if(this._theme !== v){
             this._theme = v;
             this.writeSettings();
@@ -73,6 +79,7 @@ export class Settings {
     }
     public set font(v: Font) {
         this._font = v;
+        this.displayFontSize = this._font.size * (this._zoom / 100);
         this.writeSettings();
         this._eventDispatcher.fire(settingsEventNames.settingsChanged);
     }
@@ -106,9 +113,64 @@ export class Settings {
         this.writeSettings();
         this._eventDispatcher.fire(settingsEventNames.settingsChanged);
     }
+
+    private _zoom!: number;
+    public get zoom(): number {
+        return this._zoom;
+    }
+    public set zoom(v: number) {
+        this._zoom = Math.max(10, Math.min(v, 500));
+        this.displayFontSize = (this._zoom / 100) * this._font.size;
+        this._eventDispatcher.fire(settingsEventNames.zoomChanged);
+    }
+
+    private _displayFontSize!: number;
+    public get displayFontSize(): number {
+        return this._displayFontSize;
+    }
+    private set displayFontSize(v: number) {
+        this._displayFontSize = v;
+        this._eventDispatcher.fire(settingsEventNames.settingsChanged);
+    }
+
+    private _showingStatusBar!: boolean;
+    public get showingStatusBar(): boolean {
+        return this._showingStatusBar;
+    }
+    public set showingStatusBar(v: boolean) {
+        this._showingStatusBar = v;
+        this._eventDispatcher.fire(settingsEventNames.showingStatusBarChanged);
+    }
+
+    private _wrapSearchResults!: boolean;
+    public get wrapSearchResults(): boolean {
+        return this._wrapSearchResults;
+    }
+    public set wrapSearchResults(v: boolean) {
+        this._wrapSearchResults = v;
+    }
+
+    private _matchCaseForSearchResult!: boolean;
+    public get matchCaseForSearchResult(): boolean {
+        return this._matchCaseForSearchResult;
+    }
+    public set matchCaseForSearchResult(v: boolean) {
+        this._matchCaseForSearchResult = v;
+        this.writeSettings();
+        if(Notepad.current.selection){
+            Notepad.current.selection.removeAllRanges();
+        }
+
+        if(Notepad.current.substringToFind.length > 0) {
+            Notepad.current.findSubstringPositions();
+        }
+    }
 }
 
 export const settingsEventNames = {
     themeChanged: 'settings-theme-changed',
-    settingsChanged: 'settings-changed'
+    settingsChanged: 'settings-changed',
+    zoomChanged: 'zoom-changed',
+    showingStatusBarChanged: 'showing-status-bar-changed',
+    matchCaseSettingChanged: 'match-case-setting-changed'
 }

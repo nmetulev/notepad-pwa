@@ -11,6 +11,7 @@ import './menu';
 import './editor';
 import './settings'
 import './status-bar';
+import './find-input';
 
 import './styles/global.css';
 import { Settings, settingsEventNames } from './state/notepadSettings';
@@ -32,6 +33,10 @@ export class AppIndex extends LitElement {
 
   @state() showSettings: boolean = false;
 
+  @state() showingStatusBar: boolean = true;
+
+  @state() showingFindInput: boolean = false;
+
   static get styles() {
     return css`
 
@@ -40,6 +45,7 @@ export class AppIndex extends LitElement {
         flex-direction: column;
         height: 100vh;
         overflow: hidden;
+        position: relative;
       }
 
       .settings {
@@ -70,7 +76,7 @@ export class AppIndex extends LitElement {
       }
 
       app-editor::-webkit-scrollbar-thumb {
-        background-color: #8a8a8a;
+        background-color: #a1a1a1;
         border: 4px solid rgba(0, 0, 0, 0);
         background-clip: padding-box;
         border-radius: 9999px;
@@ -78,6 +84,18 @@ export class AppIndex extends LitElement {
 
       .settings.hidden {
         display: none;
+      }
+
+      .search-holder {
+        position: absolute;
+        width: 100%;
+        top: 100px;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: fit-content;
       }
 
       /* app-header,
@@ -142,6 +160,57 @@ export class AppIndex extends LitElement {
       }
     });
 
+    // zoom in
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && (e.key === '+' || e.key === '=')) {
+          e.preventDefault();
+          Settings.instance.zoom += 10;
+      }
+    });
+
+     // zoom out
+     document.addEventListener('keydown', e => {
+      if (e.ctrlKey && (e.key === '-' || e.key === '_')) {
+          e.preventDefault();
+          Settings.instance.zoom += -10;
+      }
+    });
+
+    // restore default zoom
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && (e.key === '0' || e.key === ')')) {
+          e.preventDefault();
+          Settings.instance.zoom = 100;
+      }
+    });
+
+    // open find window
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && e.key === 'f') {
+          e.preventDefault();
+          this.showingFindInput = true;
+      }
+    });
+
+    /* // find next
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F3') {
+          e.preventDefault();
+          Notepad.instance.findListIndex += 1;
+
+          Notepad.instance.findSubstringPositions()
+          Notepad.instance.search();
+      }
+    });
+
+    // find previous
+    document.addEventListener('keydown', e => {
+      if (e.shiftKey && e.key === "F3") {
+          e.preventDefault();
+          Settings.instance.zoom = 100;
+      }
+    });*/
+
     window.addEventListener('beforeunload', e => {
       let dirtyTab = Notepad.tabs.find(t => t.isDirty);
       if (dirtyTab) {
@@ -152,7 +221,14 @@ export class AppIndex extends LitElement {
       return;
     });
 
-    // Notepad.on(Notepad.eventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
+    // Notepad.instance.on(notepadEventNames.decideOnChanges, (afterDialog: any) => this.showDialog(afterDialog))
+    Settings.instance.on(settingsEventNames.showingStatusBarChanged, () => this.toggleStatusBar() )
+  }
+
+  toggleStatusBar(){
+    console.log(Settings.instance.showingStatusBar)
+    this.showingStatusBar = Settings.instance.showingStatusBar;
+    this.requestUpdate();
   }
 
   public showDialog() {
@@ -208,13 +284,14 @@ export class AppIndex extends LitElement {
   render() {
     return html`
       <div class="root">
-        <div class="content-root">
+        <div class="content-root" @show-find-input=${() => this.showingFindInput = true} @close-find-input=${() => this.showingFindInput = false}>
           <app-header></app-header>
           <app-menu @showSettingsClicked=${() => this.showSettings = true}></app-menu>
           <app-editor
           .fontStyles=${Settings.instance.font}
           ></app-editor>
-          <app-status-bar></app-status-bar>
+          ${this.showingStatusBar ? html`<app-status-bar></app-status-bar>` : null }
+          ${this.showingFindInput ? html`<div class="search-holder"><find-input></find-input></div>` : null}
         </div>
         <app-settings class=${classMap({settings: true, hidden: !this.showSettings})} @settingsClosed=${() => this.showSettings = false}></app-settings>
         <div class="dialog">

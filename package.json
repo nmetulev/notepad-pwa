@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite --open --port 3000",
+    "dev-azure": "npx @azure/static-web-apps-cli start http://localhost:3000 --run \"npm run dev-server\"",
     "dev-task": "vite",
     "build": "tsc && vite build",
     "start": "npm run dev",
@@ -13,10 +14,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fluentui/svg-icons": "^1.1.224",
     "@shoelace-style/shoelace": "^2.12.0",
     "@types/wicg-file-system-access": "^2023.10.4",
-    "lit": "^3.1.0",
-    "@fluentui/svg-icons": "^1.1.224"
+    "lit": "^3.1.0"
   },
   "devDependencies": {
     "rollup-plugin-postcss-lit": "^2.0.0",

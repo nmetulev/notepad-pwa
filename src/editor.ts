@@ -33,6 +33,7 @@ export class AppMenu extends LitElement {
         min-width: 100%;
         overflow-wrap: normal;
         box-sizing: border-box;
+        line-height: 1.2;
       }
 
       .editor.wrap {
@@ -58,6 +59,9 @@ export class AppMenu extends LitElement {
   constructor() {
     super();
     Notepad.on(Notepad.eventNames.currentTabIndexChanged, this.onFileChangedHandler);
+    Notepad.on(NotepadFile.eventNames.fileChanged, this.onFileChangedHandler);
+    // Notepad.on(NotepadFile.eventNames.insertedText, this.updateText);
+    // Settings.on(Notepad.eventNames.settingsChanged, () => this.updateSettings(this))
   }
 
   disconnectedCallback(): void {
@@ -67,13 +71,17 @@ export class AppMenu extends LitElement {
     // if (this.file) {
     //   this.file.removeListener(NotepadFile.eventNames.fileChanged, this.onFileChangedHandler)
     // }
-    localStorage.setItem('lastSession', encodeURIComponent(Notepad.instance.editorContents));
-    Notepad.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler);
+    localStorage.setItem('lastSession', encodeURIComponent(Notepad.current.editorContents));
+    Notepad.current.removeListener(NotepadFile.eventNames.fileChanged, this.onFileChangedHandler);
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     this.setEditorContents();
     this.editor?.focus();
+    this.updateCursorPosition();
+    Notepad.current.editorDiv = this.shadowRoot!.querySelector('.editor') as HTMLDivElement;
+    //@ts-ignore
+    Notepad.instance.selection = this.shadowRoot!.getSelection();
   }
 
   private onFileChangedHandler = this.setEditorContents.bind(this);
@@ -104,7 +112,12 @@ export class AppMenu extends LitElement {
 
   updateText(e: InputEvent){
     this.file!.editorContents = (e.target as HTMLDivElement).innerText;
-  }
+      this.editor.textContent = Notepad.current.fileContents || ""; // sets editor to file contents if file contents exist.
+      if(localStorage.getItem('lastSession') && Settings.instance.start_behavior && this.editor.textContent.length === 0){
+        this.editor.textContent = decodeURIComponent(localStorage.getItem('lastSession')!);
+      }
+      Notepad.current.editorContents = this.editor.textContent;
+    }
 
   updateSettings(root: any){
     root.requestUpdate();
@@ -129,10 +142,45 @@ export class AppMenu extends LitElement {
     return "unset";
   }
 
+
+  updateCursorPosition() {
+
+    const contentEditableDiv = this.shadowRoot!.querySelector(".editor")!;
+
+    //@ts-ignore
+    const selection = this.shadowRoot!.getSelection();
+    if (selection!.rangeCount > 0) {
+      const range = selection!.getRangeAt(0);
+      const start = range.startOffset;
+      const end = range.endOffset;
+
+      const contentDivRect = contentEditableDiv.getBoundingClientRect();
+      const rangeRect = range.getBoundingClientRect();
+
+      const lineHeight = parseInt(getComputedStyle(contentEditableDiv).lineHeight);
+
+      // Calculate line number, ensuring it's not negative
+      let line = Math.floor((rangeRect.top - contentDivRect.top) / lineHeight) + 1;
+      line = Math.max(line, 1); // Ensure line number is at least 1
+
+      // Handling special cases
+      if (contentEditableDiv.textContent === '') {
+          // If there's no text, default to the first line
+          line = 1;
+      }
+
+      Notepad.current.cursorPosition = {
+          start: start + 1,
+          end: end + 1,
+          line: line
+      }
+    }
+  }
+
   render() {
 
     const styleInfo = {
-      'font-size': (Settings.instance.font.size).toString() + 'px',
+      'font-size': (Settings.instance.displayFontSize).toString() + 'px',
       'font-family': Settings.instance.font.family,
       'font-style': Settings.instance.font.style.includes("italic") ? "italic" : "unset",
       'font-weight': this.decideFontWeight(),
@@ -151,7 +199,9 @@ export class AppMenu extends LitElement {
           spellcheck="false"
           @input=${(e: InputEvent) => this.updateText(e)}
           @keydown=${this.handleTab}
-          @paste=${this.pasteAsPlainText}></div>
+          @paste=${this.pasteAsPlainText}
+          @click=${() => this.updateCursorPosition()}
+          @keyup=${() => this.updateCursorPosition()}></div>
       </div>
     `;
   }
