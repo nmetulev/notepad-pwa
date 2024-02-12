@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Notepad } from './state';
-import { Settings } from './settings-state';
+import { Settings } from './state';
 
 @customElement('find-input')
 export class AppMenu extends LitElement {
@@ -123,12 +123,12 @@ export class AppMenu extends LitElement {
     // puts the last value back in the box
     if(localStorage.getItem("search-string-setting-state")){
       console.log("hit", JSON.parse(localStorage.getItem("search-string-setting-state")!))
-      Notepad.instance.substringToFind = JSON.parse(localStorage.getItem("search-string-setting-state")!);
+      Notepad.current.substringToFind = JSON.parse(localStorage.getItem("search-string-setting-state")!);
     }
     if(localStorage.getItem('notepadSettings')){
       Settings.instance.matchCaseForSearchResult = JSON.parse(localStorage.getItem('notepadSettings')!).matchCaseForSearchResult || false;
     }
-    this.inputValue = Notepad.instance.substringToFind;
+    this.inputValue = Notepad.current.substringToFind;
   }
 
 
@@ -141,25 +141,25 @@ export class AppMenu extends LitElement {
     const input = this.shadowRoot!.querySelector('input');
     const newSubstring = input!.value;
     newSubstring.length === 0 ? this.showClear = false : this.showClear = true;
-    Notepad.instance.substringToFind = newSubstring;
+    Notepad.current.substringToFind = newSubstring;
     this.requestUpdate();
   }
 
   handleSubmit(e: Event){
     e.preventDefault()
-    Notepad.instance.search()
+    Notepad.current.search()
   }
 
   updateIndex(value: number){
-    Notepad.instance.findListIndex += value;
+    Notepad.current.findListIndex += value;
   }
 
   clearInput(){
     const input = this.shadowRoot!.querySelector('input') as HTMLInputElement;
     input.value = "";
     this.showClear = true;
-    Notepad.instance.selection.removeAllRanges();
-    Notepad.instance.substringToFind = "";
+    Notepad.current.selection.removeAllRanges();
+    Notepad.current.substringToFind = "";
   }
 
   handleCloseComponent(){
@@ -187,7 +187,7 @@ export class AppMenu extends LitElement {
             <form class="input-and-actions" @submit=${(e: Event) => this.handleSubmit(e)}>
                 <input .value=${this.inputValue} class="the-input" placeholder="Find" @input=${() => this.updateSubstringToFind()} />
                 ${this.showClear ? html`<button type="button" class="search-action" value="clear" @click=${() => this.clearInput()}><sl-icon name="x-lg" label="close"></sl-icon></button>` : null }
-                <button type="button" class="search-action" value="search" @click=${() => Notepad.instance.search()}><sl-icon name="search" label="search"></sl-icon></button>
+                <button type="button" class="search-action" value="search" @click=${() => Notepad.current.search()}><sl-icon name="search" label="search"></sl-icon></button>
             </form>
             <button type="button" class="icon-button" value="previous" @click=${() => this.updateIndex(1)}><sl-icon name="arrow-down" label="arrow-down"></sl-icon></button>
             <button type="button" class="icon-button" value="next" @click=${() => this.updateIndex(-1)}><sl-icon name="arrow-up" label="arrow-up"></sl-icon></button>

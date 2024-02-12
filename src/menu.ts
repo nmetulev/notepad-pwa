@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { Notepad } from './state';
+import { Notepad, Settings } from './state';
 
 import '@shoelace-style/shoelace/dist/components/button/button'
 import '@shoelace-style/shoelace/dist/components/icon/icon'
@@ -8,7 +8,6 @@ import '@shoelace-style/shoelace/dist/components/dropdown/dropdown'
 import '@shoelace-style/shoelace/dist/components/menu/menu'
 import '@shoelace-style/shoelace/dist/components/menu-item/menu-item'
 import '@shoelace-style/shoelace/dist/components/divider/divider'
-import { Settings } from './settings-state';
 
 // import { setDefaultAnimation } from '@shoelace-style/shoelace/dist/utilities/animation-registry.js';
 // setDefaultAnimation('dropdown.show', {
@@ -270,16 +269,16 @@ export class AppMenu extends LitElement {
   private async editMenuItemClicked(item: string) {
     switch (item) {
       case 'cut':
-        Notepad.instance.cut();
+        Notepad.current.cut();
         break;
       case 'copy':
-        Notepad.instance.copy();
+        Notepad.current.copy();
         break;
       case 'paste':
-        Notepad.instance.paste();
+        Notepad.current.paste();
         break;
       case 'delete':
-        Notepad.instance.delete()
+        Notepad.current.delete()
         break;
       case 'find':
         const event = new Event('show-find-input', {bubbles: true, composed: true});
@@ -287,16 +286,16 @@ export class AppMenu extends LitElement {
         break;
 
       case 'find-next':
-        Notepad.instance.findListIndex += 1;
+        Notepad.current.findListIndex += 1;
         break;
       case 'find-previous':
-        Notepad.instance.findListIndex -= 1;
+        Notepad.current.findListIndex -= 1;
         break;
       case 'select-all':
-        Notepad.instance.selectAll();
+        Notepad.current.selectAll();
         break;
       case 'time-date':
-        Notepad.instance.insertTimeDate();
+        Notepad.current.insertTimeDate();
         break;
       default:
         console.log(`${item} NOT IMPLEMENTED`)

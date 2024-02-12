@@ -1,7 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { Notepad, notepadEventNames } from './state';
-import { Settings, settingsEventNames } from './settings-state';
+import { Notepad, NotepadFile, Settings } from './state';
 
 @customElement('app-status-bar')
 export class AppMenu extends LitElement {
@@ -43,38 +42,38 @@ export class AppMenu extends LitElement {
 
   constructor() {
     super();
-    Notepad.instance.on(notepadEventNames.cursorPositionChanged, () => this.handleCursorUpdate(this));
-    Notepad.instance.on(notepadEventNames.fileEndingChanged, () => this.handleDataChange(this, 'file-ending'));
-    Notepad.instance.on(notepadEventNames.encodingChanged, () => this.handleDataChange(this, 'encoding'));
-    Settings.instance.on(settingsEventNames.zoomChanged, () => this.handleDataChange(this, 'zoom'));
+    Notepad.current.on(NotepadFile.eventNames.cursorPositionChanged, () => this.handleCursorUpdate(this));
+    Notepad.current.on(NotepadFile.eventNames.fileEndingChanged, () => this.handleDataChange(this, 'file-ending'));
+    Notepad.current.on(NotepadFile.eventNames.encodingChanged, () => this.handleDataChange(this, 'encoding'));
+    // Settings.instance.on(settingsEventNames.zoomChanged, () => this.handleDataChange(this, 'zoom'));
   }
 
   disconnectedCallback(): void {
-    Notepad.instance.removeListener(notepadEventNames.cursorPositionChanged, this.handleCursorUpdate);
-    Notepad.instance.removeListener(notepadEventNames.fileEndingChanged, () => this.handleDataChange(this, 'file-ending'));
-    Notepad.instance.removeListener(notepadEventNames.encodingChanged, () => this.handleDataChange(this, 'encoding'));
+    Notepad.current.removeListener(NotepadFile.eventNames.cursorPositionChanged, this.handleCursorUpdate);
+    Notepad.current.removeListener(NotepadFile.eventNames.fileEndingChanged, () => this.handleDataChange(this, 'file-ending'));
+    Notepad.current.removeListener(NotepadFile.eventNames.encodingChanged, () => this.handleDataChange(this, 'encoding'));
   }
 
   handleCursorUpdate(root: any){
-    if(Notepad.instance.cursorPosition){
-      const cursorPosition = Notepad.instance.cursorPosition;
+    if(Notepad.current.cursorPosition){
+      const cursorPosition = Notepad.current.cursorPosition;
 
       root.start = cursorPosition.start;
-      root.end = Notepad.instance.cursorPosition.end;
-      root.line = Notepad.instance.cursorPosition.line;
+      root.end = Notepad.current.cursorPosition.end;
+      root.line = Notepad.current.cursorPosition.line;
     }
   }
 
   handleDataChange(root: any, changedField: string){
     switch (changedField) {
       case 'file-ending':
-        if(Notepad.instance.fileEnding){
-          root.lineEnding = Notepad.instance.fileEnding;
+        if(Notepad.current.fileEnding){
+          root.lineEnding = Notepad.current.fileEnding;
         }
         break;
       case 'encoding':
-        if(Notepad.instance.encoding){
-          root.encoding = Notepad.instance.encoding
+        if(Notepad.current.encoding){
+          root.encoding = Notepad.current.encoding
         }
         break;
       case 'zoom':
@@ -94,7 +93,7 @@ export class AppMenu extends LitElement {
         <div class="position">
           Ln ${this.line}, Col ${this.end}
         </div>
-        <div class="zoom">${Notepad.instance.editorContents.length} characters</div>
+        <div class="zoom">${Notepad.current.editorContents.length} characters</div>
         <div class="zoom">${this.zoom}%</div>
         <div class="line-endings">${this.lineEnding}</div>
         <div class="text-type">${this.encoding}</div>
