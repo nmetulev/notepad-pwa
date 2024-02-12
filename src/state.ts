@@ -121,9 +121,9 @@ export class Notepad {
             }
 
             if (hasBOM) {
-                Notepad._instance.encoding = "UTF-8 with BOM";
+                this.encoding = "UTF-8 with BOM";
             } else {
-                Notepad._instance.encoding = "UTF-8";
+                this.encoding = "UTF-8";
             }
         };
 

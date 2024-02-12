@@ -157,7 +157,9 @@ export class Settings {
     public set matchCaseForSearchResult(v: boolean) {
         this._matchCaseForSearchResult = v;
         this.writeSettings();
-        Notepad.instance.selection.removeAllRanges();
+        if(Notepad.instance.selection){
+            Notepad.instance.selection.removeAllRanges();
+        }
         Notepad.instance.findSubstringPositions();
     }
 }
