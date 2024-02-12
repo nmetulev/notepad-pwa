@@ -160,7 +160,9 @@ export class Settings {
         if(Notepad.instance.selection){
             Notepad.instance.selection.removeAllRanges();
         }
-        Notepad.instance.findSubstringPositions();
+        if(Notepad.instance.substringToFind.length > 0){
+            Notepad.instance.findSubstringPositions();
+        }
     }
 }
 
