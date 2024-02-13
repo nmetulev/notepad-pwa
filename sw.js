@@ -16,19 +16,17 @@ self.addEventListener("install", (e) => {
     );
 });
 
-self.addEventListener("fetch", (e) => {
-    e.respondWith(
-      (async () => {
-        const r = await caches.match(e.request);
-        console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
-        if (r) {
-          return r;
-        }
-        const response = await fetch(e.request);
-        const cache = await caches.open(cacheName);
-        console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
-        cache.put(e.request, response.clone());
-        return response;
-      })(),
-    );
+// Stale-With-Revalidate cache strategy, credit to https://web.dev/articles/offline-cookbook#stale-while-revalidate
+self.addEventListener('fetch', function (event) {
+  event.respondWith(
+    caches.open(cacheName).then(function (cache) {
+      return cache.match(event.request).then(function (response) {
+        var fetchPromise = fetch(event.request).then(function (networkResponse) {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        });
+        return response || fetchPromise;
+      });
+    }),
+  );
 });
