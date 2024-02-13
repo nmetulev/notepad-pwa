@@ -133,7 +133,7 @@ export class AppIndex extends LitElement {
   }
 
   @query('.dialog', true) private dialog!: SlDialog
-  @query('.settings', true) private settingsView!: SlDialog
+  //@query('.settings', true) private settingsView!: SlDialog
 
   constructor() {
     super();

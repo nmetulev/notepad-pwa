@@ -11,6 +11,7 @@ export class MessageDialogService {
     }
 
     static show(message: string, title: string = "Message") {
+        console.log(message, title, this._dialog)
         document.querySelector('body')?.appendChild(document.createElement('div'));
     }
 }

@@ -84,6 +84,7 @@ export class NotepadFile extends EventProducer<void | string> {
         if (!this.fileHandle) {
             this.updateFileName();
         }
+        localStorage.setItem(`lastSession-${this._id}`, encodeURIComponent(this._editorContents));
         this.fire(NotepadFile.eventNames.editorChanged);
     }
 
@@ -103,7 +104,6 @@ export class NotepadFile extends EventProducer<void | string> {
     }
 
     public set selection(v: Selection){
-        console.log("Setting selection")
         this._selection = v;
         //this._eventDispatcher.fire(notepadEventNames.cursorPositionChanged)
     }

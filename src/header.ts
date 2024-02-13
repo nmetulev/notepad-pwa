@@ -1,4 +1,4 @@
-import { LitElement, css, html, PropertyValueMap } from 'lit';
+import { LitElement, css, html } from 'lit';
 import { property, customElement, query, state } from 'lit/decorators.js';
 import { Notepad, NotepadFile } from './state';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -16,7 +16,7 @@ export class AppHeader extends LitElement {
   @state() tabs : NotepadFile[] = [];
   @state() selectedTabIndex = 0;
   private _currentNotepadFile: NotepadFile | undefined;
-  private shouldTearTab = false;
+  //private shouldTearTab = false;
 
   private set currentNotepadFile(file: NotepadFile | undefined) {
     if (this._currentNotepadFile) {
@@ -170,17 +170,17 @@ export class AppHeader extends LitElement {
 
   private onFileHameChangedHandler = this.handleFileNameChanged.bind(this);
   private handleFileNameChanged() {
-    console.log('File name changed', Notepad.current.fileName)
+    //console.log('File name changed', Notepad.current.fileName)
     this.requestUpdate();
   }
 
   private handleDragStart(e: DragEvent) {
-    // console.log('handleDragStart');
+    console.log('handleDragStart', e);
     // this.shouldTearTab = true;
   }
 
   private handleDragEnd(e: DragEvent) {
-    // console.log('handleDragEnd');
+    console.log('handleDragEnd', e);
 
     // todo: use windows.screen to get current position and to open new window closer to existing window
     // https://web.dev/learn/pwa/windows/
@@ -195,13 +195,13 @@ export class AppHeader extends LitElement {
   private handleDrop(e: DragEvent) {
     // this.shouldTearTab = false;
     // this.createTab();
-    // console.log('handleDrop');
+    console.log('handleDrop', e);
     // e.stopPropagation();
     return false;
   }
 
   private handleDragOver(e: DragEvent) {
-    // console.log(e);
+    console.log('handleDragOver', e);
     // e.preventDefault();
   }
 
@@ -271,7 +271,7 @@ export class AppHeader extends LitElement {
               panel=${tab.id}
               @dragstart=${(e: DragEvent) => this.handleDragStart(e)}
               @dragend=${(e: DragEvent) => this.handleDragEnd(e)}
-              @click=${(e: Event) => {Notepad.changeTabById(tab.id)}}
+              @click=${() => {Notepad.changeTabById(tab.id)}}
               draggable="true"
               closable
               ><span class="file-name">${tab.fileName}</span>${tab.isDirty ? html`<sl-icon class="dirty-flag" name="dot"></sl-icon>` : html``}</sl-tab>

@@ -2,7 +2,7 @@ import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { Font, Settings, settingsEventNames } from './state/notepadSettings';
+import { Font, Settings } from './state/notepadSettings';
 import { Notepad, NotepadFile } from './state';
 
 @customElement('app-editor')
@@ -66,7 +66,7 @@ export class AppMenu extends LitElement {
 
   disconnectedCallback(): void {
     Notepad.removeListener(Notepad.eventNames.currentTabIndexChanged, this.onFileChangedHandler);
-    localStorage.setItem('lastSession', this.editor.innerText);
+    //localStorage.setItem('lastSession', this.editor.innerText);
 
     // if (this.file) {
     //   this.file.removeListener(NotepadFile.eventNames.fileChanged, this.onFileChangedHandler)
@@ -89,8 +89,12 @@ export class AppMenu extends LitElement {
   private setEditorContents() {
     this.file = Notepad.current;
     if (this.editor) {
-      this.editor.textContent = this.file.editorContents || this.file.fileContents || "";
-      // this.file.editorContents = this.editor.innerText;
+      const lastSession = localStorage.getItem(`lastSession-${this.file.id}`)
+      if(lastSession){
+        this.editor.textContent = JSON.parse(lastSession)
+      } else {
+        this.editor.textContent = this.file.editorContents || this.file.fileContents || "";
+      }
       this.editor?.focus();
       this.setCaretPosition(this.editor, this.editor.innerText.length);
     }
@@ -116,6 +120,7 @@ export class AppMenu extends LitElement {
     if(localStorage.getItem('lastSession') && Settings.instance.start_behavior && this.editor.textContent.length === 0){
       this.editor.textContent = decodeURIComponent(localStorage.getItem('lastSession')!);
     } */
+    e.preventDefault();
     Notepad.current.editorContents = this.editor.textContent!;
   }
 

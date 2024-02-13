@@ -12,7 +12,7 @@ import SlSelect from '@shoelace-style/shoelace/dist/components/select/select.js'
 import SlRadioGroup from '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
 import SlSwitch from '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { Settings, Theme, fontStyle } from './state';
+import { Settings, Theme } from './state';
 import { getFonts } from './utils/font-factory';
 
 @customElement('app-settings')
@@ -490,7 +490,9 @@ export class AppMenu extends LitElement {
       </div>
       <div class="font-option">
         <h3 id="font-style">Style</h3>
-        <!-- goes here -->
+        <sl-select id="style-select" aria-labelledby="font-style" value=${this.availableFonts[Settings.instance.font.family].styles.includes(Settings.instance.font.style) ? Settings.instance.font.style : this.availableFonts[Settings.instance.font.family].styles[0]} @sl-change=${() => this.updateFont()}>
+          ${this.availableFonts[Settings.instance.font.family].styles.map((style: string) => html`<sl-option value="${style}">${style.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</sl-option>`)}
+        </sl-select>
       </div>
     `
     }
