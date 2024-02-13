@@ -41,7 +41,7 @@ export class Notepad {
         localStorage.setItem(`${settingName}-state-setting`, JSON.stringify(settingValue));
     }
 
-    private fileHandle: FileSystemFileHandle | undefined;
+    public fileHandle: FileSystemFileHandle | undefined;
     public fileName: string | undefined;
     public get isDirty() { return (this.fileContents || '') !== this.editorContents };
 

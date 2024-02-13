@@ -65,6 +65,7 @@ export class AppMenu extends LitElement {
 
   disconnectedCallback(): void {
     localStorage.setItem('lastSession', encodeURIComponent(Notepad.instance.editorContents));
+
     Notepad.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler);
   }
 
@@ -80,6 +81,12 @@ export class AppMenu extends LitElement {
   private onFileChangedHandler = this.setEditorContents.bind(this);
 
   private setEditorContents() {
+    /* if(localStorage.getItem('fileHandle')){
+      Notepad.instance.fileHandle = JSON.parse(localStorage.getItem('fileHandle')!) as FileSystemFileHandle;
+      Notepad.instance.setFileHandle(Notepad.instance.fileHandle);
+      return;
+    } */
+
     if (this.editor) {
       this.editor.textContent = Notepad.instance.fileContents || ""; // sets editor to file contents if file contents exist.
       if(localStorage.getItem('lastSession') && Settings.instance.start_behavior && this.editor.textContent.length === 0){
