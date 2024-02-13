@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { Notepad, NotepadFile, Settings } from './state';
+import { Notepad, NotepadFile, Settings, settingsEventNames } from './state';
 
 @customElement('app-status-bar')
 export class AppMenu extends LitElement {
@@ -45,7 +45,7 @@ export class AppMenu extends LitElement {
     Notepad.current.on(NotepadFile.eventNames.cursorPositionChanged, () => this.handleCursorUpdate(this));
     Notepad.current.on(NotepadFile.eventNames.fileEndingChanged, () => this.handleDataChange(this, 'file-ending'));
     Notepad.current.on(NotepadFile.eventNames.encodingChanged, () => this.handleDataChange(this, 'encoding'));
-    // Settings.instance.on(settingsEventNames.zoomChanged, () => this.handleDataChange(this, 'zoom'));
+    Settings.instance.on(settingsEventNames.zoomChanged, () => this.handleDataChange(this, 'zoom'));
   }
 
   disconnectedCallback(): void {
@@ -55,7 +55,6 @@ export class AppMenu extends LitElement {
   }
 
   handleCursorUpdate(root: any){
-    console.log("cursor changed")
     if(Notepad.current.cursorPosition){
       const cursorPosition = Notepad.current.cursorPosition;
 
