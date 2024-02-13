@@ -79,7 +79,7 @@ export class Settings {
     }
     public set font(v: Font) {
         this._font = v;
-        Settings.instance.displayFontSize = this._font.size * (this._zoom / 100);
+        this.displayFontSize = this._font.size * (this._zoom / 100);
         this.writeSettings();
         this._eventDispatcher.fire(settingsEventNames.settingsChanged);
     }
@@ -120,7 +120,7 @@ export class Settings {
     }
     public set zoom(v: number) {
         this._zoom = Math.max(10, Math.min(v, 500));
-        Settings.instance.displayFontSize = (this._zoom / 100) * this._font.size;
+        this.displayFontSize = (this._zoom / 100) * this._font.size;
         this._eventDispatcher.fire(settingsEventNames.zoomChanged);
     }
 
@@ -157,8 +157,12 @@ export class Settings {
     public set matchCaseForSearchResult(v: boolean) {
         this._matchCaseForSearchResult = v;
         this.writeSettings();
-        Notepad.instance.selection.removeAllRanges();
-        Notepad.instance.findSubstringPositions();
+        if(Notepad.instance.selection){
+            Notepad.instance.selection.removeAllRanges();
+        }
+        if(Notepad.instance.substringToFind.length > 0){
+            Notepad.instance.findSubstringPositions();
+        }
     }
 }
 

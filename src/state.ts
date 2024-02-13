@@ -41,7 +41,7 @@ export class Notepad {
         localStorage.setItem(`${settingName}-state-setting`, JSON.stringify(settingValue));
     }
 
-    private fileHandle: FileSystemFileHandle | undefined;
+    public fileHandle: FileSystemFileHandle | undefined;
     public fileName: string | undefined;
     public get isDirty() { return (this.fileContents || '') !== this.editorContents };
 
@@ -121,9 +121,9 @@ export class Notepad {
             }
 
             if (hasBOM) {
-                Notepad._instance.encoding = "UTF-8 with BOM";
+                this.encoding = "UTF-8 with BOM";
             } else {
-                Notepad._instance.encoding = "UTF-8";
+                this.encoding = "UTF-8";
             }
         };
 
@@ -158,13 +158,13 @@ export class Notepad {
                 const containsCR = text.includes('\r') && !text.includes('\n');
 
                 if (containsCRLF) {
-                    Notepad._instance.fileEnding = 'Windows (CRLF)';
+                    this.fileEnding = 'Windows (CRLF)';
                 } else if (containsLF) {
-                    Notepad._instance.fileEnding = 'Unix (LF)';
+                    this.fileEnding = 'Unix (LF)';
                 } else if (containsCR) {
-                    Notepad._instance.fileEnding = 'Macintosh (CR)';
+                    this.fileEnding = 'Macintosh (CR)';
                 } else {
-                    Notepad._instance.fileEnding = 'Windows (CRLF)';
+                    this.fileEnding = 'Windows (CRLF)';
                 }
             } else {
                 console.error("Buffer is null");
@@ -384,7 +384,7 @@ export class Notepad {
         this._substringToFind = v;
         this.writeSettings('search-string', this._substringToFind);
         this._findListIndex = 0;
-        this.findSubstringPositions();
+        this.findSubstringPositions(this.substringToFind);
     }
 
 
@@ -397,11 +397,11 @@ export class Notepad {
         this._findPositions = v;
     }
 
-    public findSubstringPositions(){
+    public findSubstringPositions(toFind: string){
         let startIndex = 0;
         let positions = [];
 
-        const substring = Settings.instance.matchCaseForSearchResult ? this._substringToFind : this._substringToFind.toLowerCase() ;
+        const substring = Settings.instance.matchCaseForSearchResult ? toFind : toFind.toLowerCase() ;
         const str = Settings.instance.matchCaseForSearchResult ? this._editorContents : this._editorContents.toLowerCase();
 
         while (startIndex < str.length) {
@@ -425,13 +425,15 @@ export class Notepad {
 
     }
 
-    public search() {
+    public search(index: number) {
         const element = this._editorDiv;
         if (!element) return;
 
+        if(this.findPositions.length == 0) return;
+
         //console.log("after searching from changing case", this.findPositions)
 
-        const { startIndex, endIndex } = this._findPositions[this._findListIndex];
+        const { startIndex, endIndex } = this.findPositions[index];
         let cumulativeLength = 0;
         let startNode: any = null;
         let startNodeOffset = 0;
@@ -517,11 +519,45 @@ export class Notepad {
 
         //console.log("searching next", this.findPositions)
 
-        if(this._findPositions.length > 0){
-            this.search()
+        if(this.findPositions.length > 0){
+            this.search(this.findListIndex)
         }
     }
 
+    public replace(replaceString: string){
+        if(this.substringToFind.length == 0) return;
+
+        const selection = this.selection;
+        this.search(this.findListIndex);
+        if (selection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(document.createTextNode(replaceString));
+        }
+
+        // Notepad loops to the next item after replacing
+        this.findListIndex++;
+        this.search(this.findListIndex);
+
+        this._eventDispatcher.fire(notepadEventNames.insertedText)
+    }
+
+    public replaceAll(replaceString: string){
+        if(this.substringToFind.length == 0) return;
+        if(this.findPositions.length == 0) return;
+
+        this.findListIndex = 0;
+        const selection = this.selection;
+
+        for(let i = 0; i < this.findPositions.length; i++){
+            this.search(i);
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(document.createTextNode(replaceString));
+        }
+
+        this._eventDispatcher.fire(notepadEventNames.insertedText)
+    }
 
 }
 

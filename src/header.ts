@@ -1,20 +1,20 @@
 import { LitElement, css, html } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { property, customElement, state } from 'lit/decorators.js';
 import { Notepad, notepadEventNames } from './state';
-import { styleMap } from 'lit/directives/style-map.js';
+//import { styleMap } from 'lit/directives/style-map.js';
 
 @customElement('app-header')
 export class AppHeader extends LitElement {
   @property() title = 'Untitled';
-  @property({type: Boolean}) edited = false;
   @property({type: Boolean}) settingsShowing: boolean = false;
+
+  @state() edited = false;
 
   static get styles() {
     return css`
       :host {
         display: block;
         width: env(titlebar-area-width, 100%);
-        height: env(titlebar-area-height, 33px);
         min-height: env(titlebar-area-height, 33px);
       }
 
@@ -27,12 +27,11 @@ export class AppHeader extends LitElement {
         height: env(titlebar-area-height, 33px);
         app-region: drag;
 
-        background-color: var(--header-background-color);
+        background: #fdebdb;
         color: var(--text-color);
         display: flex;
         flex-direction: row;
         align-items: center;
-        align-content: center;
         font-family: Segoe UI Variable Text, Segoe UI, SegoeUI, Helvetica Neue, Helvetica, Arial, sans-serif;
     }
 
@@ -66,6 +65,53 @@ export class AppHeader extends LitElement {
       sl-icon {
         color: var(--text-color);
       }
+
+      .tab {
+        box-sizing: border-box;
+        background-color: var(--header-background-color);
+        height: 85%;
+        align-self: flex-end;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 200px;
+        padding: 10px;
+        padding-right: 5px;
+      }
+
+      .tab h1 {
+        all: unset;
+      }
+
+      .indicators {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 16px;
+        height: 30px;
+        width: 30px;
+      }
+
+      .edited-icon {
+        font-size: 24px;
+        color: #a0a0a0;
+      }
+
+      sl-icon {
+        border-radius: 4px;
+      }
+
+      sl-icon:hover {
+        background-color: var(--menu-button-hover-background-color);
+      }
+
+
+
     `;
   }
 
@@ -90,6 +136,10 @@ export class AppHeader extends LitElement {
     this.title = Notepad.instance.fileName || 'Untitled'
     this.edited = Notepad.instance.isDirty;
     document.title = this.title;
+
+    console.log(this.edited)
+
+    this.requestUpdate();
   }
 
   backToEditor(){
@@ -101,12 +151,12 @@ export class AppHeader extends LitElement {
 
   render() {
 
-    const styleInfo = {
+    /* const styleInfo = {
       'background-color': this.settingsShowing ? 'transparent' : 'var(--header-background-color)',
-    };
+    }; */
 
     return html`
-      <div class="root" style=${styleMap(styleInfo)}>
+      <div class="root">
         ${this.settingsShowing ?
           html`
             <button id="back-button" type="button" @click=${() => this.backToEditor()}><sl-icon name="arrow-left"></sl-icon></button>
@@ -123,8 +173,11 @@ export class AppHeader extends LitElement {
           `
           :
           html`
-          <label>
-            ${this.edited ? "*" : ""}${this.title} - Notepad
+          <label class="tab">
+            <h1>${this.title}</h1>
+            <div class="indicators">
+              ${this.edited ? html`<sl-icon name="dot" label="dot" class="edited-icon"></sl-icon>` : html`<sl-icon name="x" label="x" class="close-icon"></sl-icon>`}
+            </div>
           </label>
           `
         }
