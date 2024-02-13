@@ -73,10 +73,6 @@ export class AppIndex extends LitElement {
         height: 14px;
       }
 
-      app-editor::-webkit-scrollbar-track {
-
-      }
-
       app-editor::-webkit-scrollbar-thumb {
         background-color: #a1a1a1;
         border: 4px solid rgba(0, 0, 0, 0);
