@@ -1,38 +1,34 @@
-const CACHE_NAME = 'cool-cache';
+const cacheName = "notepad-cache";
+const cacheFiles = [
+  '/',
+  '/index.html',
+  '/src/',
+];
 
-// Add whichever assets you want to pre-cache here:
-const PRECACHE_ASSETS = [
-    '/assets/',
-    '/src/'
-]
-
-// Listener for the install event - pre-caches our assets list on service worker install.
-self.addEventListener('install', event => {
-    event.waitUntil((async () => {
-        const cache = await caches.open(CACHE_NAME);
-        cache.addAll(PRECACHE_ASSETS);
-    })());
+self.addEventListener("install", (e) => {
+    console.log("[Service Worker] Install");
+    e.waitUntil(
+        (async () => {
+        const cache = await caches.open(cacheName);
+        console.log("[Service Worker] Caching all: app shell and content");
+        await cache.addAll(cacheFiles);
+        })(),
+    );
 });
 
-self.addEventListener('activate', event => {
-    event.waitUntil(self.clients.claim());
-  });
-
-
-  self.addEventListener('fetch', event => {
-    event.respondWith(async () => {
-        const cache = await caches.open(CACHE_NAME);
-
-        // match the request to our cache
-        const cachedResponse = await cache.match(event.request);
-
-        // check if we got a valid response
-        if (cachedResponse !== undefined) {
-            // Cache hit, return the resource
-            return cachedResponse;
-        } else {
-          // Otherwise, go to the network
-            return fetch(event.request)
-        };
-    });
-  });
+self.addEventListener("fetch", (e) => {
+    e.respondWith(
+      (async () => {
+        const r = await caches.match(e.request);
+        console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
+        if (r) {
+          return r;
+        }
+        const response = await fetch(e.request);
+        const cache = await caches.open(cacheName);
+        console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
+        cache.put(e.request, response.clone());
+        return response;
+      })(),
+    );
+});
