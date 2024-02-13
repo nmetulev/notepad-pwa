@@ -69,7 +69,7 @@ export class AppIndex extends LitElement {
         /* background-color: pink; //todo - remove */
       }
       app-editor::-webkit-scrollbar {
-        width: 14px;
+        width: 10px;
         height: 14px;
       }
 
@@ -85,16 +85,16 @@ export class AppIndex extends LitElement {
       }
 
       .search-holder {
-        position: absolute;
-        width: 100%;
-        top: 100px;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: fit-content;
-      }
+      position: absolute;
+      width: 100%;
+      top: 75px; /* Fixed distance from the top */
+      left: 50%;
+      transform: translate(-50%, 0);
+      display: flex;
+      align-items: flex-start; /* Align items at the top */
+      justify-content: center;
+      height: auto; /* Let the height adjust to the content */
+    }
 
       /* app-header,
       app-menu {

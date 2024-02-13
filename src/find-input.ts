@@ -2,11 +2,13 @@ import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Notepad } from './state';
 import { Settings } from './settings-state';
+import { styleMap } from 'lit/directives/style-map.js';
 
 @customElement('find-input')
 export class AppMenu extends LitElement {
 
     @state() showClear = false;
+    @state() showReplace = false;
     @state() inputValue = "";
 
   static get styles() {
@@ -18,28 +20,47 @@ export class AppMenu extends LitElement {
 
     .root {
         display: flex;
+        flex-direction: column;
         width: fit-content;
         align-items: center;
         justify-content: center;
-        padding: 5px;
+        padding: 8px;
         border: 1px solid #bfbfbf;
-        background-color: var(--editor-background-color);
+        background-color: #fbfbfb;
         border-radius: 8px;
         gap: 10px;
         box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
     }
 
+    .find-holder {
+      display: flex;
+      width: 100%;
+      gap: 10px;
+    }
+
+    .replace-holder {
+      display: flex;
+      width: 100%;
+      gap: 10px;
+    }
+
+    .ghost {
+      height: 35px;
+      width: 35px;
+    }
+
     .input-and-actions {
-        border-radius: 4px;
-        border: 1px solid #e5e5e5;
-        border-bottom: 2px solid #000000;
-        width: 250px;
-        height: 35px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        padding: 5px;
+      background-color: #ffffff;
+      border-radius: 4px;
+      border: 1px solid #e5e5e5;
+      border-bottom: 1px solid #000000;
+      width: 250px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 5px;
     }
 
     .the-input {
@@ -115,6 +136,34 @@ export class AppMenu extends LitElement {
     sl-menu-item::part(label){
         font-size: 14px;
     }
+
+    .replace-holder button {
+      all: unset;
+      background-color: var(--button-background-color);
+      border-radius: 3px;
+      border: 1px solid var(--button-border-color);
+      padding: 5px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      width: 18%;
+    }
+
+    .replace-holder button:hover {
+      cursor: default;
+      background-color: var(--button-hover-background-color);
+    }
+
+    #replace-form {
+      display: flex;
+      gap: 10px;
+    }
+
+    .replace-input-box {
+      width: 245px;
+    }
+
     `;
   }
 
@@ -122,7 +171,6 @@ export class AppMenu extends LitElement {
     super();
     // puts the last value back in the box
     if(localStorage.getItem("search-string-setting-state")){
-      console.log("hit", JSON.parse(localStorage.getItem("search-string-setting-state")!))
       Notepad.instance.substringToFind = JSON.parse(localStorage.getItem("search-string-setting-state")!);
     }
     if(localStorage.getItem('notepadSettings')){
@@ -147,7 +195,7 @@ export class AppMenu extends LitElement {
 
   handleSubmit(e: Event){
     e.preventDefault()
-    Notepad.instance.search()
+    Notepad.instance.search(Notepad.instance.findListIndex)
   }
 
   updateIndex(value: number){
@@ -179,15 +227,40 @@ export class AppMenu extends LitElement {
     }
   }
 
+  handleShowingReplace(){
+    this.showReplace = !this.showReplace;
+    this.requestUpdate();
+  }
+
+  handleReplace(all: boolean){
+    const form = this.shadowRoot!.getElementById('replace-form') as HTMLFormElement;
+    const formData = new FormData(form);
+
+    const replaceText = formData.get('replaceText') as string;
+
+    if(all){
+      Notepad.instance.replaceAll(replaceText);
+    } else {
+      Notepad.instance.replace(replaceText);
+    }
+
+  }
+
   render() {
+
+    const replaceDisplaySetting = {
+      display: this.showReplace ? 'flex' : 'none'
+    }
+
     return html`
         <div class="root">
-            <button type="button" class="icon-button" value="show-more"><sl-icon name="chevron-up" label="chevron-up"></sl-icon></button>
+          <div class="find-holder">
+            <button type="button" class="icon-button" value="show-more" @click=${() => this.handleShowingReplace()}><sl-icon name="chevron-up" label="chevron-up"></sl-icon></button>
 
             <form class="input-and-actions" @submit=${(e: Event) => this.handleSubmit(e)}>
-                <input .value=${this.inputValue} class="the-input" placeholder="Find" @input=${() => this.updateSubstringToFind()} />
-                ${this.showClear ? html`<button type="button" class="search-action" value="clear" @click=${() => this.clearInput()}><sl-icon name="x-lg" label="close"></sl-icon></button>` : null }
-                <button type="button" class="search-action" value="search" @click=${() => Notepad.instance.search()}><sl-icon name="search" label="search"></sl-icon></button>
+              <input .value=${this.inputValue} class="the-input" placeholder="Find" @input=${() => this.updateSubstringToFind()} />
+              ${this.showClear ? html`<button type="button" class="search-action" value="clear" @click=${() => this.clearInput()}><sl-icon name="x-lg" label="close"></sl-icon></button>` : null }
+              <button type="button" class="search-action" value="search" @click=${() => Notepad.instance.search()}><sl-icon name="search" label="search"></sl-icon></button>
             </form>
             <button type="button" class="icon-button" value="previous" @click=${() => this.updateIndex(1)}><sl-icon name="arrow-down" label="arrow-down"></sl-icon></button>
             <button type="button" class="icon-button" value="next" @click=${() => this.updateIndex(-1)}><sl-icon name="arrow-up" label="arrow-up"></sl-icon></button>
@@ -199,6 +272,17 @@ export class AppMenu extends LitElement {
                 </sl-menu>
             </sl-dropdown>
             <button type="button" class="icon-button" value="close" @click=${() => this.handleCloseComponent()}><sl-icon name="x-lg" label="close"></sl-icon></button>
+          </div>
+
+          <div class="replace-holder" style=${styleMap(replaceDisplaySetting)}>
+          <div class="ghost"></div>
+          <form id="replace-form" @submit=${(e: Event) => e.preventDefault() }>
+            <div class="input-and-actions replace-input-box"><input name="replaceText" class="the-input" placeholder="Replace" /></div>
+            <button type="submit" @click=${() => this.handleReplace(false)}>Replace</button>
+            <button type="submit" @click=${() => this.handleReplace(true)}>Replace all</button>
+          </form>
+          </div>
+
         </div>
     `;
   }
