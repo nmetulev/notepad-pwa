@@ -1,18 +1,20 @@
-import { LitElement, css, html, PropertyValueMap } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { LitElement, css, html } from 'lit';
+import { property, customElement, state } from 'lit/decorators.js';
 import { Notepad, notepadEventNames } from './state';
+//import { styleMap } from 'lit/directives/style-map.js';
 
 @customElement('app-header')
 export class AppHeader extends LitElement {
   @property() title = 'Untitled';
-  @property() edited = false;
+  @property({type: Boolean}) settingsShowing: boolean = false;
+
+  @state() edited = false;
 
   static get styles() {
     return css`
       :host {
         display: block;
         width: env(titlebar-area-width, 100%);
-        height: env(titlebar-area-height, 33px);
         min-height: env(titlebar-area-height, 33px);
       }
 
@@ -25,11 +27,11 @@ export class AppHeader extends LitElement {
         height: env(titlebar-area-height, 33px);
         app-region: drag;
 
-        background-color: #f0f4f9;
+        background: #fdebdb;
+        color: var(--text-color);
         display: flex;
         flex-direction: row;
         align-items: center;
-        align-content: center;
         font-family: Segoe UI Variable Text, Segoe UI, SegoeUI, Helvetica Neue, Helvetica, Arial, sans-serif;
     }
 
@@ -42,8 +44,74 @@ export class AppHeader extends LitElement {
     .root label {
       font-size: 12px;
       margin-left: 16px;
-
     }
+
+    #back-button {
+      background-color: transparent;
+      border: none;
+      margin-left: 5px;
+      margin-top: 5px;
+      padding: 3px 5px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      app-region: no-drag;
+    }
+    #back-button:hover {
+        background-color: #e8eaf0;
+      }
+
+      sl-icon {
+        color: var(--text-color);
+      }
+
+      .tab {
+        box-sizing: border-box;
+        background-color: var(--header-background-color);
+        height: 85%;
+        align-self: flex-end;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 200px;
+        padding: 10px;
+        padding-right: 5px;
+      }
+
+      .tab h1 {
+        all: unset;
+      }
+
+      .indicators {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 16px;
+        height: 30px;
+        width: 30px;
+      }
+
+      .edited-icon {
+        font-size: 24px;
+        color: #a0a0a0;
+      }
+
+      sl-icon {
+        border-radius: 4px;
+      }
+
+      sl-icon:hover {
+        background-color: var(--menu-button-hover-background-color);
+      }
+
+
+
     `;
   }
 
@@ -53,13 +121,14 @@ export class AppHeader extends LitElement {
     Notepad.instance.on(notepadEventNames.editorChanged, this.onFileChangedHandler)
   }
 
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.updateTitle();
+  }
+
   disconnectedCallback(): void {
     Notepad.instance.removeListener(notepadEventNames.fileChanged, this.onFileChangedHandler)
     Notepad.instance.removeListener(notepadEventNames.editorChanged, this.onFileChangedHandler)
-  }
-
-  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-    this.updateTitle();
   }
 
   private onFileChangedHandler = this.updateTitle.bind(this);
@@ -67,15 +136,53 @@ export class AppHeader extends LitElement {
     this.title = Notepad.instance.fileName || 'Untitled'
     this.edited = Notepad.instance.isDirty;
     document.title = this.title;
+
+    console.log(this.edited)
+
+    this.requestUpdate();
+  }
+
+  backToEditor(){
+    const event = new CustomEvent('showEditor', {
+      bubbles: true, // if you want the event to bubble up through the DOM
+    });
+    this.dispatchEvent(event);
   }
 
   render() {
+
+    /* const styleInfo = {
+      'background-color': this.settingsShowing ? 'transparent' : 'var(--header-background-color)',
+    }; */
+
     return html`
       <div class="root">
+        ${this.settingsShowing ?
+          html`
+            <button id="back-button" type="button" @click=${() => this.backToEditor()}><sl-icon name="arrow-left"></sl-icon></button>
+          `
+          :
+          null
+        }
         <img src="/assets/icons/Square44x44Logo.scale-100.png" alt="Notepad logo" />
-        <label>
-          ${this.edited ? "*" : ""}${this.title} - Notepad
-        </label>
+        ${this.settingsShowing ?
+          html`
+          <label>
+            Notepad
+          </label>
+          `
+          :
+          html`
+          <label class="tab">
+            <h1>${this.title}</h1>
+            <div class="indicators">
+              ${this.edited ? html`<sl-icon name="dot" label="dot" class="edited-icon"></sl-icon>` : html`<sl-icon name="x" label="x" class="close-icon"></sl-icon>`}
+            </div>
+          </label>
+          `
+        }
+
+
       </div>
     `;
   }
