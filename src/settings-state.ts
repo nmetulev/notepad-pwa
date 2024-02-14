@@ -161,7 +161,7 @@ export class Settings {
             Notepad.instance.selection.removeAllRanges();
         }
         if(Notepad.instance.substringToFind.length > 0){
-            Notepad.instance.findSubstringPositions();
+            Notepad.instance.findSubstringPositions(Notepad.instance.substringToFind);
         }
     }
 }

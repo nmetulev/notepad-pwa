@@ -260,7 +260,7 @@ export class AppMenu extends LitElement {
             <form class="input-and-actions" @submit=${(e: Event) => this.handleSubmit(e)}>
               <input .value=${this.inputValue} class="the-input" placeholder="Find" @input=${() => this.updateSubstringToFind()} />
               ${this.showClear ? html`<button type="button" class="search-action" value="clear" @click=${() => this.clearInput()}><sl-icon name="x-lg" label="close"></sl-icon></button>` : null }
-              <button type="button" class="search-action" value="search" @click=${() => Notepad.instance.search()}><sl-icon name="search" label="search"></sl-icon></button>
+              <button type="button" class="search-action" value="search" @click=${() => Notepad.instance.search(Notepad.instance.findListIndex)}><sl-icon name="search" label="search"></sl-icon></button>
             </form>
             <button type="button" class="icon-button" value="previous" @click=${() => this.updateIndex(1)}><sl-icon name="arrow-down" label="arrow-down"></sl-icon></button>
             <button type="button" class="icon-button" value="next" @click=${() => this.updateIndex(-1)}><sl-icon name="arrow-up" label="arrow-up"></sl-icon></button>
