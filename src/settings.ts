@@ -36,10 +36,11 @@ export class AppMenu extends LitElement {
 
       * {
         box-sizing: border-box;
+        font-family: "Segoe UI";
       }
 
       .root {
-        padding: 5px;
+        padding: 15px;
         display: flex;
         flex-direction: column;
         gap: 20px;
@@ -68,7 +69,7 @@ export class AppMenu extends LitElement {
 
       sl-details::part(header){
         background-color: var(--details-header-color);
-        padding: 20px;
+        padding: 10px;
         height: 30px;
         border-radius: 3px;
       }
@@ -77,6 +78,7 @@ export class AppMenu extends LitElement {
         background-color: var(--details-content-color);
         border-bottom-right-radius: 3px;
         border-bottom-left-radius: 3px;
+        border-top: 1px solid var(--settings-border-color);
       }
 
       sl-details::part(summary-icon){
@@ -102,9 +104,10 @@ export class AppMenu extends LitElement {
         justify-content: space-between;
         border: 1px solid var(--details-border-color);;
         background-color: var(--details-header-color);
-        padding: 9px 20px;
+        padding: 10px 15px;
         height: 50px;
         box-sizing: unset;
+        border-radius: 3px;
       }
 
       .ncs-item {
@@ -114,7 +117,6 @@ export class AppMenu extends LitElement {
       .icon-header div, .ncs-item div {
         display: flex;
         flex-direction: column;
-        gap: 3px;
       }
 
       .non-collapsable-setting div {
@@ -127,7 +129,7 @@ export class AppMenu extends LitElement {
 
       .settings-icon, sl-icon {
         margin-right: 15px;
-        font-size: 18px;
+        font-size: 12px;
         fill: var(--text-color)
       }
 
@@ -136,11 +138,12 @@ export class AppMenu extends LitElement {
       }
 
       h1 {
-        font-size: 40px;
+        font-size: 38px;
+        font-weight: 600;
       }
 
       h2, h3 {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: normal;
       }
 
@@ -200,6 +203,10 @@ export class AppMenu extends LitElement {
       sl-select::part(listbox){
         background-color: var(--select-dropdown-background-color);
         border-color: var(--select-dropdown-background-color);
+      }
+
+      sl-select::part(expand-icon){
+        font-size: 12px;
       }
 
       sl-option::part(label){
@@ -343,11 +350,12 @@ export class AppMenu extends LitElement {
       sl-radio::part(control){
         height: 20px;
         width: 20px;
-        background-color: #eeeeee;
+        background-color: var(--radio-pit-color);
         border-color: #949494;
       }
       sl-radio::part(control):hover  {
-        background-color: #e6e6e6;
+        background-color: var(--radio-hover-color);
+        cursor: default;
       }
       sl-radio::part(control--checked)  {
         color: var(--radio-pit-color);

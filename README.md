@@ -11,14 +11,14 @@ This project was built using only built in web services (ie no NPM packages besi
 - Open
 - Limitations
   - Privacy on the web (Losing the file handler on refresh)
-  - Requires user permission
+  - Requires user permission (maybe this is a plus...)
 
 ### ✒️ System Font API
 - Read fonts from users OS
 - Fall back on the default list
 - Limitations
   - Are there stytles in the OS that aren't supported in CSS
-  - Requires user permission
+  - Requires user permission (maybe this is a plus...)
 
 ### 🎯 Selection API
 - Find (and the unimplemented Replace)
@@ -27,18 +27,20 @@ This project was built using only built in web services (ie no NPM packages besi
 - Limitations
   - Gets really tricky with `shadowRoot`. Supported in chromium but not everywhere
 
-#### 🗄️ Local Storage
+### 🗄️ Local Storage
 - Saving state
   - Notepad text
   - Settings
   - Last search string in the find/replace bar
 - Limitations
-  - Making sure this isn't bogging down someones browser when things get LARGE (is this real?)
+  - Gets tricky with multiple tabs (keeping track of multiple sets of settings)
 
 ### 👷🏾‍♂️ Service Worker
 - NOTEPAD PWA ALSO WORKS OFFLINE
 - Limitations:
-  - How tricky things get with tabs
+  - Make sure you have the right strategy so that if there is an update you're not stuck on cached data.
+  - How tricky things get with tabs (get nikola to help explain this more)
+    - keeping state across windows?
 
 ### 🎨 CSS
 - It's amazing how much of this was achievable just using CSS (and sometimes some JS)
@@ -55,3 +57,8 @@ This project was built using only built in web services (ie no NPM packages besi
 ## 📈 Where do I see room for growth for PWA?
 - window setting with WCO + built in back button (Windows Specific)
 - Something like MICA would be soooo coool + there is already buzz around this (https://twitter.com/diekus/status/1754911118236041630)
+
+## Perks of the web
+- More explicit to the user exactly whats going on (asking for permission before doing certain things)
+- PWA runs in a chromium sandbox
+- Small improvements that can be made on the exisiting notepad

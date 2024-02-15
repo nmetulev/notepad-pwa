@@ -27,7 +27,7 @@ export class AppHeader extends LitElement {
         height: env(titlebar-area-height, 33px);
         app-region: drag;
 
-        background: #fdebdb;
+        background: var(--settings-background);
         color: var(--text-color);
         display: flex;
         flex-direction: row;
@@ -50,7 +50,6 @@ export class AppHeader extends LitElement {
       background-color: transparent;
       border: none;
       margin-left: 5px;
-      margin-top: 5px;
       padding: 3px 5px;
       font-size: 20px;
       display: flex;
@@ -59,7 +58,7 @@ export class AppHeader extends LitElement {
       app-region: no-drag;
     }
     #back-button:hover {
-        background-color: #e8eaf0;
+        background-color: var(--back-button-hover-color);
       }
 
       sl-icon {
@@ -68,7 +67,7 @@ export class AppHeader extends LitElement {
 
       .tab {
         box-sizing: border-box;
-        background-color: var(--header-background-color);
+        background-color: var(--menu-background-color);
         height: 85%;
         align-self: flex-end;
         border-top-left-radius: 8px;
@@ -76,9 +75,10 @@ export class AppHeader extends LitElement {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        width: 200px;
+        width: 235px;
         padding: 10px;
         padding-right: 5px;
+
       }
 
       .tab h1 {
@@ -136,8 +136,6 @@ export class AppHeader extends LitElement {
     this.title = Notepad.instance.fileName || 'Untitled'
     this.edited = Notepad.instance.isDirty;
     document.title = this.title;
-
-    console.log(this.edited)
 
     this.requestUpdate();
   }

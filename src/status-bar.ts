@@ -16,7 +16,7 @@ export class AppMenu extends LitElement {
   static get styles() {
     return css`
       .root {
-        height: 22px;
+        height: 16px;
         width: 100%;
         background-color: var(--status-bar-background-color);
         border-top: solid 1.5px var(--status-bar-border-color);
@@ -25,11 +25,11 @@ export class AppMenu extends LitElement {
         padding: 7px;
         font-family: "Segoe UI Variable Text", "Segoe UI", SegoeUI, "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-size: 12px;
-        color: #696969;
+        color: var(--status-bar-text-color);
       }
 
       .position, .zoom, .line-endings {
-        border-right: 1px solid #d6dcdd;
+        border-right: 1px solid var(--status-bar-gap-color);
       }
 
       .root > * {

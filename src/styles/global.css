@@ -29,6 +29,7 @@
 
   --editor-background-color: #ffffff;
   --header-background-color: #f0f4f9;
+  --back-button-hover-color: #e8eaf0;
 
   --menu-background-color: #f0f4f9;
   --menu-button-hover-background-color: #e4e4e4;
@@ -38,11 +39,16 @@
   --divider-color: #eeeeee;
   --status-bar-background-color: #f3f3f3;
   --status-bar-border-color: #e6e6e6;
+  --status-bar-text-color: #696969;
+  --status-bar-gap-color: #d6dcdd;
 
   --subtext-color: #5f5f5f;
 
   --radio-background-color: #0067c0;
   --radio-pit-color: #f4f4f4;
+  --radio-hover-color: #e6e6e6;
+
+  --settings-border-color: #d8d8d8;
 
 }
 
@@ -84,8 +90,9 @@ body {
 
     --editor-background-color: #272727;
     --header-background-color: #202020;
+    --back-button-hover-color: #272e36;
 
-    --menu-background-color: #1a212a;
+    --menu-background-color: #22262c;
     --menu-button-hover-background-color: #272e36;
     --menu-button-click-background-color: #232a31;
     --menu-dropdown-background-color: #2c2c2c;
@@ -93,11 +100,16 @@ body {
     --divider-color: #393939;
     --status-bar-background-color: #2c2c2c;
     --status-bar-border-color: #1c1d1d;
+    --status-bar-text-color: #ffffff;
+    --status-bar-gap-color: #3b3b3b;
 
     --subtext-color: #cfcfcf;
 
     --radio-background-color: #4cc2ff;
     --radio-pit-color: #272727;
+    --radio-hover-color: #272727;
+
+    --settings-border-color: #1c1d1d;
   }
 }
 
@@ -122,8 +134,9 @@ html.dark-mode {
 
     --editor-background-color: #272727;
     --header-background-color: #202020;
+    --back-button-hover-color: #272e36;
 
-    --menu-background-color: #1a212a;
+    --menu-background-color: #22262c;
     --menu-button-hover-background-color: #272e36;
     --menu-button-click-background-color: #232a31;
     --menu-dropdown-background-color: #2c2c2c;
@@ -131,11 +144,16 @@ html.dark-mode {
     --divider-color: #393939;
     --status-bar-background-color: #2c2c2c;
     --status-bar-border-color: #1c1d1d;
+    --status-bar-text-color: #ffffff;
+    --status-bar-gap-color: #3b3b3b;
 
     --subtext-color: #cfcfcf;
 
     --radio-background-color: #4cc2ff;
     --radio-pit-color: #272727;
+    --radio-hover-color: #272727;
+
+    --settings-border-color: #1c1d1d;
   }
 
 html.light-mode{
@@ -160,6 +178,7 @@ html.light-mode{
 
   --editor-background-color: #ffffff;
   --header-background-color: #f0f4f9;
+  --back-button-hover-color: #e8eaf0;
 
   --menu-background-color: #f0f4f9;
   --menu-button-hover-background-color: #e4e4e4;
@@ -169,9 +188,14 @@ html.light-mode{
   --divider-color: #eeeeee;
   --status-bar-background-color: #f3f3f3;
   --status-bar-border-color: #e6e6e6;
+  --status-bar-text-color: #696969;
+  --status-bar-gap-color: #d6dcdd;
 
   --subtext-color: #5f5f5f;
 
   --radio-background-color: #0067c0;
   --radio-pit-color: #f4f4f4;
+  --radio-hover-color: #e6e6e6;
+
+  --settings-border-color: #d8d8d8;
 }
