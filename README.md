@@ -47,7 +47,7 @@ We built our service worker with the "cache first" strategy, which serves the us
 
 A lot of this project was an attempt to nail the CSS to create a near 1:1 replica of the native Notepad. I was amazed at how all that was possible with vanilla CSS alone and sometimes powered by a little bit of Typescript. Everything from changing the font, toggling color theme, controlling word wrap in the editor, and using `window-controls-overlay` to creating a more _app-like_ look to the PWA when installed on the OS.
 
-I tried my best to keep the CSS organized and take advantage of CSS variables to make my life easier while working on the appearance of this app. Variables allowed me to keep my colors in check and also made it easy to toggle them when the theme switched. I also relied heavily on the Lit directives "StyleMap" and "ClassMap" which allows you to change styles or toggle classes based on conditions (ie the user selecting different settings).
+I tried my best to keep the CSS organized and take advantage of CSS variables to make my life easier while working on the appearance of this app. Variables allowed me to keep my colors in check and also made it easy to toggle them when the theme switched. I also relied heavily on the Lit directives "StyleMap" and "ClassMap" which allow me to change styles or toggle classes based on conditions (i.e. the user selecting different settings).
 
 ## 📈 Where do I see room for growth for PWA?
 
