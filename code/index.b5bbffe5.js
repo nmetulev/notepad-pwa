@@ -461,7 +461,7 @@
     `}};mt.styles=An;mt.dependencies={"sl-icon-button":Z};a([S(".dialog")],mt.prototype,"dialog",2);a([S(".dialog__panel")],mt.prototype,"panel",2);a([S(".dialog__overlay")],mt.prototype,"overlay",2);a([u({type:Boolean,reflect:!0})],mt.prototype,"open",2);a([u({reflect:!0})],mt.prototype,"label",2);a([u({attribute:"no-header",type:Boolean,reflect:!0})],mt.prototype,"noHeader",2);a([R("open",{waitUntilFirstUpdate:!0})],mt.prototype,"handleOpenChange",1);at("dialog.show",{keyframes:[{opacity:0,scale:.8},{opacity:1,scale:1}],options:{duration:250,easing:"ease"}});at("dialog.hide",{keyframes:[{opacity:1,scale:1},{opacity:0,scale:.8}],options:{duration:250,easing:"ease"}});at("dialog.denyClose",{keyframes:[{scale:1},{scale:1.02},{scale:1}],options:{duration:250}});at("dialog.overlay.show",{keyframes:[{opacity:0},{opacity:1}],options:{duration:250}});at("dialog.overlay.hide",{keyframes:[{opacity:1},{opacity:0}],options:{duration:250}});mt.define("sl-dialog");var Xn={$code:"en",$name:"English",$dir:"ltr",carousel:"Carousel",clearEntry:"Clear entry",close:"Close",copied:"Copied",copy:"Copy",currentValue:"Current value",error:"Error",goToSlide:(e,t)=>`Go to slide ${e} of ${t}`,hidePassword:"Hide password",loading:"Loading",nextSlide:"Next slide",numOptionsSelected:e=>e===0?"No options selected":e===1?"1 option selected":`${e} options selected`,previousSlide:"Previous slide",progress:"Progress",remove:"Remove",resize:"Resize",scrollToEnd:"Scroll to end",scrollToStart:"Scroll to start",selectAColorFromTheScreen:"Select a color from the screen",showPassword:"Show password",slideNum:e=>`Slide ${e}`,toggleColorFormat:"Toggle color format"};Gn(Xn);class Fs{constructor(){this.eventHandlers=new Map}fire(t,s){const i=this.eventHandlers.get(t);if(i&&i.length)for(const o of i)o(s)}add(t,s){let i=this.eventHandlers.get(t);i||(i=[],this.eventHandlers.set(t,i)),i.push(s)}remove(t,s){const i=this.eventHandlers.get(t);if(i)for(let o=0;o<i.length;o++)i[o]===s&&(i.splice(o,1),o--)}}class b{constructor(){this._eventDispatcher=new Fs,localStorage.getItem("notepadSettings")||(this.theme="system",this.font={family:"times_new_roman",style:"regular",size:11},this.wrap=!0,this.open_behavior=!0,this.start_behavior=!0,this.zoom=100,this.displayFontSize=11,this.showingStatusBar=!0,this.matchCaseForSearchResult=!1,this.wrapSearchResults=!0)}static get instance(){if(!this._instance){let t=localStorage.getItem("notepadSettings");if(t){let s=JSON.parse(t);this._instance=new b,Object.assign(this._instance,s),this._instance._eventDispatcher=new Fs}else this._instance=new b}return this._instance}on(t,s){this._eventDispatcher.add(t,s)}removeListener(t,s){this._eventDispatcher.remove(t,s)}writeSettings(){localStorage.setItem("notepadSettings",JSON.stringify(this))}get theme(){return this._theme}set theme(t){this._theme!==t&&(this._theme=t,this.writeSettings(),this._eventDispatcher.fire(tt.themeChanged))}get font(){return this._font}set font(t){this._font=t,this.displayFontSize=this._font.size*(this._zoom/100),this.writeSettings(),this._eventDispatcher.fire(tt.settingsChanged)}get wrap(){return this._wrap}set wrap(t){this._wrap=t,this.writeSettings(),this._eventDispatcher.fire(tt.settingsChanged)}get open_behavior(){return this._open_behavior}set open_behavior(t){this._open_behavior=t,this.writeSettings(),this._eventDispatcher.fire(tt.settingsChanged)}get start_behavior(){return this._start_behavior}set start_behavior(t){this._start_behavior=t,this.writeSettings(),this._eventDispatcher.fire(tt.settingsChanged)}get zoom(){return this._zoom}set zoom(t){this._zoom=Math.max(10,Math.min(t,500)),this.displayFontSize=this._zoom/100*this._font.size,this._eventDispatcher.fire(tt.zoomChanged)}get displayFontSize(){return this._displayFontSize}set displayFontSize(t){this._displayFontSize=t,this._eventDispatcher.fire(tt.settingsChanged)}get showingStatusBar(){return this._showingStatusBar}set showingStatusBar(t){this._showingStatusBar=t,this._eventDispatcher.fire(tt.showingStatusBarChanged)}get wrapSearchResults(){return this._wrapSearchResults}set wrapSearchResults(t){this._wrapSearchResults=t}get matchCaseForSearchResult(){return this._matchCaseForSearchResult}set matchCaseForSearchResult(t){this._matchCaseForSearchResult=t,this.writeSettings(),g.instance.selection&&g.instance.selection.removeAllRanges(),g.instance.substringToFind.length>0&&g.instance.findSubstringPositions(g.instance.substringToFind)}}const tt={themeChanged:"settings-theme-changed",settingsChanged:"settings-changed",zoomChanged:"zoom-changed",showingStatusBarChanged:"showing-status-bar-changed",matchCaseSettingChanged:"match-case-setting-changed"};class g{constructor(){this._eventDispatcher=new Fs,this._cursorPosition={start:1,end:1,line:1},this._encoding="UTF-8",this._fileEnding="Windows (CRLF)",this._substringToFind="",this._findListIndex=0,this._findPositions=[]}static get instance(){return this._instance||(this._instance=new g),this._instance}on(t,s){this._eventDispatcher.add(t,s)}removeListener(t,s){this._eventDispatcher.remove(t,s)}writeSettings(t,s){localStorage.setItem(`${t}-state-setting`,JSON.stringify(s))}get isDirty(){return(this.fileContents||"")!==this.editorContents}get fileContents(){return this._fileContents}set fileContents(t){this._fileContents=t,this._eventDispatcher.fire(E.fileChanged)}get editorContents(){return this._editorContents}set editorContents(t){this._editorContents=t,localStorage.setItem("lastSession",encodeURIComponent(this._editorContents)),this._eventDispatcher.fire(E.editorChanged)}get cursorPosition(){return this._cursorPosition}set cursorPosition(t){this._cursorPosition=t,this._eventDispatcher.fire(E.cursorPositionChanged)}get selection(){return this._selection}set selection(t){this._selection=t}get editorDiv(){return this._editorDiv}set editorDiv(t){this._editorDiv=t}get encoding(){return this._encoding}set encoding(t){this._encoding=t,this._eventDispatcher.fire(E.encodingChanged)}getEncoding(t){const s=new FileReader,i=[239,187,191],o=t.slice(0,i.length);s.onloadend=n=>{const r=new Uint8Array(n.target.result);let c=!0;for(let l=0;l<i.length;l++)if(r[l]!==i[l]){c=!1;break}c?this.encoding="UTF-8 with BOM":this.encoding="UTF-8"},s.onerror=()=>{console.log("Error reading the file")},s.readAsArrayBuffer(o)}get fileEnding(){return this._fileEnding}set fileEnding(t){this._fileEnding=t,this._eventDispatcher.fire(E.fileEndingChanged)}getCarraigeReturn(t){const s=new FileReader;s.onload=()=>{const i=s.result;if(i){const o=new TextDecoder("utf-8").decode(i),n=o.includes(`\r
 `),r=o.includes(`
 `),c=o.includes("\r")&&!o.includes(`
-`);n?this.fileEnding="Windows (CRLF)":r?this.fileEnding="Unix (LF)":c?this.fileEnding="Macintosh (CR)":this.fileEnding="Windows (CRLF)"}else console.error("Buffer is null")},s.onerror=()=>{console.error("Error reading file:",s.error)},s.readAsArrayBuffer(t)}async setFileHandle(t){try{const s=await t.getFile();return this.getCarraigeReturn(s),this.getEncoding(s),this.fileName=t.name,this.fileContents=await s.text(),this.fileHandle=t,!0}catch{this.fileHandle=void 0,this.fileContents=void 0,this.fileName=void 0}return!1}newFile(t=!1){if(!t&&this.isDirty){this.handleAboutToLoseChanges("new");return}this.fileHandle=void 0,this.fileName=void 0,this.fileContents=void 0}async openFile(t=!1){if(!t&&this.isDirty)return this.handleAboutToLoseChanges("open"),!1;try{const s=await window.showOpenFilePicker(),i=s.length?s[0]:null;return i?this.setFileHandle(i):!1}catch{}return!1}async saveFile(){if(!this.fileHandle)return this.saveAsFile();try{const t=await this.fileHandle.createWritable();return await t.write(this.editorContents||""),await t.close(),this.fileContents=this.editorContents,!0}catch{}return!1}async saveAsFile(){const t={types:[{description:"Text Files",accept:{"text/plain":[".txt"]}}]};try{const s=await window.showSaveFilePicker(t);if(s){this.fileHandle=s,this.fileName=s.name;const i=await this.fileHandle.createWritable();return await i.write(this.editorContents||""),await i.close(),this.fileContents=this.editorContents,!0}}catch{}return!1}handleAboutToLoseChanges(t){this._eventDispatcher.fire(E.decideOnChanges,t)}async cut(){const s=this._selection.toString();navigator.clipboard.writeText(s).then(()=>{document.execCommand("cut")}).catch(i=>{console.error("Failed to cut text: ",i)}),this._eventDispatcher.fire(E.insertedText)}async copy(){const s=this._selection.toString();navigator.clipboard.writeText(s).then(()=>{}).catch(i=>{console.error("Failed to copy text: ",i)})}async paste(){const t=this._selection;navigator.clipboard.readText().then(s=>{if(s){if(!t.rangeCount)return!1;t.deleteFromDocument(),t.getRangeAt(0).insertNode(document.createTextNode(s)),t.collapseToEnd()}this._eventDispatcher.fire(E.insertedText)})}async delete(){const t=this._selection;t.deleteFromDocument(),t.removeAllRanges(),this._eventDispatcher.fire(E.insertedText)}selectAll(){var t=document.createRange();t.selectNodeContents(this._editorDiv);var s=this._selection;s.removeAllRanges(),s.addRange(t)}async insertTimeDate(){const t=this._selection,s=this.getCurrentDateTimeFormatted(),i=t.getRangeAt(0),o=document.createTextNode(s);i.deleteContents(),i.insertNode(o),i.setStartAfter(o),i.collapse(!0),t.removeAllRanges(),t.addRange(i),this._eventDispatcher.fire(E.insertedText)}getCurrentDateTimeFormatted(){const t=new Date,s=t.getHours().toString().padStart(2,"0"),i=t.getMinutes().toString().padStart(2,"0"),o=(t.getMonth()+1).toString().padStart(2,"0"),n=t.getDate().toString().padStart(2,"0"),r=t.getFullYear();return`${s}:${i} ${o}/${n}/${r}`}get substringToFind(){return this._substringToFind}set substringToFind(t){this._substringToFind=t,this.writeSettings("search-string",this._substringToFind),this._findListIndex=0,this.findSubstringPositions(this.substringToFind)}get findPositions(){return this._findPositions}set findPositions(t){this._findPositions=t}findSubstringPositions(t){let s=0,i=[];const o=b.instance.matchCaseForSearchResult?t:t.toLowerCase(),n=b.instance.matchCaseForSearchResult?this._editorContents:this._editorContents.toLowerCase();for(;s<n.length;){let r=n.indexOf(o,s);if(r===-1)break;let c=r+o.length;i.push({startIndex:r,endIndex:c}),s=r+1}this._findPositions=i}search(t){const s=this._editorDiv;if(!s||this.findPositions.length==0)return;const{startIndex:i,endIndex:o}=this.findPositions[t];let n=0,r=null,c=0,l=null,d=0;const f=h=>{h.childNodes.forEach(m=>{if(m.nodeType===Node.TEXT_NODE){const p=m.textContent.length;!r&&n+p>=i&&(r=m,c=i-n),!l&&n+p>=o&&(l=m,d=o-n),n+=p}else m.nodeType===Node.ELEMENT_NODE&&((m.nodeName==="BR"||m.nodeName==="DIV"||m.nodeName==="P")&&n++,f(m))})};if(f(s),r&&l){const h=document.createRange(),m=this._selection;try{h.setStart(r,c),h.setEnd(l,d),m.removeAllRanges(),m.addRange(h);let p=document.createElement("span");h.insertNode(p),p.scrollIntoView({behavior:"smooth",block:"center",inline:"nearest"}),p.parentNode.removeChild(p)}catch(p){console.error("Error setting range:",p)}}}get findListIndex(){return this._findListIndex}set findListIndex(t){t<0&&(b.instance.wrapSearchResults?t=this._findPositions.length-1:t=0),t>=this._findPositions.length&&(b.instance.wrapSearchResults?t=0:t=this._findPositions.length-1),this._findListIndex=t,this.findPositions.length>0&&this.search(this.findListIndex)}replace(t){if(this.substringToFind.length==0)return;const s=this.selection;if(this.search(this.findListIndex),s&&s.rangeCount>0){const i=s.getRangeAt(0);i.deleteContents(),i.insertNode(document.createTextNode(t))}this.findListIndex++,this.search(this.findListIndex),this._eventDispatcher.fire(E.insertedText)}replaceAll(t){if(this.substringToFind.length==0||this.findPositions.length==0)return;this.findListIndex=0;const s=this.selection;for(let i=0;i<this.findPositions.length;i++){this.search(i);const o=s.getRangeAt(0);o.deleteContents(),o.insertNode(document.createTextNode(t))}this._eventDispatcher.fire(E.insertedText)}}const E={fileChanged:"notepad-file-changed",editorChanged:"notepad-editor-contents-changed",decideOnChanges:"notepad-need-to-decide-on-changes",cursorPositionChanged:"cursor-position-changed",encodingChanged:"encoding-changed",fileEndingChanged:"file-ending-changed",insertedText:"insert-text-to-editor",findSubstringChanged:"find-substring-changed",showFindInput:"show-find-input"};var Jn=Object.defineProperty,Qn=Object.getOwnPropertyDescriptor,os=(e,t,s,i)=>{for(var o=i>1?void 0:i?Qn(t,s):t,n=e.length-1,r;n>=0;n--)(r=e[n])&&(o=(i?r(t,s,o):r(o))||o);return i&&o&&Jn(t,s,o),o};let Se=class extends lt{constructor(){super(),this.title="Untitled",this.settingsShowing=!1,this.edited=!1,this.onFileChangedHandler=this.updateTitle.bind(this),g.instance.on(E.fileChanged,this.onFileChangedHandler),g.instance.on(E.editorChanged,this.onFileChangedHandler)}static get styles(){return Ut`
+`);n?this.fileEnding="Windows (CRLF)":r?this.fileEnding="Unix (LF)":c?this.fileEnding="Macintosh (CR)":this.fileEnding="Windows (CRLF)"}else console.error("Buffer is null")},s.onerror=()=>{console.error("Error reading file:",s.error)},s.readAsArrayBuffer(t)}async setFileHandle(t){try{const s=await t.getFile();return this.getCarraigeReturn(s),this.getEncoding(s),this.fileName=t.name,this.fileContents=await s.text(),this.fileHandle=t,!0}catch{this.fileHandle=void 0,this.fileContents=void 0,this.fileName=void 0}return!1}newFile(t=!1){if(!t&&this.isDirty){this.handleAboutToLoseChanges("new");return}this.fileHandle=void 0,this.fileName=void 0,this.fileContents=void 0}async openFile(t=!1){if(!t&&this.isDirty)return this.handleAboutToLoseChanges("open"),!1;try{const s={types:[{description:"Text Files",accept:{"text/plain":[".txt",".bat",".ini",".log"],"text/html":[".html"],"text/css":[".css"],"application/javascript":[".js"],"application/xml":[".xml"],"text/markdown":[".md"]}}]},i=await window.showOpenFilePicker(s),o=i.length?i[0]:null;return o?this.setFileHandle(o):!1}catch{}return!1}async saveFile(){if(!this.fileHandle)return this.saveAsFile();try{const t=await this.fileHandle.createWritable();return await t.write(this.editorContents||""),await t.close(),this.fileContents=this.editorContents,!0}catch{}return!1}async saveAsFile(){const t={types:[{description:"Text Files",accept:{"text/plain":[".txt"]}}]};try{const s=await window.showSaveFilePicker(t);if(s){this.fileHandle=s,this.fileName=s.name;const i=await this.fileHandle.createWritable();return await i.write(this.editorContents||""),await i.close(),this.fileContents=this.editorContents,!0}}catch{}return!1}handleAboutToLoseChanges(t){this._eventDispatcher.fire(E.decideOnChanges,t)}async cut(){const s=this._selection.toString();navigator.clipboard.writeText(s).then(()=>{document.execCommand("cut")}).catch(i=>{console.error("Failed to cut text: ",i)}),this._eventDispatcher.fire(E.insertedText)}async copy(){const s=this._selection.toString();navigator.clipboard.writeText(s).then(()=>{}).catch(i=>{console.error("Failed to copy text: ",i)})}async paste(){const t=this._selection;navigator.clipboard.readText().then(s=>{if(s){if(!t.rangeCount)return!1;t.deleteFromDocument(),t.getRangeAt(0).insertNode(document.createTextNode(s)),t.collapseToEnd()}this._eventDispatcher.fire(E.insertedText)})}async delete(){const t=this._selection;t.deleteFromDocument(),t.removeAllRanges(),this._eventDispatcher.fire(E.insertedText)}selectAll(){var t=document.createRange();t.selectNodeContents(this._editorDiv);var s=this._selection;s.removeAllRanges(),s.addRange(t)}async insertTimeDate(){const t=this._selection,s=this.getCurrentDateTimeFormatted(),i=t.getRangeAt(0),o=document.createTextNode(s);i.deleteContents(),i.insertNode(o),i.setStartAfter(o),i.collapse(!0),t.removeAllRanges(),t.addRange(i),this._eventDispatcher.fire(E.insertedText)}getCurrentDateTimeFormatted(){const t=new Date,s=t.getHours().toString().padStart(2,"0"),i=t.getMinutes().toString().padStart(2,"0"),o=(t.getMonth()+1).toString().padStart(2,"0"),n=t.getDate().toString().padStart(2,"0"),r=t.getFullYear();return`${s}:${i} ${o}/${n}/${r}`}get substringToFind(){return this._substringToFind}set substringToFind(t){this._substringToFind=t,this.writeSettings("search-string",this._substringToFind),this._findListIndex=0,this.findSubstringPositions(this.substringToFind)}get findPositions(){return this._findPositions}set findPositions(t){this._findPositions=t}findSubstringPositions(t){let s=0,i=[];const o=b.instance.matchCaseForSearchResult?t:t.toLowerCase(),n=b.instance.matchCaseForSearchResult?this._editorContents:this._editorContents.toLowerCase();for(;s<n.length;){let r=n.indexOf(o,s);if(r===-1)break;let c=r+o.length;i.push({startIndex:r,endIndex:c}),s=r+1}this._findPositions=i}search(t){const s=this._editorDiv;if(!s||this.findPositions.length==0)return;const{startIndex:i,endIndex:o}=this.findPositions[t];let n=0,r=null,c=0,l=null,d=0;const f=h=>{h.childNodes.forEach(m=>{if(m.nodeType===Node.TEXT_NODE){const p=m.textContent.length;!r&&n+p>=i&&(r=m,c=i-n),!l&&n+p>=o&&(l=m,d=o-n),n+=p}else m.nodeType===Node.ELEMENT_NODE&&((m.nodeName==="BR"||m.nodeName==="DIV"||m.nodeName==="P")&&n++,f(m))})};if(f(s),r&&l){const h=document.createRange(),m=this._selection;try{h.setStart(r,c),h.setEnd(l,d),m.removeAllRanges(),m.addRange(h);let p=document.createElement("span");h.insertNode(p),p.scrollIntoView({behavior:"smooth",block:"center",inline:"nearest"}),p.parentNode.removeChild(p)}catch(p){console.error("Error setting range:",p)}}}get findListIndex(){return this._findListIndex}set findListIndex(t){t<0&&(b.instance.wrapSearchResults?t=this._findPositions.length-1:t=0),t>=this._findPositions.length&&(b.instance.wrapSearchResults?t=0:t=this._findPositions.length-1),this._findListIndex=t,this.findPositions.length>0&&this.search(this.findListIndex)}replace(t){if(this.substringToFind.length==0)return;const s=this.selection;if(this.search(this.findListIndex),s&&s.rangeCount>0){const i=s.getRangeAt(0);i.deleteContents(),i.insertNode(document.createTextNode(t))}this.findListIndex++,this.search(this.findListIndex),this._eventDispatcher.fire(E.insertedText)}replaceAll(t){if(this.substringToFind.length==0||this.findPositions.length==0)return;this.findListIndex=0;const s=this.selection;for(let i=0;i<this.findPositions.length;i++){this.search(i);const o=s.getRangeAt(0);o.deleteContents(),o.insertNode(document.createTextNode(t))}this._eventDispatcher.fire(E.insertedText)}print(){var t=this.editorContents,s=document.createElement("iframe");s.style.display="none",document.body.appendChild(s);var i=s.contentDocument;i.open(),i.write("<html><head><title>Print</title></head><body><pre>"+t+"</pre></body></html>"),i.close(),s.contentWindow.print(),s.parentNode.removeChild(s)}}const E={fileChanged:"notepad-file-changed",editorChanged:"notepad-editor-contents-changed",decideOnChanges:"notepad-need-to-decide-on-changes",cursorPositionChanged:"cursor-position-changed",encodingChanged:"encoding-changed",fileEndingChanged:"file-ending-changed",insertedText:"insert-text-to-editor",findSubstringChanged:"find-substring-changed",showFindInput:"show-find-input"};var Jn=Object.defineProperty,Qn=Object.getOwnPropertyDescriptor,os=(e,t,s,i)=>{for(var o=i>1?void 0:i?Qn(t,s):t,n=e.length-1,r;n>=0;n--)(r=e[n])&&(o=(i?r(t,s,o):r(o))||o);return i&&o&&Jn(t,s,o),o};let Se=class extends lt{constructor(){super(),this.title="Untitled",this.settingsShowing=!1,this.edited=!1,this.onFileChangedHandler=this.updateTitle.bind(this),g.instance.on(E.fileChanged,this.onFileChangedHandler),g.instance.on(E.editorChanged,this.onFileChangedHandler)}static get styles(){return Ut`
       :host {
         display: block;
         width: env(titlebar-area-width, 100%);
@@ -477,7 +477,7 @@
         height: env(titlebar-area-height, 33px);
         app-region: drag;
 
-        background: #fdebdb;
+        background: var(--settings-background);
         color: var(--text-color);
         display: flex;
         flex-direction: row;
@@ -500,7 +500,6 @@
       background-color: transparent;
       border: none;
       margin-left: 5px;
-      margin-top: 5px;
       padding: 3px 5px;
       font-size: 20px;
       display: flex;
@@ -509,7 +508,7 @@
       app-region: no-drag;
     }
     #back-button:hover {
-        background-color: #e8eaf0;
+        background-color: var(--back-button-hover-color);
       }
 
       sl-icon {
@@ -518,7 +517,7 @@
 
       .tab {
         box-sizing: border-box;
-        background-color: var(--header-background-color);
+        background-color: var(--menu-background-color);
         height: 85%;
         align-self: flex-end;
         border-top-left-radius: 8px;
@@ -526,9 +525,10 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        width: 200px;
+        width: 235px;
         padding: 10px;
         padding-right: 5px;
+
       }
 
       .tab h1 {
@@ -562,7 +562,7 @@
 
 
 
-    `}connectedCallback(){super.connectedCallback(),this.updateTitle()}disconnectedCallback(){g.instance.removeListener(E.fileChanged,this.onFileChangedHandler),g.instance.removeListener(E.editorChanged,this.onFileChangedHandler)}updateTitle(){this.title=g.instance.fileName||"Untitled",this.edited=g.instance.isDirty,document.title=this.title,console.log(this.edited),this.requestUpdate()}backToEditor(){const e=new CustomEvent("showEditor",{bubbles:!0});this.dispatchEvent(e)}render(){return T`
+    `}connectedCallback(){super.connectedCallback(),this.updateTitle()}disconnectedCallback(){g.instance.removeListener(E.fileChanged,this.onFileChangedHandler),g.instance.removeListener(E.editorChanged,this.onFileChangedHandler)}updateTitle(){this.title=g.instance.fileName||"Untitled",this.edited=g.instance.isDirty,document.title=this.title,this.requestUpdate()}backToEditor(){const e=new CustomEvent("showEditor",{bubbles:!0});this.dispatchEvent(e)}render(){return T`
       <div class="root">
         ${this.settingsShowing?T`
             <button id="back-button" type="button" @click=${()=>this.backToEditor()}><sl-icon name="arrow-left"></sl-icon></button>
@@ -1726,6 +1726,7 @@
 
       .settings-wheel {
         fill: var(--text-color);
+        font-size: 18px;
       }
       .settings-button::part(label) {
         display: flex;
@@ -1792,11 +1793,11 @@
         </div>
         <div class="settings-container">
           <sl-button class="settings-button" @click=${()=>this.showSettingsPage()}>
-            <svg class="settings-wheel" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M1.91 7.38A8.5 8.5 0 0 1 3.7 4.3a.5.5 0 0 1 .54-.13l1.92.68a1 1 0 0 0 1.32-.76l.36-2a.5.5 0 0 1 .4-.4 8.53 8.53 0 0 1 3.55 0c.2.04.35.2.38.4l.37 2a1 1 0 0 0 1.32.76l1.92-.68a.5.5 0 0 1 .54.13 8.5 8.5 0 0 1 1.78 3.08c.06.2 0 .4-.15.54l-1.56 1.32a1 1 0 0 0 0 1.52l1.56 1.32a.5.5 0 0 1 .15.54 8.5 8.5 0 0 1-1.78 3.08.5.5 0 0 1-.54.13l-1.92-.68a1 1 0 0 0-1.32.76l-.37 2a.5.5 0 0 1-.38.4 8.53 8.53 0 0 1-3.56 0 .5.5 0 0 1-.39-.4l-.36-2a1 1 0 0 0-1.32-.76l-1.92.68a.5.5 0 0 1-.54-.13 8.5 8.5 0 0 1-1.78-3.08.5.5 0 0 1 .15-.54l1.56-1.32a1 1 0 0 0 0-1.52L2.06 7.92a.5.5 0 0 1-.15-.54Zm1.06 0 1.3 1.1a2 2 0 0 1 0 3.04l-1.3 1.1c.3.79.72 1.51 1.25 2.16l1.6-.58a2 2 0 0 1 2.63 1.53l.3 1.67a7.56 7.56 0 0 0 2.5 0l.3-1.67a2 2 0 0 1 2.64-1.53l1.6.58a7.5 7.5 0 0 0 1.24-2.16l-1.3-1.1a2 2 0 0 1 0-3.04l1.3-1.1a7.5 7.5 0 0 0-1.25-2.16l-1.6.58a2 2 0 0 1-2.63-1.53l-.3-1.67a7.55 7.55 0 0 0-2.5 0l-.3 1.67A2 2 0 0 1 5.81 5.8l-1.6-.58a7.5 7.5 0 0 0-1.24 2.16ZM7.5 10a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0Zm1 0a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0Z"/></svg>
+            <svg class="settings-wheel" width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M1.91 7.38A8.5 8.5 0 0 1 3.7 4.3a.5.5 0 0 1 .54-.13l1.92.68a1 1 0 0 0 1.32-.76l.36-2a.5.5 0 0 1 .4-.4 8.53 8.53 0 0 1 3.55 0c.2.04.35.2.38.4l.37 2a1 1 0 0 0 1.32.76l1.92-.68a.5.5 0 0 1 .54.13 8.5 8.5 0 0 1 1.78 3.08c.06.2 0 .4-.15.54l-1.56 1.32a1 1 0 0 0 0 1.52l1.56 1.32a.5.5 0 0 1 .15.54 8.5 8.5 0 0 1-1.78 3.08.5.5 0 0 1-.54.13l-1.92-.68a1 1 0 0 0-1.32.76l-.37 2a.5.5 0 0 1-.38.4 8.53 8.53 0 0 1-3.56 0 .5.5 0 0 1-.39-.4l-.36-2a1 1 0 0 0-1.32-.76l-1.92.68a.5.5 0 0 1-.54-.13 8.5 8.5 0 0 1-1.78-3.08.5.5 0 0 1 .15-.54l1.56-1.32a1 1 0 0 0 0-1.52L2.06 7.92a.5.5 0 0 1-.15-.54Zm1.06 0 1.3 1.1a2 2 0 0 1 0 3.04l-1.3 1.1c.3.79.72 1.51 1.25 2.16l1.6-.58a2 2 0 0 1 2.63 1.53l.3 1.67a7.56 7.56 0 0 0 2.5 0l.3-1.67a2 2 0 0 1 2.64-1.53l1.6.58a7.5 7.5 0 0 0 1.24-2.16l-1.3-1.1a2 2 0 0 1 0-3.04l1.3-1.1a7.5 7.5 0 0 0-1.25-2.16l-1.6.58a2 2 0 0 1-2.63-1.53l-.3-1.67a7.55 7.55 0 0 0-2.5 0l-.3 1.67A2 2 0 0 1 5.81 5.8l-1.6-.58a7.5 7.5 0 0 0-1.24 2.16ZM7.5 10a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0Zm1 0a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0Z"/></svg>
           </sl-button>
         </div>
       </div>
-    `}showSettingsPage(){const e=new CustomEvent("showSettingsPage",{bubbles:!0});this.dispatchEvent(e)}async menuItemClicked(e,t){if(e==="file"){await this.fileMenuItemClicked(t);return}if(e==="edit"){await this.editMenuItemClicked(t);return}}async fileMenuItemClicked(e){switch(e){case"new":g.instance.newFile();break;case"new-window":window.open("/","","width=1200, height=750");break;case"open":g.instance.openFile();break;case"save":g.instance.saveFile();break;case"save-as":g.instance.saveAsFile();break;case"print":var t=await fetch("http://localhost:7083");console.log(await t.text());break;default:console.log(`${e} NOT IMPLEMENTED`)}}async editMenuItemClicked(e){switch(e){case"cut":g.instance.cut();break;case"copy":g.instance.copy();break;case"paste":g.instance.paste();break;case"delete":g.instance.delete();break;case"find":const t=new Event("show-find-input",{bubbles:!0,composed:!0});this.dispatchEvent(t);break;case"find-next":g.instance.findListIndex+=1;break;case"find-previous":g.instance.findListIndex-=1;break;case"select-all":g.instance.selectAll();break;case"time-date":g.instance.insertTimeDate();break;default:console.log(`${e} NOT IMPLEMENTED`)}}};Mi=Qr([Ht("app-menu")],Mi);/**
+    `}showSettingsPage(){const e=new CustomEvent("showSettingsPage",{bubbles:!0});this.dispatchEvent(e)}async menuItemClicked(e,t){if(e==="file"){await this.fileMenuItemClicked(t);return}if(e==="edit"){await this.editMenuItemClicked(t);return}}async fileMenuItemClicked(e){switch(e){case"new":g.instance.newFile();break;case"new-window":window.open("/","","width=1200, height=750");break;case"open":g.instance.openFile();break;case"save":g.instance.saveFile();break;case"save-as":g.instance.saveAsFile();break;case"print":g.instance.print();break;default:console.log(`${e} NOT IMPLEMENTED`)}}async editMenuItemClicked(e){switch(e){case"cut":g.instance.cut();break;case"copy":g.instance.copy();break;case"paste":g.instance.paste();break;case"delete":g.instance.delete();break;case"find":const t=new Event("show-find-input",{bubbles:!0,composed:!0});this.dispatchEvent(t);break;case"find-next":g.instance.findListIndex+=1;break;case"find-previous":g.instance.findListIndex-=1;break;case"select-all":g.instance.selectAll();break;case"time-date":g.instance.insertTimeDate();break;default:console.log(`${e} NOT IMPLEMENTED`)}}};Mi=Qr([Ht("app-menu")],Mi);/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
@@ -3173,10 +3174,11 @@
 
       * {
         box-sizing: border-box;
+        font-family: "Segoe UI";
       }
 
       .root {
-        padding: 5px;
+        padding: 15px;
         display: flex;
         flex-direction: column;
         gap: 20px;
@@ -3205,7 +3207,7 @@
 
       sl-details::part(header){
         background-color: var(--details-header-color);
-        padding: 20px;
+        padding: 10px;
         height: 30px;
         border-radius: 3px;
       }
@@ -3214,6 +3216,7 @@
         background-color: var(--details-content-color);
         border-bottom-right-radius: 3px;
         border-bottom-left-radius: 3px;
+        border-top: 1px solid var(--settings-border-color);
       }
 
       sl-details::part(summary-icon){
@@ -3239,9 +3242,10 @@
         justify-content: space-between;
         border: 1px solid var(--details-border-color);;
         background-color: var(--details-header-color);
-        padding: 9px 20px;
+        padding: 10px 15px;
         height: 50px;
         box-sizing: unset;
+        border-radius: 3px;
       }
 
       .ncs-item {
@@ -3251,7 +3255,6 @@
       .icon-header div, .ncs-item div {
         display: flex;
         flex-direction: column;
-        gap: 3px;
       }
 
       .non-collapsable-setting div {
@@ -3264,7 +3267,7 @@
 
       .settings-icon, sl-icon {
         margin-right: 15px;
-        font-size: 18px;
+        font-size: 12px;
         fill: var(--text-color)
       }
 
@@ -3273,11 +3276,12 @@
       }
 
       h1 {
-        font-size: 40px;
+        font-size: 38px;
+        font-weight: 600;
       }
 
       h2, h3 {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: normal;
       }
 
@@ -3337,6 +3341,10 @@
       sl-select::part(listbox){
         background-color: var(--select-dropdown-background-color);
         border-color: var(--select-dropdown-background-color);
+      }
+
+      sl-select::part(expand-icon){
+        font-size: 12px;
       }
 
       sl-option::part(label){
@@ -3480,11 +3488,12 @@
       sl-radio::part(control){
         height: 20px;
         width: 20px;
-        background-color: #eeeeee;
+        background-color: var(--radio-pit-color);
         border-color: #949494;
       }
       sl-radio::part(control):hover  {
-        background-color: #e6e6e6;
+        background-color: var(--radio-hover-color);
+        cursor: default;
       }
       sl-radio::part(control--checked)  {
         color: var(--radio-pit-color);
@@ -3609,7 +3618,7 @@
       </div>
     `}};Qs([V()],Qe.prototype,"availableFonts",2);Qs([V()],Qe.prototype,"neededIconColor",2);Qe=Qs([Ht("app-settings")],Qe);const vl=[8,9,10,11,12,14,16,18,20,22,24,26,28,36,48,72],me={theme:T`<svg class="settings-icon" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.75 6.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm3 1a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm2.5 1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm-.75 3.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM13.25 14a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm.45-11a7.82 7.82 0 0 0-7.93.17 9.6 9.6 0 0 0-3.25 3.89 5.9 5.9 0 0 0-.62 2.43c0 .8.27 1.57.94 2.12.61.5 1.14.74 1.66.77.51.02.92-.19 1.23-.37l.2-.12c.24-.15.44-.27.69-.35.28-.09.64-.12 1.16.04.19.06.3.14.38.24.09.1.16.26.2.47.06.21.09.46.1.76.02.1.02.24.03.37l.04.58c.05.67.17 1.44.57 2.14.42.7 1.1 1.3 2.2 1.68 1.6.54 3.07.1 4.21-.8a7.46 7.46 0 0 0 2.37-3.6C19.2 9.16 17.68 5.04 13.7 3ZM6.3 4.01a6.82 6.82 0 0 1 6.94-.14c3.5 1.8 4.87 5.4 3.69 9.25a6.46 6.46 0 0 1-2.04 3.1 3.33 3.33 0 0 1-3.26.64c-.9-.3-1.38-.76-1.66-1.24a4 4 0 0 1-.44-1.7l-.04-.54-.02-.41c-.03-.31-.06-.63-.13-.93-.07-.3-.2-.6-.4-.86-.22-.26-.5-.46-.87-.57a2.85 2.85 0 0 0-1.75-.03c-.38.12-.7.32-.95.47l-.14.09c-.29.16-.48.24-.68.23-.22-.01-.55-.12-1.08-.55-.38-.31-.57-.76-.57-1.34 0-.6.19-1.29.52-2.01A8.63 8.63 0 0 1 6.3 4.02Z"/></svg>`,font:T`<svg class="settings-icon" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M6 2c.2 0 .4.13.47.32L8.9 8.57v.02l.18.44-.53 1.4-.46-1.17H3.91l-.94 2.42a.5.5 0 1 1-.94-.36L3.1 8.59v-.02l2.43-6.25A.5.5 0 0 1 6 2ZM4.3 8.26h3.4L6 3.88 4.3 8.26Zm8.17-2.94a.5.5 0 0 0-.94 0L7.15 17H6.5a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-.28l1.13-3h5.37l1.15 3h-.37a.5.5 0 1 0 0 1h2a.5.5 0 1 0 0-1h-.56L12.47 5.32ZM14.34 13H9.72l2.29-6.09L14.34 13Z"/></svg>`,wrap:T`<svg class="settings-icon" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 4.5c0-.28.22-.5.5-.5h15a.5.5 0 0 1 0 1h-15a.5.5 0 0 1-.5-.5Zm0 5c0-.28.22-.5.5-.5H16a3 3 0 1 1 0 6h-4.3l.65.65a.5.5 0 0 1-.7.7l-1.5-1.5a.5.5 0 0 1 0-.7l1.5-1.5a.5.5 0 0 1 .7.7l-.64.65H16a2 2 0 1 0 0-4H2.5a.5.5 0 0 1-.5-.5Zm0 5c0-.28.22-.5.5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5Z"/></svg>`,open:T`<svg class="settings-icon" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M6 4a2 2 0 0 0-2 2v8c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2v-2.5a.5.5 0 0 1 1 0V14a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h2.5a.5.5 0 0 1 0 1H6Zm5-.5c0-.28.22-.5.5-.5h5c.28 0 .5.22.5.5v5a.5.5 0 0 1-1 0V4.7l-4.15 4.15a.5.5 0 0 1-.7-.7L15.29 4H11.5a.5.5 0 0 1-.5-.5Z"/></svg>`,tab:T`<svg class="settings-icon flip_icon" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M3 5.5A2.5 2.5 0 0 1 5.5 3h9A2.5 2.5 0 0 1 17 5.5v9a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 3 14.5v-9ZM16 6v-.5c0-.83-.67-1.5-1.5-1.5H9v1.5c0 .28.22.5.5.5H16ZM8 4H5.5C4.67 4 4 4.67 4 5.5v9c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5V7H9.5A1.5 1.5 0 0 1 8 5.5V4Z"/></svg>`};var yl=Object.defineProperty,wl=Object.getOwnPropertyDescriptor,jt=(e,t,s,i)=>{for(var o=i>1?void 0:i?wl(t,s):t,n=e.length-1,r;n>=0;n--)(r=e[n])&&(o=(i?r(t,s,o):r(o))||o);return i&&o&&yl(t,s,o),o};let Lt=class extends lt{constructor(){super(),this.start=0,this.end=0,this.line=0,this.lineEnding="Windows (CRLF)",this.encoding="UTF-8",this.zoom=100,g.instance.on(E.cursorPositionChanged,()=>this.handleCursorUpdate(this)),g.instance.on(E.fileEndingChanged,()=>this.handleDataChange(this,"file-ending")),g.instance.on(E.encodingChanged,()=>this.handleDataChange(this,"encoding")),b.instance.on(tt.zoomChanged,()=>this.handleDataChange(this,"zoom"))}static get styles(){return Ut`
       .root {
-        height: 22px;
+        height: 16px;
         width: 100%;
         background-color: var(--status-bar-background-color);
         border-top: solid 1.5px var(--status-bar-border-color);
@@ -3618,11 +3627,11 @@
         padding: 7px;
         font-family: "Segoe UI Variable Text", "Segoe UI", SegoeUI, "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-size: 12px;
-        color: #696969;
+        color: var(--status-bar-text-color);
       }
 
       .position, .zoom, .line-endings {
-        border-right: 1px solid #d6dcdd;
+        border-right: 1px solid var(--status-bar-gap-color);
       }
 
       .root > * {
@@ -3857,7 +3866,7 @@
         /* background-color: pink; //todo - remove */
       }
       app-editor::-webkit-scrollbar {
-        width: 10px;
+        width: 4px;
         height: 14px;
       }
 
@@ -3908,4 +3917,4 @@
         ${this.showingFindInput?T`<div class="search-holder"><find-input></find-input></div>`:null}
       </div>
     `}};oe([V()],Nt.prototype,"appSettings",2);oe([V()],Nt.prototype,"showSettings",2);oe([V()],Nt.prototype,"showingStatusBar",2);oe([V()],Nt.prototype,"showingFindInput",2);oe([Yi(".dialog",!0)],Nt.prototype,"dialog",2);Nt=oe([Ht("app-index")],Nt);
-//# sourceMappingURL=index.f984cedb.js.map
+//# sourceMappingURL=index.b5bbffe5.js.map
