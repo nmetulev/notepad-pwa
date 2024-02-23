@@ -21,7 +21,7 @@ The Windows OS provides some fonts like "Wingdings 2" and some specific styles l
 ### User permission
 The above two APIs both will require user permission. I consider this the double edge sword of the web. For developers, you have to consider the case where the user does not allow access for the necessary API. Sometimes the API is central to the app functioning, like the File System API in this PWA. So, if this were to be a _real_ app, we would probably make sure this was accepted before moving forward. Requesting permission to access certain information it gives the user full transparency and control over what the app is reaching into on their computer, which can transfer to the user being more comfortable using a PWA.
 
-This is a difference between PWA and Native applications that can not be avoided. This should no be viewed as a strictly negative thing because it does indeed benefit the user.
+This is a difference between PWA and Native applications that cannot be avoided. This should not be viewed as a strictly negative thing because it does indeed benefit the user.
 
 ### 🎯 Selection API
 
