@@ -216,7 +216,24 @@ export class Notepad {
         }
         try {
 
-            const files = await window.showOpenFilePicker();
+            const options = {
+                types: [
+                  {
+                    description: 'Text Files',
+                    accept: {
+                        'text/plain': ['.txt', '.bat', '.ini', '.log'],
+                        'text/html': ['.html'],
+                        'text/css': ['.css'],
+                        'application/javascript': ['.js'],
+                        'application/xml': ['.xml'],
+                        'text/markdown': ['.md']
+
+                    },
+                  },
+                ],
+              };
+
+            const files = await window.showOpenFilePicker(options);
             const fileHandle = files.length ? files[0] : null;
 
             if (!fileHandle) {
@@ -557,6 +574,27 @@ export class Notepad {
         }
 
         this._eventDispatcher.fire(notepadEventNames.insertedText)
+    }
+
+    public print(){
+        var editorContents = this.editorContents;
+
+        // Create a temporary iframe
+        var iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+
+        // Write editor contents to iframe document
+        var iframeDocument = iframe.contentDocument!;
+        iframeDocument.open();
+        iframeDocument.write('<html><head><title>Print</title></head><body><pre>' + editorContents + '</pre></body></html>');
+        iframeDocument.close();
+
+        // Print iframe content
+        iframe.contentWindow!.print();
+
+        // Remove the iframe from the DOM after printing
+        iframe.parentNode!.removeChild(iframe);
     }
 
 }

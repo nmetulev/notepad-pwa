@@ -69,7 +69,7 @@ export class AppIndex extends LitElement {
         /* background-color: pink; //todo - remove */
       }
       app-editor::-webkit-scrollbar {
-        width: 10px;
+        width: 4px;
         height: 14px;
       }
 
