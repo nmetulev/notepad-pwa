@@ -35,7 +35,7 @@ This PWA uses local storage to save state variables and settings. This includes 
 
 We began the work of adding tabs to the Notepad PWA to get closer to the Native app, however, we ran out of time and wanted to prioritize discovery of the gap between Native and PWA rather than how well we can code a Notepad PWA. Introducing tabs adds a layer of complexity with using local storage because now there are somethings that need to persist across all of Notepad (Settings or the last thing the user searched) and others that are specific to the Notepad instance or tab (the text in the editor, the file handler).
 
-While using local storage is usually pretty light on processing power, if you are going to be reading and writing to local storage often, it can begin to slow down your App, though we never reached that point with the Notepad PWA.
+While using local storage is usually pretty light on processing power, if you are going to be reading and writing to local storage often, it can begin to slow down your app, though we never reached that point with the Notepad PWA.
 
 ### 👷🏾‍♂️ Service Worker
 
