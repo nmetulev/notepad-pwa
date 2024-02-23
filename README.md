@@ -8,7 +8,7 @@ This project was built using only built in web services (ie no NPM packages besi
 
 ### 💾 System File Access API
 
-The System File Access API is a MUST inlcude for any sort of app that is going to want to read/write user files. For the Notepad PWA, we used this API to handle opening and saving files. Even though this API requires permission (which we will talk more about later), it is central to the apps functioning, so we will rely on the user accepting this API to have access to their file system in order for the app to work as expected.
+The System File Access API is a MUST include for any app that needs to read/write user files. For the Notepad PWA, we used this API to handle opening and saving files. Even though this API requires permission (which we will discuss more later), it is central to the apps functioning, so we will rely on the user accepting this API to have access to their file system in order for the app to work as expected.
 
 ### ✒️ Local Font Access API
 
