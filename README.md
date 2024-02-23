@@ -51,7 +51,7 @@ I tried my best to keep the CSS organized and take advantage of CSS variables to
 
 ## 📈 Where do I see room for growth for PWA?
 
-Two things I feel like I wasn't able to nail how I wanted was
+Two things I wasn't able to accomplish perfectly were:
 1. The title bar with `window-controls-overlay` was close but I had to manually add a back button and ensure that the "browser part" stayed the correct color to match each theme. If there was a way to have the collapse of WCO and also the back button from the minimal-ui display, that would be a nice solution to my problem.
 2. I have heard buzz around a [MICA like background](https://twitter.com/diekus/status/1754911118236041630) which would be an amazing addition to the web platform. This is not only just super cool to have in an app, but native applications use this widespread and it would be just another way for PWAs to match up to native applications and even look like them too. The native Notepad uses this in the settings page and I used the guidance of this [github repo](https://github.com/yell0wsuit/acrylic-mica-css) to replicate that as best that I can.
 
