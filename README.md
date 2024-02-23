@@ -41,7 +41,7 @@ While using local storage is usually pretty light on processing power, if you ar
 
 Service workers and PWAs go hand in hand with the most common use case being getting the app working (to some extent) offline. On first visit, the Notepad PWA Service worker will register and save all of the assets to the cache. After this, anytime the user loses connection the assets are saved so visually things work and look the same. The data entered while offline uses local storage which doens't need connection anyway so the editor would have worked offline by default.
 
-We gave our service worker the "cache first" stratergy which serves the user anything in the cache before anything else loaded from the apps server. This can create faster load times for your user, however, it can also cause things to become stale if the developer pushes new updates to their app. This is avoided with the addition of a [little bit of code](https://web.dev/articles/offline-cookbook#stale-while-revalidate).
+We built our service worker with the "cache first" strategy, which serves the user anything in the cache before anything else loaded from the app's server. This can create faster load times for the user. However, it can also cause things to become stale if the developer pushes new updates to their app. This is avoided with the addition of a [little bit of code](https://web.dev/articles/offline-cookbook#stale-while-revalidate).
 
 ### 🎨 CSS
 
