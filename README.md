@@ -12,7 +12,7 @@ The System File Access API is a MUST include for any app that needs to read/writ
 
 ### ✒️ Local Font Access API
 
-The Notepad native application offers a lot of different font families and styles to select and use in the editor. Instead of manually porting the fonts over to the PWA, we can just use the Local Font Access API to grab all available fonts on the users operating system. In the spirit of PWA, this will allow the available fonts to  be different across different devices (ie Android will have different font selections compared to Windows).
+The Notepad native application offers a lot of different font families and styles to select and use in the editor. Instead of manually porting the fonts over to the PWA, we can just use the Local Font Access API to grab all available fonts on the users operating system. In the spirit of PWA, this will allow the available fonts to be different across different devices (i.e. Android will have different font selections compared to Windows).
 
 This API is only supported in chromium, so that limits where the PWA can be used, but fret not, if the API is unavailable on your OS, there should be a fallback list that the PWA will rely on.
 
