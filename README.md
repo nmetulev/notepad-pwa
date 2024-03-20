@@ -1,4 +1,4 @@
-# Notepad (PWA)
+# Notes PWA
 
 This was a project that was design to expose the gap between Progressive Web Apps and Native Applications (especially on Windows). Below, you will find discussion of some of the things I discovered a long the way such as ways that PWA outperformed the Native platform, key web APIs that were used in the making of this PWA, as well of some of the limtations of PWA where there is room to grow.
 
